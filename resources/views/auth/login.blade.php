@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-image: url('{{ asset('images/background1.jpg') }}');
+            background-image: url('{{ asset("images/background1.jpg") }}');
             background-size: cover;
             background-position: center;
             font-family: 'Arial', sans-serif;
@@ -62,12 +62,23 @@
             background-color: #23272b; /* Cinza mais escuro */
         }
 
+        .alert-success {
+            text-align: left;
+        }
     </style>
 </head>
 <body>
     <div class="container d-flex justify-content-center align-items-center h-100">
         <div class="login-box">
             <h1>AgroConecta</h1>
+
+            <!-- Mensagem de sucesso -->
+            @if(session('message'))
+                <div class="alert alert-success">
+                    {{ session('message') }}
+                </div>
+            @endif
+
             <form action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="mb-3 text-start">
@@ -79,8 +90,7 @@
                     <input type="password" id="password" name="password" class="form-control" placeholder="Digite sua senha" required>
                 </div>
                 <button type="submit" class="btn btn-green btn-lg w-100">Iniciar Sessão</button>
-                <button type="submit" class="btn btn-dark btn-lg w-100 border-0 mt-2">Registre-se</button>
-
+                <a href="{{ route('register') }}" class="btn btn-dark btn-lg w-100 border-0 mt-2">Registre-se</a>
             </form>
             <div class="extra-options mt-3">
                 <a href="{{ route('password.request') }}" class="d-block mt-3">Esqueceu sua senha?</a>
