@@ -6,6 +6,19 @@
     <title>Redefinir Senha</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
+    body {
+        background-image: url('{{ asset("images/background1.jpg") }}');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Arial', sans-serif;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card p-4" style="width: 100%; max-width: 400px;">
