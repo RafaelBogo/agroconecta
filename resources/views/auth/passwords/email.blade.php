@@ -18,6 +18,11 @@
         justify-content: center;
         align-items: center;
     }
+
+    .btn-enviar{
+        background-color: #28a745;
+        color: white;
+    }
 </style>
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
@@ -32,7 +37,7 @@
                     <label for="email" class="form-label">E-mail</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu e-mail" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Enviar Link</button>
+                <button type="submit" class="btn btn-enviar w-100">Enviar Link</button>
             </form>
         </div>
     </div>

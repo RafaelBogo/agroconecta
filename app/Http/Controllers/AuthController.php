@@ -18,9 +18,33 @@ class AuthController extends Controller
 
     // Lógica de login (a ser implementada)
     public function login(Request $request)
-    {
-        // Lógica de autenticação
+{
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (auth()->attempt($request->only('email', 'password'))) {
+            // Autenticação bem-sucedida
+            return redirect()->route('dashboard')->with('message', 'Login realizado com sucesso!');
+        }
+
+        // Autenticação falhou
+        return back()->withErrors(['email' => 'Credenciais inválidas.']);
     }
+
+    //Logout
+    public function logout(Request $request)
+    {
+        auth()->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('message', 'Sessão encerrada com sucesso.');
+    }
+
+
+
 
     // Exibir o formulário de registro
     public function showRegisterForm()
