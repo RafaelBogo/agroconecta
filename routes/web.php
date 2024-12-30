@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+
 
 // Rota para exibir o formulário de login
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -30,4 +32,7 @@ Route::get('/dashboard', function () {
 
 //Rota para Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::post('/dashboard/search', [DashboardController::class, 'search'])->name('dashboard.search');
 
