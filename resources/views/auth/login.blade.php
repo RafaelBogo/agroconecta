@@ -36,16 +36,6 @@
             color: #333;
         }
 
-        .btn-green {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-green:hover {
-            background-color: #218838;
-            color: white;
-        }
-
         .extra-options a {
             color: #222;
         }
@@ -89,7 +79,7 @@
                     <label for="password" class="form-label">Senha</label>
                     <input type="password" id="password" name="password" class="form-control" placeholder="Digite sua senha" required>
                 </div>
-                <button type="submit" class="btn btn-green btn-lg w-100">Iniciar Sessão</button>
+                <button type="submit" class="btn btn-success btn-lg w-100">Iniciar Sessão</button>
                 <a href="{{ route('register') }}" class="btn btn-dark btn-lg w-100 border-0 mt-2">Registre-se</a>
             </form>
             <div class="extra-options mt-3">

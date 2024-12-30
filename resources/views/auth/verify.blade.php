@@ -36,7 +36,7 @@
         }
 
         .btn-primary {
-            background-color: #007bff;
+            background-color: #;
             color: white !important;
         }
 
@@ -73,7 +73,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Verificar</button>
+                <button type="submit" class="btn btn-success w-100">Verificar</button>
             </form>
         </div>
     </div>

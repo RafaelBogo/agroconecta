@@ -19,10 +19,6 @@
         align-items: center;
     }
 
-    .btn-redefinir {
-        background-color: #28a745 !important;
-        color: white;
-    }
 </style>
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
@@ -43,7 +39,7 @@
                     <label for="password_confirmation" class="form-label">Confirme a Nova Senha</label>
                     <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirme sua nova senha" required>
                 </div>
-                <button type="submit" class="btn btn-redefinir w-100">Redefinir Senha</button>
+                <button type="submit" class="btn btn-success w-100">Redefinir Senha</button>
             </form>
         </div>
     </div>
