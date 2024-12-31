@@ -8,7 +8,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 
 
-
 // Rota para exibir o formulário de login
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -43,8 +42,10 @@ Route::post('/dashboard/search', [DashboardController::class, 'search'])->name('
 Route::get('/minha-conta', [DashboardController::class, 'minhaConta'])->name('minha.conta');
 
 // Rotas para cadastro de produtos (Vender)
-Route::get('/vender', [ProductController::class, 'showStep1'])->name('sell.step1'); // Página inicial para venda
-Route::post('/vender', [ProductController::class, 'storeStep1'])->name('sell.step1.save');
+Route::get('/vender', [ProductController::class, 'showImportant'])->name('sell.important');
+
+Route::get('/vender/step1', [ProductController::class, 'showStep1'])->name('sell.step1');
+Route::post('/vender/step1', [ProductController::class, 'storeStep1'])->name('sell.step1.save');
 
 Route::get('/vender/step2', [ProductController::class, 'showStep2'])->name('sell.step2');
 Route::post('/vender/step2', [ProductController::class, 'storeStep2'])->name('sell.step2.save');

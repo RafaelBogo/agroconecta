@@ -7,9 +7,15 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
+    //step-1
+    public function showImportant()
+    {
+        return view('sell.important');
+    }
+
     public function showStep1()
     {
-        return view('sell.step1');
+        return view('sell.step1'); // Certifique-se de que 'step1.blade.php' existe em resources/views/sell
     }
 
     public function storeStep1(Request $request)
@@ -30,6 +36,7 @@ class ProductController extends Controller
         return redirect()->route('sell.step2')->with('product_id', $product->id);
     }
 
+    //step-2
     public function showStep2()
     {
         return view('sell.step2'); // Certifique-se de que o arquivo step2.blade.php exista
@@ -50,21 +57,27 @@ class ProductController extends Controller
         return redirect()->route('products.step3');
     }
 
-    public function storeStep3(Request $request)
+    //step-3
+    public function showStep3()
     {
-        $request->validate([
-            'photo' => 'required|image',
-        ]);
-
-        $product = Product::find(session('product_id'));
-        if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('products', 'public');
-            $product->photo = $path;
-        }
-        $product->save();
-
-        return redirect()->route('sell.complete');
+        return view('sell.step3'); // Certifique-se de que o arquivo 'step3.blade.php' está na pasta correta
     }
+
+    public function storeStep3(Request $request)
+{
+    $validatedData = $request->validate([
+        'product_image' => 'required|image|max:2048', // Validação para aceitar apenas imagens de até 2MB
+    ]);
+
+    // Salve a imagem no storage
+    $path = $request->file('product_image')->store('products', 'public');
+
+    // Opcional: Salve o caminho da imagem no banco de dados
+    // Product::create([...]);
+
+    return redirect()->route('sell.complete')->with('success', 'Imagem carregada com sucesso!');
+}
+
 
     public function showComplete()
     {

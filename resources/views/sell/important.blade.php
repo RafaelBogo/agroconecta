@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroConecta - Etapa 1</title>
+    <title>AgroConecta - Dicas para Vender</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -66,23 +67,21 @@
 
         .left-section p {
             margin-top: 10px;
-            margin-bottom: 225px;
             font-size: 16px;
             color: #555;
         }
 
         .right-section {
-            flex: 1;
+            max-width: 60%;
             padding-left: 20px;
-            padding-right: 20px; /* Adicionado espaço interno à direita */
             max-height: 450px;
-            overflow-y: auto;
+            overflow-y: auto; /* Adiciona a barra de rolagem */
         }
 
         .right-section ul {
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin-right: 20px; /* Adiciona um espaço entre a lista e a barra de rolagem */
         }
 
         .right-section ul li {
@@ -95,63 +94,56 @@
             box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .right-section ul li strong {
+            color: #333;
         }
 
-        .form-control {
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            padding: 15px;
-            font-size: 16px;
-            width: 100%;
-        }
-
-        .form-control:focus {
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-        }
-
-        .btn-success, .btn-secondary {
+        .btn-success {
             width: 100%;
             margin-top: 10px;
+            margin-top: 300px ;
         }
 
         /* Barra de rolagem personalizada */
         .right-section::-webkit-scrollbar {
-            width: 35px;
+            width: 35px; /* Reduz a largura para algo mais minimalista */
         }
 
+
         .right-section::-webkit-scrollbar-track {
-            background: rgba(200, 200, 200, 0.2);
-            border-radius: 20px;
+            background: rgba(200, 200, 200, 0.2); /* Fundo sutil para a barra de rolagem */
+            border-radius: 20px; /* Deixa o track arredondado */
+            padding-left: 50px;
+
         }
 
         .right-section::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
+            background-color: rgba(0, 0, 0, 0.3); /* Cor verde para o thumb */
+            border-radius: 20px; /* Deixa o thumb arredondado */
+            padding-left: 50px;
         }
 
         .right-section::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(120, 123, 123, 0.9);
+            background-color: rgba(120, 123, 123, 0.9); /* Altera a cor do thumb ao passar o mouse */
         }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">AgroConecta</a>
             <div class="navbar-nav mx-auto">
-                <a class="nav-link" href="{{ route('dashboard') }}">Início</a>
+                <a class="nav-link" href="{{ route('dashboard')}} ">Início</a>
                 <a class="nav-link" href="#">Produtos</a>
                 <a class="nav-link" href="{{ route('sell.step1') }}">Vender</a>
                 <a class="nav-link" href="#">Carrinho</a>
             </div>
             <div class="d-flex align-items-center">
-                <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
+            <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
-                    <a href="#" class="nav-link text-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Sair
                     </a>
                 </form>
@@ -159,46 +151,31 @@
         </div>
     </nav>
 
+    <!-- Conteúdo -->
     <div class="container">
         <div class="content-box">
             <div class="left-section">
                 <h2>Etapa 1</h2>
-                <p>Após preencher os campos <strong>verifique</strong> suas informações antes de prosseguir para garantir que estejam todas corretas.</p>
-                <a href="{{ route('sell.important') }}" class="btn btn-secondary">Voltar</a>
-                <a href="{{ route('sell.step2') }}" class="btn btn-success">Avançar</a>
+                <p>Confira algumas <strong>dicas</strong> antes de cadastrar seu produto para venda:</p>
+                <button onclick="window.location='{{ route('sell.step2') }}'" class="btn btn-success">Avançar</button>
             </div>
             <div class="right-section">
-                <form action="{{ route('sell.step1.save') }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label for="name">Nome do Produto</label>
-                        <input type="text" id="name" name="name" class="form-control" placeholder="Insira o nome aqui" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Valor em Reais</label>
-                        <input type="number" id="price" name="price" class="form-control" placeholder="Insira o valor aqui" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="quantity">Quantidade Disponível</label>
-                        <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Insira a quantidade aqui" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="validity">Validade do Produto</label>
-                        <input type="date" id="validity" name="validity" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="unit">Unidade de Medida (Quilograma ou Unidade)</label>
-                        <input type="text" id="unit" name="unit" class="form-control" placeholder="Insira a unidade de medida aqui" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contact">Telefone para Contato</label>
-                        <input type="text" id="contact" name="contact" class="form-control" placeholder="Insira seu telefone aqui" required>
-                    </div>
-                </form>
+                <ul>
+                    <li><strong>USE BOAS FOTOS:</strong> Fotos claras, de alta qualidade e com fundo neutro atraem mais compradores. Mostre detalhes do produto.</li>
+                    <li><strong>DESCREVA BEM:</strong> Explique tipo, quantidade, origem e diferenciais do produto. Inclua informações como cultivo orgânico, se for o caso.</li>
+                    <li><strong>DEFINA PREÇO JUSTO:</strong> Pesquise preços de mercado, considere seus custos e seja competitivo. Inclua valores promocionais, quando possível.</li>
+                    <li><strong>INFORME LOCALIZAÇÃO:</strong> Seja claro sobre sua localização, use pontos de referência e outras informações que ajudarão o cliente encontrar seu ponto de venda.</li>
+                    <li><strong>GARANTA QUALIDADE:</strong> Atualize seus estoques, informe validade e melhores condições de armazenamento ou consumo.</li>
+                    <li><strong>SEJA HONESTO:</strong> Descreva o produto exatamente como ele é, sem omitir informações importantes para o comprador.</li>
+                    <li><strong>RESPONDA RÁPIDO:</strong> Esteja disponível para responder dúvidas dos clientes de forma ágil.</li>
+                    <li><strong>INVISTA NO EMBALAMENTO:</strong> Caso precise enviar produtos, utilize embalagens que protejam o conteúdo durante o transporte.</li>
+                    <li><strong>ATUALIZE SEMPRE:</strong> Mantenha as informações sobre os produtos atualizadas, incluindo preços e disponibilidade.</li>
+                </ul>
             </div>
         </div>
     </div>
 
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
