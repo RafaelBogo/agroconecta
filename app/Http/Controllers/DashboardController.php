@@ -31,4 +31,9 @@ class DashboardController extends Controller
 
         return view('dashboard', compact('cities', 'products'));
     }
+
+    public function minhaConta(){
+        return view('minhaConta');
+    }
+
 }

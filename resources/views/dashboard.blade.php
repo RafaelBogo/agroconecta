@@ -96,8 +96,8 @@
                 <a class="nav-link" href="#">Carrinho</a>
             </div>
             <div class="d-flex align-items-center">
-                <a class="nav-link px-3" href="#">Minha Conta</a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
+            <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
                     <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Sair

@@ -36,3 +36,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::post('/dashboard/search', [DashboardController::class, 'search'])->name('dashboard.search');
 
+//Rota paga a Minha conta
+Route::get('/minha-conta', [DashboardController::class, 'minhaConta'])->name('minha.conta');
