@@ -94,11 +94,11 @@
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">AgroConecta</a>
+            <a class="navbar-brand" href="{{ route('dashboard') }}">AgroConecta</a>
             <div class="navbar-nav mx-auto">
-                <a class="nav-link" href="#">Início</a>
+                <a class="nav-link" href="{{ route('dashboard') }}">Início</a>
                 <a class="nav-link" href="#">Produtos</a>
-                <a class="nav-link" href="#">Vender</a>
+                <a class="nav-link" href="{{ route('sell.step1') }}">Vender</a>
                 <a class="nav-link" href="#">Carrinho</a>
             </div>
             <div class="d-flex align-items-center">
@@ -137,7 +137,7 @@
                     <p>Avalie produtos que você comprou.</p>
                 </div>
             </div>
-            <button class="btn btn-success">Voltar</button>
+            <a href="{{ route('dashboard') }}" class="btn btn-success">Voltar</a>
         </div>
     </div>
 

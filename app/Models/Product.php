@@ -18,6 +18,11 @@ class Product extends Model
         'description',
         'price',
         'city',
+        'unit',
+        'quantity',
+        'validity',
+        'contact',
+        'address',
+        'photo',
     ];
 }
-

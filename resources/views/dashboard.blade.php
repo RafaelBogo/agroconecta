@@ -92,7 +92,7 @@
             <div class="navbar-nav mx-auto">
                 <a class="nav-link" href="#">Início</a>
                 <a class="nav-link" href="#">Produtos</a>
-                <a class="nav-link" href="#">Vender</a>
+                <a class="nav-link" href="{{ route('sell.step1') }}">Vender</a>
                 <a class="nav-link" href="#">Carrinho</a>
             </div>
             <div class="d-flex align-items-center">
