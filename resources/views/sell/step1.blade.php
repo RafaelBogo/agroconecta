@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-image: url('{{ asset("images/background1.jpg") }}');
+            background-image: url('{{ asset("images/background2.jpg") }}');
             background-size: cover;
             background-position: center;
             font-family: 'Arial', sans-serif;
@@ -99,10 +99,9 @@
         }
 
         .btn-success {
-            width: 80%;
-            margin-top: 300px;
-            font-size: 16px;
-            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            margin-top: 300px ;
         }
 
         /* Barra de rolagem personalizada */

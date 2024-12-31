@@ -32,25 +32,22 @@ class ProductController extends Controller
 
     public function showStep2()
     {
-        return view('sell.step2');
+        return view('sell.step2'); // Certifique-se de que o arquivo step2.blade.php exista
     }
 
-    public function storeStep2(Request $request)
-    {
+    public function storeStep2(Request $request){
+        // Validação dos dados enviados
         $request->validate([
             'description' => 'required|max:250',
-            'address' => 'required|max:250',
+            'pickup_address' => 'required|max:250',
+            'save_address' => 'nullable|boolean',
         ]);
 
-        $product = Product::find(session('product_id'));
-        $product->update($request->all());
+        // Salvando os dados temporários na sessão ou banco
+        session()->put('step2', $request->only('description', 'pickup_address', 'save_address'));
 
-        return redirect()->route('sell.step3');
-    }
-
-    public function showStep3()
-    {
-        return view('sell.step3');
+        // Redirecionando para o Step 3
+        return redirect()->route('products.step3');
     }
 
     public function storeStep3(Request $request)
