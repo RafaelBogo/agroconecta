@@ -108,17 +108,18 @@
     </nav>
     <div class="container text-center">
         <div class="search-bar">
-            <form action="{{ route('dashboard.search') }}" method="GET" class="d-flex">
-                <input type="text" name="product" placeholder="Busque por um Produto"
-                    class="form-control me-2 flex-grow-2" value="{{ request('product') }}">
-                <select name="city" class="form-select me-2 flex-grow-1" style="max-width: 150px;">
-                    <option value="">Cidade</option>
-                    @foreach($cities as $city)
-                        <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>{{ $city }}</option>
-                    @endforeach
-                </select>
-                <button type="submit" class="btn btn-success">Buscar</button>
-            </form>
+        <form action="{{ route('dashboard.search') }}" method="GET" class="d-flex">
+            <input type="text" name="product" placeholder="Busque por um Produto"
+                class="form-control me-2 flex-grow-2" value="{{ request('product') }}">
+            <select name="city" class="form-select me-2 flex-grow-1" style="max-width: 150px;">
+                <option value="">Cidade</option>
+                @foreach($cities as $city)
+                    <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>{{ $city }}</option>
+                @endforeach
+            </select>
+            <button type="submit" class="btn btn-success">Buscar</button>
+        </form>
+
         </div>
 
         <div class="products">

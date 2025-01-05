@@ -15,14 +15,16 @@ class Product extends Model
     // Colunas que podem ser preenchidas
     protected $fillable = [
         'name',
-        'description',
         'price',
-        'city',
-        'unit',
-        'quantity',
         'validity',
+        'unit',
         'contact',
+        'description',
         'address',
+        'city',
         'photo',
+        'user_id',
+        'stock',
     ];
+
 }

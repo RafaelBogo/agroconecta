@@ -136,7 +136,7 @@
             <div class="navbar-nav mx-auto">
                 <a class="nav-link" href="{{ route('dashboard')}} ">Início</a>
                 <a class="nav-link" href="#">Produtos</a>
-                <a class="nav-link" href="{{ route('sell.step1') }}">Vender</a>
+                <a class="nav-link" href="{{ route('sell.important') }}">Vender</a>
                 <a class="nav-link" href="#">Carrinho</a>
             </div>
             <div class="d-flex align-items-center">
@@ -155,9 +155,9 @@
     <div class="container">
         <div class="content-box">
             <div class="left-section">
-                <h2>Etapa 1</h2>
+                <h2>IMPORtANTE</h2>
                 <p>Confira algumas <strong>dicas</strong> antes de cadastrar seu produto para venda:</p>
-                <button onclick="window.location='{{ route('sell.step2') }}'" class="btn btn-success">Avançar</button>
+                <button onclick="window.location='{{ route('sell.cadastroProduto') }}'" class="btn btn-success">Avançar</button>
             </div>
             <div class="right-section">
                 <ul>
