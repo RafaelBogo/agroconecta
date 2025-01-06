@@ -24,6 +24,18 @@ Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name(
 // Rota para dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
+// Rota de busca no dashboard
+Route::get('/dashboard/search', function (Illuminate\Http\Request $request) {
+    $query = [];
+    if ($request->filled('product')) {
+        $query['product'] = $request->product;
+    }
+    if ($request->filled('city')) {
+        $query['city'] = $request->city;
+    }
+    return redirect()->route('products.show', $query);
+})->name('dashboard.search');
+
 // Rota para logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -42,6 +54,3 @@ Route::get('/produtos/buscar', [ProductController::class, 'search'])->name('prod
 
 // Rota para a Minha Conta
 Route::get('/minha-conta', [DashboardController::class, 'minhaConta'])->name('minha.conta');
-
-// Rota de busca no dashboard
-Route::get('/dashboard/search', [DashboardController::class, 'search'])->name('dashboard.search');

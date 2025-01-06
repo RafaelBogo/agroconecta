@@ -67,10 +67,21 @@ class ProductController extends Controller
         }
     }
 
-    public function showProducts()
+    public function showProducts(Request $request)
     {
-        $products = Product::all(); // Carregar todos os produtos
-        $cities = Product::select('city')->distinct()->pluck('city'); // Obter as cidades únicas
+        $query = Product::query();
+
+        if ($request->filled('product')) {
+            $query->where('name', 'like', '%' . $request->product . '%');
+        }
+
+        if ($request->filled('city')) {
+            $query->where('city', $request->city);
+        }
+
+        $products = $query->get();
+        $cities = Product::select('city')->distinct()->pluck('city');
+
         return view('products.showProducts', compact('products', 'cities'));
     }
 

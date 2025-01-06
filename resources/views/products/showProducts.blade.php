@@ -81,7 +81,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="#">AgroConecta</a>
             <div class="navbar-nav mx-auto">
-                <a class="nav-link" href="#">Início</a>
+                <a class="nav-link" href="{{ route('dashboard')}}">Início</a>
                 <a class="nav-link" href="{{ route('products.show')}}">Produtos</a>
                 <a class="nav-link" href="{{ route('sell.important') }}">Vender</a>
                 <a class="nav-link" href="#">Carrinho</a>
