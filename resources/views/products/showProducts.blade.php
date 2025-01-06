@@ -118,7 +118,7 @@
         <div class="products">
             @foreach($products as $product)
                 <div class="product-card">
-                    <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
+                    <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}" style="max-width: 100%; height: auto; border-radius: 5px;">
                     <h5>{{ $product->name }}</h5>
                     <p>{{ $product->description }}</p>
                     <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
