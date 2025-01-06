@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Meu Carrinho - AgroConecta</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -33,25 +34,9 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .cart-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
         .cart-item img {
             max-width: 80px;
             border-radius: 8px;
-        }
-
-        .cart-summary {
-            text-align: right;
-            margin-top: 20px;
         }
 
         .btn-finalize {
@@ -67,7 +52,7 @@
                 <a class="nav-link" href="{{ route('dashboard') }}">Início</a>
                 <a class="nav-link" href="{{ route('products.show') }}">Produtos</a>
                 <a class="nav-link" href="{{ route('sell.important') }}">Vender</a>
-                <a class="nav-link" href="#">Carrinho</a>
+                <a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a>
             </div>
             <div class="d-flex align-items-center">
                 <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
@@ -95,7 +80,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach ($cartItems as $id => $item)
+                    @foreach ($cartItems as $id => $item)
                     <tr>
                         <td>
                             <img src="{{ asset('storage/' . $item['photo']) }}" alt="{{ $item['name'] }}" style="width: 50px; height: 50px; border-radius: 5px;">
@@ -105,21 +90,52 @@
                         <td>{{ $item['quantity'] }}</td>
                         <td>R$ {{ number_format($item['price'] * $item['quantity'], 2, ',', '.') }}</td>
                         <td>
-                            <form method="POST" action="{{ route('cart.delete') }}">
+                            <form class="delete-item-form" data-item-id="{{ $id }}">
                                 @csrf
                                 @method('DELETE')
-                                <input type="hidden" name="item_id" value="{{ $id }}">
-                                <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                                <button type="button" class="btn btn-danger btn-sm delete-button">Remover</button>
                             </form>
                         </td>
                     </tr>
-                @endforeach
+                    @endforeach
                 </tbody>
             </table>
         @endif
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const form = this.closest('.delete-item-form');
+                const itemId = form.getAttribute('data-item-id');
+
+                fetch("{{ route('cart.delete') }}", {
+                    method: "DELETE",
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        item_id: itemId
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Erro ao remover o item do carrinho.');
+                })
+                .then(data => {
+                    alert(data.success || 'Item removido com sucesso!');
+                    form.closest('tr').remove();
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Houve um erro ao remover o item.');
+                });
+            });
+        });
+    </script>
 </body>
 </html>

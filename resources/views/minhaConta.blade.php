@@ -99,7 +99,7 @@
                 <a class="nav-link" href="{{ route('dashboard') }}">Início</a>
                 <a class="nav-link" href="{{ route('products.show')}}">Produtos</a>
                 <a class="nav-link" href="{{ route('sell.important') }}">Vender</a>
-                <a class="nav-link" href="#">Carrinho</a>
+                <a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a>
             </div>
             <div class="d-flex align-items-center">
                 <a class="nav-link px-3" href="#">Minha Conta</a>
