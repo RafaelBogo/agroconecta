@@ -75,6 +75,9 @@ Route::middleware('auth')->group(function () {
 
     // Atualizar quantidade no carrinho
     Route::put('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
+
+    Route::get('/cart/summary', [CartController::class, 'getCartSummary'])->name('cart.summary');
+
 });
 
 

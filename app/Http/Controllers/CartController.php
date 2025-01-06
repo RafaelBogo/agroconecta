@@ -70,11 +70,32 @@ class CartController extends Controller
             // Atualiza o carrinho na sessão
             session()->put('cart', $cart);
 
-            return response()->json(['success' => 'Item removido do carrinho com sucesso!']);
+            // Recalcula o total do carrinho
+            $total = array_reduce($cart, function ($carry, $item) {
+                return $carry + ($item['price'] * $item['quantity']);
+            }, 0);
+
+            return response()->json([
+                'success' => 'Item removido do carrinho com sucesso!',
+                'total' => $total
+            ]);
         }
 
         return response()->json(['error' => 'Item não encontrado no carrinho.'], 404);
     }
+
+    public function getCartSummary()
+    {
+        $cart = session()->get('cart', []);
+
+        // Calcula o total do carrinho
+        $total = array_reduce($cart, function ($carry, $item) {
+            return $carry + ($item['price'] * $item['quantity']);
+        }, 0);
+
+        return response()->json(['total' => $total]);
+    }
+
 
 
 }
