@@ -6,6 +6,7 @@ use App\Http\Controllers\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
 
 // Rota para exibir o formulário de login
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -57,3 +58,24 @@ Route::get('/produtos/buscar', [ProductController::class, 'search'])->name('prod
 
 // Rota para a Minha Conta
 Route::get('/minha-conta', [DashboardController::class, 'minhaConta'])->name('minha.conta');
+
+//Exbie o protduto
+Route::get('/produtos/{id}', [ProductController::class, 'showProductDetails'])->name('products.details');
+
+
+Route::middleware('auth')->group(function () {
+    // Visualizar o carrinho
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+
+    // Adicionar ao carrinho
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+
+    // Remover do carrinho
+    Route::delete('/cart/delete', [CartController::class, 'deleteItem'])->name('cart.delete');
+
+    // Atualizar quantidade no carrinho
+    Route::put('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
+});
+
+
+

@@ -73,8 +73,8 @@
                 <a class="nav-link" href="#">Início</a>
                 <a class="nav-link" href="{{ route('products.show')}}">Produtos</a>
                 <a class="nav-link" href="{{ route('sell.important') }}">Vender</a>
-                <a class="nav-link" href="#">Carrinho</a>
-            </div>
+                <a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a>
+                </div>
             <div class="d-flex align-items-center">
             <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
