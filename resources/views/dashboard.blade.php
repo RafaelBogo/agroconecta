@@ -38,7 +38,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            padding: 5px;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -68,7 +68,7 @@
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">AgroConecta</a>
+            <a class="navbar-brand" href="{{ route('dashboard') }}">AgroConecta</a>
             <div class="navbar-nav mx-auto">
                 <a class="nav-link" href="#">Início</a>
                 <a class="nav-link" href="{{ route('products.show')}}">Produtos</a>

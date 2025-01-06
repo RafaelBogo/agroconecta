@@ -40,15 +40,18 @@ Route::get('/dashboard/search', function (Illuminate\Http\Request $request) {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rotas do processo de venda
-Route::get('/vender', [ProductController::class, 'showImportant'])->name('sell.important'); // Página de dicas
+Route::get('/vender', [ProductController::class, 'showImportant'])->name('sell.important');
 Route::get('/vender/cadastro', [ProductController::class, 'showCadastroProduto'])
     ->name('sell.cadastroProduto')
-    ->middleware('auth'); // Garante que o usuário está logado
+    ->middleware('auth');
 Route::post('/vender/cadastro', [ProductController::class, 'storeCadastroProduto'])
     ->name('sell.store')
-    ->middleware('auth'); // Garante que o usuário está logado
+    ->middleware('auth');
+Route::get('/vender/concluido', function () {
+    return view('sell.complete');
+})->name('sell.complete');
 
-// Rotas para produtos
+    // Rotas para produtos
 Route::get('/produtos', [ProductController::class, 'showProducts'])->name('products.show');
 Route::get('/produtos/buscar', [ProductController::class, 'search'])->name('products.search');
 

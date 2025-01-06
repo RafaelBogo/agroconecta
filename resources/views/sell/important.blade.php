@@ -132,10 +132,10 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">AgroConecta</a>
+            <a class="navbar-brand" href="{{ route('dashboard') }}">AgroConecta</a>
             <div class="navbar-nav mx-auto">
                 <a class="nav-link" href="{{ route('dashboard')}} ">Início</a>
-                <a class="nav-link" href="#">Produtos</a>
+                <a class="nav-link" href="{{ route('products.show')}}">Produtos</a>
                 <a class="nav-link" href="{{ route('sell.important') }}">Vender</a>
                 <a class="nav-link" href="#">Carrinho</a>
             </div>

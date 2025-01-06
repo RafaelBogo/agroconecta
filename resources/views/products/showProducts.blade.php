@@ -6,80 +6,104 @@
     <title>AgroConecta - Produtos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-image: url('{{ asset("images/background2.jpg") }}');
-            background-size: cover;
-            background-position: center;
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
-            margin: 0;
-        }
+    body {
+        background-image: url('{{ asset("images/background2.jpg") }}');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Arial', sans-serif;
+        min-height: 100vh;
+        margin: 0;
+    }
 
-        .navbar {
-            background-color: #787b7b;
-            opacity: 0.9;
-        }
+    .navbar {
+        background-color: #787b7b;
+        opacity: 0.9;
+    }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-        }
+    .navbar a {
+        color: white;
+        text-decoration: none;
+    }
 
-        .navbar a:hover {
-            text-decoration: underline;
-            color: #ccc;
-        }
+    .navbar a:hover {
+        text-decoration: underline;
+        color: #ccc;
+    }
 
-        .search-bar {
-            width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+    .search-bar {
+        width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-        .products {
-            margin-top: 30px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
+    .products {
+        margin-top: 30px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        max-height: 500px; /* Altura máxima para ativar a barra de rolagem */
+        overflow-y: auto; /* Adiciona a barra de rolagem */
+        padding-right: 20px; /* Espaço entre os cards e a barra de rolagem */
+    }
 
-        .product-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+    /* Barra de rolagem personalizada */
+    .products::-webkit-scrollbar {
+        width: 35px; /* Largura da barra */
+    }
 
-        .product-card img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
+    .products::-webkit-scrollbar-track {
+        background: rgba(245, 245, 245, 0.9); /* Fundo mais claro e neutro */
+        border-radius: 20px; /* Bordas arredondadas */
+    }
 
-        .product-card h5 {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-        }
+    .products::-webkit-scrollbar-thumb {
+        background-color: rgba(120, 120, 120, 0.6); /* Tom de cinza compatível */
+        border-radius: 20px; /* Bordas arredondadas */
+    }
 
-        .product-card p {
-            font-size: 0.9rem;
-            color: #666;
-        }
-    </style>
+    .products::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(100, 100, 100, 0.9); /* Cor mais escura ao passar o mouse */
+    }
+
+    .product-card {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .product-card img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+
+    .product-card h5 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .product-card p {
+        font-size: 0.9rem;
+        color: #666;
+    }
+</style>
+
+
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">AgroConecta</a>
+            <a class="navbar-brand" href="{{ route('dashboard') }}">AgroConecta</a>
             <div class="navbar-nav mx-auto">
                 <a class="nav-link" href="{{ route('dashboard')}}">Início</a>
                 <a class="nav-link" href="{{ route('products.show')}}">Produtos</a>
@@ -118,7 +142,8 @@
         <div class="products">
             @foreach($products as $product)
                 <div class="product-card">
-                    <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}" style="max-width: 100%; height: auto; border-radius: 5px;">
+                    <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}"
+                        style="max-width: 100%; height: auto; border-radius: 5px;">
                     <h5>{{ $product->name }}</h5>
                     <p>{{ $product->description }}</p>
                     <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
@@ -128,6 +153,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

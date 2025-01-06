@@ -31,7 +31,7 @@ class ProductController extends Controller
                 'contact' => 'required|string|max:255',
                 'description' => 'required|string|max:250',
                 'address' => 'required|string|max:255',
-                'city' => 'required|string|max:255', // Adicione a validação para 'city'
+                'city' => 'required|string|max:255',
                 'photo' => 'required|image|max:2048',
                 'stock' => 'required|integer|min:0',
             ]);
@@ -39,8 +39,8 @@ class ProductController extends Controller
             // Upload da foto
             $path = $request->file('photo')->store('products', 'public');
 
-            // Criação do produto no banco
-            $product = Product::create([
+            // Salvar o produto no banco
+            Product::create([
                 'name' => $validatedData['name'],
                 'price' => $validatedData['price'],
                 'validity' => $validatedData['validity'],
@@ -48,16 +48,14 @@ class ProductController extends Controller
                 'contact' => $validatedData['contact'],
                 'description' => $validatedData['description'],
                 'address' => $validatedData['address'],
-                'city' => $validatedData['city'], // Salvar o campo 'city'
+                'city' => $validatedData['city'],
                 'photo' => $path,
                 'user_id' => Auth::id(),
                 'stock' => $validatedData['stock'],
             ]);
 
-
-            Log::info('Produto cadastrado com sucesso:', ['product_id' => $product->id]);
-
-            return redirect()->route('dashboard')->with('success', 'Produto cadastrado com sucesso!');
+            // Redirecionar para a página de conclusão
+            return redirect()->route('sell.complete');
         } catch (\Exception $e) {
             Log::error('Erro ao cadastrar produto:', [
                 'error' => $e->getMessage(),
@@ -66,6 +64,7 @@ class ProductController extends Controller
             return redirect()->back()->withErrors(['error' => 'Erro ao salvar o produto. Por favor, tente novamente.']);
         }
     }
+
 
     public function showProducts(Request $request)
     {
@@ -104,8 +103,6 @@ class ProductController extends Controller
 
         return view('products.showProducts', compact('products', 'cities'));
     }
-
-
 
 
 }
