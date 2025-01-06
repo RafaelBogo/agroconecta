@@ -66,4 +66,35 @@ class ProductController extends Controller
             return redirect()->back()->withErrors(['error' => 'Erro ao salvar o produto. Por favor, tente novamente.']);
         }
     }
+
+    public function showProducts()
+    {
+        $products = Product::all(); // Carregar todos os produtos
+        $cities = Product::select('city')->distinct()->pluck('city'); // Obter as cidades únicas
+        return view('products.showProducts', compact('products', 'cities'));
+    }
+
+
+    public function search(Request $request)
+    {
+        $query = Product::query();
+
+        // Filtros
+        if ($request->filled('product')) {
+            $query->where('name', 'like', '%' . $request->product . '%');
+        }
+
+        if ($request->filled('city')) {
+            $query->where('city', $request->city);
+        }
+
+        $products = $query->get(); // Produtos filtrados
+        $cities = Product::select('city')->distinct()->pluck('city'); // Lista de cidades
+
+        return view('products.showProducts', compact('products', 'cities'));
+    }
+
+
+
+
 }

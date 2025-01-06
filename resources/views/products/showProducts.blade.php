@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroConecta - Dashboard</title>
+    <title>AgroConecta - Produtos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -13,13 +13,11 @@
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
             margin: 0;
-            display: flex;
-            flex-direction: column;
         }
 
         .navbar {
             background-color: #787b7b;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .navbar a {
@@ -34,34 +32,47 @@
 
         .search-bar {
             width: 600px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 5px;
+            margin: 50px auto;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .search-bar input {
-            width: 75%;
-            padding: 10px;
-            border: 1px solid #ccc;
+        .products {
+            margin-top: 30px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
             border-radius: 5px;
         }
 
-        .search-bar button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .product-card h5 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
         }
 
-        .search-bar button:hover {
-            background-color: #45a049;
+        .product-card p {
+            font-size: 0.9rem;
+            color: #666;
         }
     </style>
 </head>
@@ -76,19 +87,20 @@
                 <a class="nav-link" href="#">Carrinho</a>
             </div>
             <div class="d-flex align-items-center">
-            <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
-                @csrf
-                <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    Sair
-                </a>
-            </form>
+                <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
+                    @csrf
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Sair
+                    </a>
+                </form>
             </div>
         </div>
     </nav>
+
     <div class="container text-center">
         <div class="search-bar">
-            <form action="{{ route('dashboard.search') }}" method="GET" class="d-flex">
+            <form action="{{ route('products.search') }}" method="GET" class="d-flex">
                 <input type="text" name="product" placeholder="Busque por um Produto"
                     class="form-control me-2 flex-grow-2" value="{{ request('product') }}">
                 <select name="city" class="form-select me-2 flex-grow-1" style="max-width: 150px;">
@@ -99,6 +111,20 @@
                 </select>
                 <button type="submit" class="btn btn-success">Buscar</button>
             </form>
+        </div>
+    </div>
+
+    <div class="container text-center">
+        <div class="products">
+            @foreach($products as $product)
+                <div class="product-card">
+                    <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
+                    <h5>{{ $product->name }}</h5>
+                    <p>{{ $product->description }}</p>
+                    <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
+                    <p><strong>Disponível em:</strong> {{ $product->city }}</p>
+                </div>
+            @endforeach
         </div>
     </div>
 

@@ -31,10 +31,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/vender', [ProductController::class, 'showImportant'])->name('sell.important'); // Página de dicas
 Route::get('/vender/cadastro', [ProductController::class, 'showCadastroProduto'])
     ->name('sell.cadastroProduto')
-    ->middleware('auth'); // Garante que o usuário está logado // Página do formulário de cadastro
+    ->middleware('auth'); // Garante que o usuário está logado
 Route::post('/vender/cadastro', [ProductController::class, 'storeCadastroProduto'])
     ->name('sell.store')
-    ->middleware('auth'); // Garante que o usuário está logado // Processa o cadastro
+    ->middleware('auth'); // Garante que o usuário está logado
+
+// Rotas para produtos
+Route::get('/produtos', [ProductController::class, 'showProducts'])->name('products.show');
+Route::get('/produtos/buscar', [ProductController::class, 'search'])->name('products.search');
 
 // Rota para a Minha Conta
 Route::get('/minha-conta', [DashboardController::class, 'minhaConta'])->name('minha.conta');
