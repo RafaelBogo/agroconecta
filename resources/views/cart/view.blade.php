@@ -35,7 +35,7 @@
         }
 
         .cart-container {
-            max-width: 1000px;
+            width: 1000px;
             margin: 100px auto;
             padding: 20px;
             background: rgba(255, 255, 255, 0.95);
@@ -180,7 +180,7 @@
                 <span id="finalizarText">Finalizar Pedido</span>
                 <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
             </button>
-            <button class="btn btn-secondary btn-finalize">Continuar Comprando</button>
+            <a class="btn btn-secondary btn-finalize" href="{{ route('products.show') }}">Continuar Comprando</a>
         </div>
     </div>
 </div>
