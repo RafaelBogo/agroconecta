@@ -180,7 +180,7 @@
                 <span id="finalizarText">Finalizar Pedido</span>
                 <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
             </button>
-            <a class="btn btn-secondary btn-finalize" href="{{ route('products.show') }}">Continuar Comprando</a>
+            <a class="btn btn-dark btn-finalize" href="{{ route('products.show') }}">Continuar Comprando</a>
         </div>
     </div>
 </div>

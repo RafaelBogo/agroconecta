@@ -82,7 +82,7 @@
             margin-top: 10px;
         }
 
-        .btn-success {
+        .btn-dark {
             margin-top: 30px;
             color: white;
             width: 100%;
@@ -140,7 +140,7 @@
                     <p>Avalie produtos que você comprou.</p>
                 </div>
             </div>
-            <a href="{{ route('dashboard') }}" class="btn btn-success">Voltar</a>
+            <a href="{{ route('dashboard') }}" class="btn btn-dark">Voltar</a>
         </div>
     </div>
 

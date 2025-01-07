@@ -45,6 +45,28 @@
             max-width: 900px;
             padding: 30px;
             margin: 50px auto;
+            max-height: 80vh; /* Define a altura máxima */
+            overflow-y: auto; /* Adiciona a barra de rolagem */
+            padding-right: 20px;
+        }
+
+        /* Personalização da barra de rolagem */
+        .content-box::-webkit-scrollbar {
+            width: 35px;
+        }
+
+        .content-box::-webkit-scrollbar-track {
+            background: rgba(245, 245, 245, 0.9);
+            border-radius: 20px;
+        }
+
+        .content-box::-webkit-scrollbar-thumb {
+            background-color: rgba(120, 120, 120, 0.6);
+            border-radius: 20px;
+        }
+
+        .content-box::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(100, 100, 100, 0.9);
         }
 
         .form-group {
@@ -68,7 +90,6 @@
             width: 100%;
             margin-top: 10px;
         }
-
     </style>
 </head>
 <body>
@@ -85,7 +106,7 @@
                 <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
-                    <a href="#" class="nav-link text-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <a href="#" class="nav-link text-white" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Sair
                     </a>
                 </form>

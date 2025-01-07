@@ -40,8 +40,8 @@
         }
 
         .products {
-            margin-top: 30px;
-            max-width: 1200px;
+            margin-top: 15px;
+            max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
             display: grid;

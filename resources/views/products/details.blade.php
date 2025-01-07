@@ -44,17 +44,38 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             max-width: 900px;
             width: 100%;
-            margin: 20px auto; /* Centraliza o container e adiciona espaçamento */
+            margin: 20px auto;
             display: flex;
             gap: 30px;
             flex-wrap: wrap;
+            max-height: 600px; /* Altura máxima do contêiner */
+            overflow-y: auto; /* Habilita a barra de rolagem */
+        }
+
+        /* Barra de rolagem personalizada */
+        .product-container::-webkit-scrollbar {
+            width: 35px;
+        }
+
+        .product-container::-webkit-scrollbar-track {
+            background: rgba(245, 245, 245, 0.9);
+            border-radius: 20px;
+        }
+
+        .product-container::-webkit-scrollbar-thumb {
+            background-color: rgba(120, 120, 120, 0.6);
+            border-radius: 20px;
+        }
+
+        .product-container::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(100, 100, 100, 0.9);
         }
 
         .product-image {
             flex: 1 1 45%;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: left;
+            align-items: start;
         }
 
         .product-image img {
@@ -62,6 +83,7 @@
             height: auto;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
         }
 
         .product-info {
@@ -98,15 +120,6 @@
             border-radius: 5px;
         }
 
-        .product-info button {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .product-info .description {
-            margin-top: 20px;
-        }
-
         .product-info .description h4 {
             font-size: 1.5rem;
             font-weight: bold;
@@ -118,6 +131,22 @@
             font-size: 1rem;
             color: #555;
             line-height: 1.5;
+        }
+
+        .additional-info {
+            margin-top: 20px;
+        }
+
+        .additional-info h4 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .additional-info p {
+            font-size: 1rem;
+            color: #555;
         }
     </style>
 </head>
@@ -159,6 +188,7 @@
                     <label for="quantity">Quantidade</label>
                     <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Insira aqui a quantidade" value="1" min="1">
                     <button type="submit" class="btn btn-success mt-3">Adicionar ao Carrinho</button>
+                    <a href="{{route('products.show')}}" class="btn btn-dark mt-3">Continuar Comprando</a>
                 </form>
                 <script>
                     document.getElementById('add-to-cart-form').addEventListener('submit', function (e) {
@@ -194,12 +224,22 @@
                 </script>
             </div>
 
+            <!-- Descrição -->
             <div class="description mt-4">
                 <h4>Descrição</h4>
                 <p>{{ $product->description }}</p>
             </div>
-        </div>
 
+            <!-- Informações adicionais -->
+            <div class="additional-info mt-4">
+                <h4>Informações Adicionais</h4>
+                <p><strong>Validade:</strong> {{ $product->validity }}</p>
+                <p><strong>Unidade:</strong> {{ $product->unit }}</p>
+                <p><strong>Contato do Vendedor:</strong> {{ $product->contact }}</p>
+                <p><strong>Endereço:</strong> {{ $product->address }}, {{ $product->city }}</p>
+                <p><strong>Estoque Disponível:</strong> {{ $product->stock }}</p>
+            </div>
+        </div>
     </div>
 </body>
 </html>
