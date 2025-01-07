@@ -52,16 +52,15 @@ Route::get('/vender/concluido', function () {
     return view('sell.complete');
 })->name('sell.complete');
 
-    // Rotas para produtos
+// Rotas para produtos
 Route::get('/produtos', [ProductController::class, 'showProducts'])->name('products.show');
 Route::get('/produtos/buscar', [ProductController::class, 'search'])->name('products.search');
 
 // Rota para a Minha Conta
 Route::get('/minha-conta', [DashboardController::class, 'minhaConta'])->name('minha.conta');
 
-//Exbie o protduto
+// Exibe o produto
 Route::get('/produtos/{id}', [ProductController::class, 'showProductDetails'])->name('products.details');
-
 
 Route::middleware('auth')->group(function () {
     // Visualizar o carrinho
@@ -76,9 +75,9 @@ Route::middleware('auth')->group(function () {
     // Atualizar quantidade no carrinho
     Route::put('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
 
+    // Resumo do carrinho
     Route::get('/cart/summary', [CartController::class, 'getCartSummary'])->name('cart.summary');
 
+    // Finalizar o pedido
+    Route::post('/cart/finalizar', [CartController::class, 'finalizarPedido'])->name('cart.finalizar');
 });
-
-
-
