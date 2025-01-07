@@ -45,66 +45,58 @@
             margin-left: auto;
             margin-right: auto;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(3, 1fr); /* 3 itens por linha */
             gap: 20px;
-            max-height: 500px; /* Altura máxima para ativar a barra de rolagem */
-            overflow-y: auto; /* Adiciona a barra de rolagem */
-            padding-right: 20px; /* Espaço entre os cards e a barra de rolagem */
-            padding-bottom: 50px;
+            max-height: 500px; /* Altura máxima */
+            overflow-y: auto; /* Barra de rolagem vertical */
+            padding-right: 10px;
+            padding-bottom: 20px;
         }
 
         /* Barra de rolagem personalizada */
         .products::-webkit-scrollbar {
-            width: 35px; /* Largura da barra */
+            width: 35px;
         }
 
         .products::-webkit-scrollbar-track {
-            background: rgba(245, 245, 245, 0.9); /* Fundo mais claro e neutro */
-            border-radius: 20px; /* Bordas arredondadas */
+            background: rgba(245, 245, 245, 0.9);
+            border-radius: 20px;
         }
 
         .products::-webkit-scrollbar-thumb {
-            background-color: rgba(120, 120, 120, 0.6); /* Tom de cinza compatível */
-            border-radius: 20px; /* Bordas arredondadas */
+            background-color: rgba(120, 120, 120, 0.6);
+            border-radius: 20px;
         }
 
         .products::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(100, 100, 100, 0.9); /* Cor mais escura ao passar o mouse */
+            background-color: rgba(100, 100, 100, 0.9);
+        }
+
+        .product-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .product-card:hover {
+            transform: scale(1.02); /* Reduzi o scale para evitar cortes */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Aumentei o shadow para destaque */
         }
 
         .products {
-        margin-top: 30px;
-        max-width: 1200px;
-        margin-left: auto;
-        margin-right: auto;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-        padding-bottom: 50px;
-        overflow: visible; /* Permite que o conteúdo ultrapasse o contêiner */
-    }
-
-    .product-card {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-    }
-
-    .product-card img {
-        max-width: 100%;
-        height: auto;
-        margin-bottom: 10px;
-        border-radius: 5px;
-    }
-
-    .product-card:hover {
-        transform: scale(1.05); /* Aumenta o tamanho do card */
-    }
-
+            padding: 10px; /* Adicionei espaçamento interno para evitar cortes */
+        }
     </style>
 </head>
 <body>
