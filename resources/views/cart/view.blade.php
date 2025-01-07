@@ -14,38 +14,64 @@
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
             margin: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1030;
-            background-color: rgba(120, 123, 123, 0.9);
+            background-color: #787b7b;
+            opacity: 0.9;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
 
+        .navbar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+            color: #ccc;
+        }
+
         .cart-container {
-            max-width: 1200px;
-            margin: 50px auto;
+            max-width: 1000px;
+            margin: 100px auto;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
         }
 
         .cart-content {
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .cart-table {
-            flex: 3;
+            flex: 2;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-table .table {
+            margin: 0;
         }
 
         .cart-summary {
             flex: 1;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(245, 245, 245, 1);
             border-radius: 10px;
             padding: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -53,16 +79,25 @@
 
         .cart-summary h4 {
             font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
         }
 
         .cart-summary p {
-            margin: 10px 0;
+            margin: 5px 0;
             font-size: 1rem;
         }
 
-        .btn-finalize {
+        .cart-summary .btn-finalize {
             margin-top: 20px;
             width: 100%;
+        }
+
+        .empty-cart {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 20px;
         }
     </style>
 </head>
