@@ -116,11 +116,14 @@
     <div class="container account-container">
         <div class="account-box">
             <div class="options-grid">
-                <div class="option-card">
+            <div class="option-card">
+                <a href="{{ route('orders.index') }}" style="text-decoration: none; color: inherit;">
                     <i class="bi bi-cart"></i>
                     <h5>Meus Pedidos</h5>
                     <p>Verifique os produtos que você comprou.</p>
-                </div>
+                </a>
+            </div>
+
                 <div class="option-card">
                     <i class="bi bi-person"></i>
                     <h5>Meus Dados</h5>

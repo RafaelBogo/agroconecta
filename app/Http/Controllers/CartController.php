@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+use App\Models\Order;
 
 class CartController extends Controller
 {
@@ -113,6 +114,15 @@ class CartController extends Controller
                 Log::error('ID do produto ausente no carrinho:', $item);
                 return response()->json(['error' => 'Erro: Produto no carrinho sem ID.'], 400);
             }
+
+            // Criação do pedido na tabela 'orders'
+            Order::create([
+                'user_id' => Auth::id(),
+                'product_id' => $item['id'],
+                'quantity' => $item['quantity'],
+                'total_price' => $item['price'] * $item['quantity'],
+                'status' => 'Processando',
+            ]);
         }
 
         $total = array_reduce($cart, function ($carry, $item) {
@@ -135,8 +145,10 @@ class CartController extends Controller
         ];
 
         try {
+            // Envia o e-mail com os detalhes do pedido
             Mail::to($orderDetails['user_email'])->send(new PedidoFinalizado($orderDetails));
 
+            // Limpa o carrinho após finalizar o pedido
             session()->forget('cart');
 
             return response()->json(['success' => 'Pedido finalizado com sucesso!']);
@@ -145,6 +157,7 @@ class CartController extends Controller
             return response()->json(['error' => 'Erro ao processar o pedido.'], 500);
         }
     }
+
 
 
 }
