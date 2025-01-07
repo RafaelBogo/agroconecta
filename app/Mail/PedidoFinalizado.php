@@ -30,7 +30,8 @@ class PedidoFinalizado extends Mailable
     public function build()
     {
         return $this->subject('Detalhes do seu Pedido - AgroConecta')
-                    ->view('cart.pedido_finalizado'); // Atualizado para o caminho correto
+                    ->view('cart.pedido_finalizado');
     }
+
 
 }

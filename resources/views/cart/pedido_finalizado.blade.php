@@ -14,6 +14,8 @@
         @foreach ($orderDetails['items'] as $item)
             <li>
                 {{ $item['quantity'] }}x {{ $item['name'] }} - R$ {{ number_format($item['price'], 2, ',', '.') }}
+                <br>
+                <small><strong>Endereço de Retirada:</strong> {{ $item['seller_address'] }}</small>
             </li>
         @endforeach
     </ul>

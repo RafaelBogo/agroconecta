@@ -13,17 +13,13 @@ class CartController extends Controller
 {
     public function viewCart()
     {
-        // Obtém os itens do carrinho armazenados na sessão
         $cartItems = session('cart', []);
+        Log::info('Conteúdo do carrinho ao exibir:', $cartItems);
 
-        // Retorna a view com os itens do carrinho
         return view('cart.view', compact('cartItems'));
     }
-
     public function addToCart(Request $request)
     {
-        Log::info('addToCart chamado', $request->all());
-
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
@@ -31,12 +27,22 @@ class CartController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
+        // Obtém o carrinho da sessão
         $cart = session()->get('cart', []);
 
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity'] += $request->quantity;
-        } else {
-            $cart[$product->id] = [
+        // Adiciona ou atualiza o produto no carrinho
+        $found = false;
+        foreach ($cart as &$item) {
+            if ($item['id'] == $product->id) {
+                $item['quantity'] += $request->quantity;
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            $cart[] = [
+                'id' => $product->id, // Garante que o ID do produto é salvo como valor
                 'name' => $product->name,
                 'price' => $product->price,
                 'photo' => $product->photo,
@@ -44,12 +50,16 @@ class CartController extends Controller
             ];
         }
 
+        // Atualiza a sessão do carrinho
         session()->put('cart', $cart);
 
-        Log::info('Carrinho atualizado', session('cart'));
+        // Log para verificar o carrinho atualizado
+        Log::info('Carrinho atualizado após adicionar produto:', session('cart'));
 
         return response()->json(['message' => 'Produto adicionado ao carrinho com sucesso!']);
     }
+
+
 
     public function deleteItem(Request $request)
     {
@@ -92,8 +102,17 @@ class CartController extends Controller
     {
         $cart = session()->get('cart', []);
 
+        Log::info('Conteúdo do carrinho ao finalizar pedido:', $cart);
+
         if (empty($cart)) {
             return response()->json(['error' => 'O carrinho está vazio.'], 400);
+        }
+
+        foreach ($cart as $item) {
+            if (!isset($item['id'])) {
+                Log::error('ID do produto ausente no carrinho:', $item);
+                return response()->json(['error' => 'Erro: Produto no carrinho sem ID.'], 400);
+            }
         }
 
         $total = array_reduce($cart, function ($carry, $item) {
@@ -104,26 +123,28 @@ class CartController extends Controller
             'user_name' => Auth::user()->name,
             'user_email' => Auth::user()->email,
             'items' => array_map(function ($item) {
+                $product = Product::find($item['id']);
                 return [
                     'name' => $item['name'],
                     'price' => $item['price'],
                     'quantity' => $item['quantity'],
+                    'seller_address' => $product->address ?? 'Endereço não informado',
                 ];
             }, $cart),
             'total' => $total,
         ];
 
         try {
-            // Envia o e-mail usando o Mailable
             Mail::to($orderDetails['user_email'])->send(new PedidoFinalizado($orderDetails));
 
-            // Limpa o carrinho
             session()->forget('cart');
 
             return response()->json(['success' => 'Pedido finalizado com sucesso!']);
         } catch (\Exception $e) {
-            Log::error('Erro ao enviar o e-mail: ' . $e->getMessage());
-            return response()->json(['error' => 'Erro ao processar o pedido. Tente novamente mais tarde.'], 500);
+            Log::error('Erro ao finalizar pedido: ' . $e->getMessage());
+            return response()->json(['error' => 'Erro ao processar o pedido.'], 500);
         }
     }
+
+
 }
