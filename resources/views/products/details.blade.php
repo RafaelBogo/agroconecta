@@ -83,7 +83,6 @@
             height: auto;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
         }
 
         .product-info {
@@ -214,7 +213,8 @@
                             throw new Error('Erro ao adicionar ao carrinho.');
                         })
                         .then(data => {
-                            alert(data.message || 'Produto adicionado ao carrinho com sucesso!');
+                            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                            successModal.show();
                         })
                         .catch(error => {
                             console.error('Erro:', error);
@@ -241,5 +241,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Produto adicionado ao carrinho com sucesso!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

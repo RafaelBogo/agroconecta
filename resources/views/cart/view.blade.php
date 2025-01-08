@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,10 +66,6 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .cart-table .table {
-            margin: 0;
-        }
-
         .cart-summary {
             flex: 1;
             background: rgba(245, 245, 245, 1);
@@ -101,6 +98,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
@@ -115,22 +113,23 @@
                 <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
-                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Sair</a>
+                    <a href="#" class="nav-link"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Sair</a>
                 </form>
             </div>
         </div>
     </nav>
 
     <div class="cart-container">
-    <h1>Meu Carrinho</h1>
+        <h1>Meu Carrinho</h1>
 
-    @php $total = 0; @endphp <!-- Inicialize $total aqui, fora de qualquer lógica condicional -->
+        @php $total = 0; @endphp
 
-    <div class="cart-content">
-        <div class="cart-table">
-            @if (empty($cartItems))
+        <div class="cart-content">
+            <div class="cart-table">
+                @if (empty($cartItems))
                 <p>O carrinho está vazio.</p>
-            @else
+                @else
                 <table class="table">
                     <thead>
                         <tr>
@@ -143,160 +142,174 @@
                     </thead>
                     <tbody>
                         @foreach ($cartItems as $id => $item)
-                            @php
-                                $subtotal = $item['price'] * $item['quantity'];
-                                $total += $subtotal;
-                            @endphp
-                            <tr>
-                                <td>
-                                    <img src="{{ asset('storage/' . $item['photo']) }}" alt="{{ $item['name'] }}" style="width: 50px; height: 50px; border-radius: 5px;">
-                                    {{ $item['name'] }}
-                                </td>
-                                <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
-                                <td>{{ $item['quantity'] }}</td>
-                                <td>R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
-                                <td>
-                                    <form class="delete-item-form" data-item-id="{{ $id }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-danger btn-sm delete-button">Remover</button>
-                                    </form>
-                                </td>
-                            </tr>
+                        @php
+                        $subtotal = $item['price'] * $item['quantity'];
+                        $total += $subtotal;
+                        @endphp
+                        <tr>
+                            <td>
+                                <img src="{{ asset('storage/' . $item['photo']) }}" alt="{{ $item['name'] }}"
+                                    style="width: 50px; height: 50px; border-radius: 5px;">
+                                {{ $item['name'] }}
+                            </td>
+                            <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
+                            <td>{{ $item['quantity'] }}</td>
+                            <td>R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm delete-button"
+                                    data-item-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    Remover
+                                </button>
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
-            @endif
-        </div>
+                @endif
+            </div>
 
-        <div class="cart-summary">
-            <h4>Resumo</h4>
-            <p>Valor dos produtos: <span>R$ {{ number_format($total, 2, ',', '.') }}</span></p>
-            <p>Entrega: <span>Retirada com o produtor</span></p>
-            <p>Desconto: <span>R$ 0,00</span></p>
-            <hr>
-            <p><strong>Total: R$ {{ number_format($total, 2, ',', '.') }}</strong></p>
-            <button class="btn btn-success btn-finalize" id="finalizarPedido">
-                <span id="finalizarText">Finalizar Pedido</span>
-                <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
-            </button>
-            <a class="btn btn-dark btn-finalize" href="{{ route('products.show') }}">Continuar Comprando</a>
+            <div class="cart-summary">
+                <h4>Resumo</h4>
+                <p>Valor dos produtos: <span>R$ {{ number_format($total, 2, ',', '.') }}</span></p>
+                <p>Entrega: <span>Retirada com o produtor</span></p>
+                <p>Desconto: <span>R$ 0,00</span></p>
+                <hr>
+                <p><strong>Total: R$ {{ number_format($total, 2, ',', '.') }}</strong></p>
+                <button class="btn btn-success btn-finalize" id="finalizarPedido">
+                    <span id="finalizarText">Finalizar Pedido</span>
+                    <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                </button>
+                <a class="btn btn-dark btn-finalize" href="{{ route('products.show') }}">Continuar Comprando</a>
+            </div>
         </div>
     </div>
-</div>
 
+    <!-- Modal de Confirmação de Remoção -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza de que deseja remover este item do carrinho?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger confirm-delete">Remover</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Finalização -->
+    <div class="modal fade" id="finalizarModal" tabindex="-1" aria-labelledby="finalizarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="finalizarModalLabel">Pedido Finalizado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Pedido realizado com sucesso!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    // Função para remover item do carrinho
-    document.querySelectorAll('.delete-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const form = this.closest('.delete-item-form');
-            const itemId = form.getAttribute('data-item-id');
+        let currentItemId = null;
 
-            fetch("{{ route('cart.delete') }}", {
-                method: "DELETE",
-                headers: {
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    item_id: itemId
+        // Configuração do botão de remoção
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function () {
+                currentItemId = this.getAttribute('data-item-id');
+            });
+        });
+
+        // Confirmação de remoção
+        document.querySelector('.confirm-delete').addEventListener('click', function () {
+            if (currentItemId) {
+                fetch("{{ route('cart.delete') }}", {
+                    method: "DELETE",
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ item_id: currentItemId })
                 })
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector(`button[data-item-id="${currentItemId}"]`).closest('tr').remove();
+                        updateCartSummary();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                        modal.hide();
+                    }
+                })
+                .catch(error => console.error('Erro ao remover o item:', error));
+            }
+        });
+
+        // Finalizar Pedido
+        document.getElementById('finalizarPedido').addEventListener('click', function () {
+            const finalizarButton = this;
+            const spinner = document.getElementById('finalizarSpinner');
+            const finalizarText = document.getElementById('finalizarText');
+
+            // Exibe o spinner e oculta o texto
+            spinner.style.display = 'inline-block';
+            finalizarText.style.display = 'none';
+            finalizarButton.disabled = true;
+
+            fetch("{{ route('cart.finalizar') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
-                throw new Error('Erro ao remover o item do carrinho.');
             })
+            .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Remove o item visualmente da tabela
-                    form.closest('tr').remove();
+                    // Exibe o modal de finalização
+                    const modal = new bootstrap.Modal(document.getElementById('finalizarModal'));
+                    modal.show();
+
+                    // Remove os itens do carrinho do DOM
+                    document.querySelectorAll('.cart-table tbody tr').forEach(row => row.remove());
 
                     // Atualiza o resumo do carrinho
                     updateCartSummary();
-                    alert(data.success);
+
+                    // Exibe mensagem de carrinho vazio
+                    const cartTable = document.querySelector('.cart-table');
+                    cartTable.innerHTML = '<p>O carrinho está vazio.</p>';
+                } else {
+                    alert('Houve um erro ao finalizar o pedido.');
                 }
             })
             .catch(error => {
-                console.error('Erro:', error);
-                alert('Houve um erro ao remover o item.');
+                console.error('Erro ao finalizar o pedido:', error);
+                alert('Houve um erro ao finalizar o pedido.');
+            })
+            .finally(() => {
+                // Oculta o spinner e restaura o botão
+                spinner.style.display = 'none';
+                finalizarText.style.display = 'inline-block';
+                finalizarButton.disabled = false;
             });
         });
-    });
-
-    // Função para atualizar o resumo do carrinho
-    function updateCartSummary() {
-        fetch("{{ route('cart.summary') }}", {
-            method: "GET",
-            headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Erro ao buscar o resumo do carrinho.');
-        })
-        .then(data => {
-            const total = data.total;
-            document.querySelector('.cart-summary p span').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-            document.querySelector('.cart-summary strong').textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Houve um erro ao atualizar o resumo do carrinho.');
-        });
-    }
-
-    // Função para finalizar o pedido
-    document.getElementById('finalizarPedido').addEventListener('click', function () {
-        const finalizarButton = this;
-        const spinner = document.getElementById('finalizarSpinner');
-        const finalizarText = document.getElementById('finalizarText');
-
-        // Exibe o spinner
-        spinner.style.display = 'inline-block';
-        finalizarText.style.display = 'none';
-
-        fetch("{{ route('cart.finalizar') }}", {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Erro ao finalizar o pedido.');
-        })
-        .then(data => {
-            if (data.success) {
-                alert(data.success);
-                // Redireciona para o dashboard ou outra página
-                window.location.href = "{{ route('dashboard') }}";
-            } else if (data.error) {
-                alert(data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Houve um erro ao finalizar o pedido.');
-        })
-        .finally(() => {
-            // Oculta o spinner e restaura o botão
-            spinner.style.display = 'none';
-            finalizarText.style.display = 'inline-block';
-        });
-    });
-</script>
 
 
+        function updateCartSummary() {
+            // Atualizar o resumo do carrinho
+        }
+    </script>
 </body>
+
 </html>

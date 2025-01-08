@@ -8,6 +8,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\UserController;
+
 
 // Rota para exibir o formulário de login
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -89,4 +91,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/account/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::put('/account/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
 });
+
+//Rota para Meus Dados
+Route::get('/meus-dados', action: [UserController::class, 'show'])->name('user.data');
+Route::put('/meus-dados', [UserController::class, 'update'])->name('user.update');
 

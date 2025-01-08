@@ -125,9 +125,11 @@
             </div>
 
                 <div class="option-card">
-                    <i class="bi bi-person"></i>
-                    <h5>Meus Dados</h5>
-                    <p>Verifique e edite seus dados pessoais.</p>
+                    <a href="{{ route('user.data') }}" style="text-decoration: none; color: inherit;">
+                        <i class="bi bi-person"></i>
+                        <h5>Meus Dados</h5>
+                        <p>Verifique e edite seus dados pessoais.</p>
+                    </a>
                 </div>
                 <div class="option-card">
                     <i class="bi bi-box"></i>
