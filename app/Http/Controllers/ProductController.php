@@ -129,4 +129,55 @@ class ProductController extends Controller
         return response()->json(['success' => false, 'message' => 'Product not found.']);
     }
 
+    public function edit($id)
+    {
+        // Busca o produto pelo ID e verifica se pertence ao usuário autenticado
+        $product = Product::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+
+        // Retorna a view de edição com o produto
+        return view('account.editProduct', compact('product'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Validação dos dados
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'city' => 'nullable|string|max:255',
+            'stock' => 'required|integer|min:0',
+            'validity' => 'nullable|date',
+            'unit' => 'nullable|string|max:255',
+            'contact' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        // Busca o produto
+        $product = Product::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+
+        // Atualiza os campos
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->city = $request->city;
+        $product->stock = $request->stock;
+        $product->validity = $request->validity;
+        $product->unit = $request->unit;
+        $product->contact = $request->contact;
+        $product->address = $request->address;
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('products', 'public');
+            $product->photo = $path;
+        }
+
+        $product->save();
+
+        // Define uma sessão indicando sucesso
+        return redirect()->back()->with('success', 'Produto atualizado com sucesso!');
+    }
+
+
 }
