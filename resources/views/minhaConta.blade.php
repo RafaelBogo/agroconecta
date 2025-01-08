@@ -132,9 +132,11 @@
                     </a>
                 </div>
                 <div class="option-card">
-                    <i class="bi bi-box"></i>
-                    <h5>Meus Produtos</h5>
-                    <p>Gerencie e edite os produtos que você vende.</p>
+                    <a href="{{ route('account.myProducts') }}"style="text-decoration: none; color: inherit;">
+                        <i class="bi bi-box"></i>
+                        <h5>Meus Produtos</h5>
+                        <p>Gerencie e edite os produtos que você vende.</p>
+                    </a>
                 </div>
                 <div class="option-card">
                     <i class="bi bi-star"></i>

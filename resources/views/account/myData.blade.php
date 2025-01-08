@@ -135,44 +135,43 @@
         </nav>
 
         <div class="container">
-        <div class="content-box">
-            <h2>Meus Dados</h2>
+            <div class="content-box">
+                <h2>Meus Dados</h2>
+                <form action="{{ route('user.update') }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-            <form action="{{ route('user.update') }}" method="POST">
-                @csrf
-                @method('PUT')
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">Seu Nome Completo</label>
+                                <input type="text" id="name" name="name" class="form-control" placeholder="Seu Nome Completo" value="{{ $user->name }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="{{ $user->email }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Telefone</label>
+                                <input type="text" id="phone" name="phone" class="form-control" placeholder="(XX) XXXXX-XXXX" value="{{ $user->phone }}" required>
+                            </div>
+                        </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="name">Seu Nome Completo</label>
-                            <input type="text" id="name" name="name" class="form-control" placeholder="Seu Nome Completo" value="{{ $user->name }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="{{ $user->email }}" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Telefone</label>
-                            <input type="text" id="phone" name="phone" class="form-control" placeholder="(XX) XXXXX-XXXX" value="{{ $user->phone }}" required>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="address">Seu Endereço Completo</label>
+                                <textarea id="address" name="address" class="form-control" rows="8" placeholder="Cidade, comunidade/bairro, rua, ponto de referência, cor da casa..." required>{{ $user->address }}</textarea>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="address">Seu Endereço Completo</label>
-                            <textarea id="address" name="address" class="form-control" rows="8" placeholder="Cidade, comunidade/bairro, rua, ponto de referência, cor da casa..." required>{{ $user->address }}</textarea>
-                        </div>
+                    <div class="btn-container">
+                        <a href="{{ route('minha.conta') }}" class="btn btn-secondary">Voltar</a>
+                        <button type="submit" class="btn btn-success">Salvar</button>
                     </div>
-                </div>
-
-                <div class="btn-container">
-                    <button type="submit" class="btn btn-success">Salvar</button>
-                    <a href="{{ route('minha.conta') }}" class="btn btn-secondary">Voltar</a>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
 
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

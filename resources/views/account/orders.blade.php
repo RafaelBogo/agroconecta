@@ -135,6 +135,9 @@
         @empty
             <p class="text-center">Você ainda não realizou nenhum pedido.</p>
         @endforelse
+        <div class="text-center mt-4">
+            <a href="{{ route('minha.conta') }}" class="btn btn-dark">Voltar</a>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

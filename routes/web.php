@@ -96,3 +96,10 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/meus-dados', action: [UserController::class, 'show'])->name('user.data');
 Route::put('/meus-dados', [UserController::class, 'update'])->name('user.update');
 
+// Rotas para Meus Produtos
+Route::middleware(['auth'])->group(function () {
+    Route::get('/account/my-products', [ProductController::class, 'myProducts'])->name('account.myProducts');
+    Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit'); // Adicione esta rota
+    Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update'); // Para salvar as edições
+});

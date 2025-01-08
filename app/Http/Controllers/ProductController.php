@@ -109,5 +109,24 @@ class ProductController extends Controller
         return view('products.details', compact('product'));
     }
 
+    public function myProducts()
+    {
+        $products = Product::where('user_id', auth()->id())->get();
+
+        return view('account.myProducts', compact('products'));
+    }
+
+    public function destroy($id)
+    {
+        // Busca o produto pelo ID e verifica se pertence ao usuário autenticado
+        $product = Product::where('id', $id)->where('user_id', auth()->id())->first();
+
+        if ($product) {
+            $product->delete();
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Product not found.']);
+    }
 
 }
