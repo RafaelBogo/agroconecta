@@ -6,6 +6,8 @@
     <title>AgroConecta - Registro</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         body {
             background-image: url('{{ asset("images/background1.jpg") }}');
@@ -62,6 +64,33 @@
         .invalid-feedback {
             display: block;
         }
+
+        /* Estilização do campo de senha com botão de exibição */
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 40px; /* Espaço para o botão de exibir senha */
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(2%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #6c757d; /* Cor neutra */
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-password:hover {
+            color: #343a40; /* Cor mais escura */
+        }
     </style>
 </head>
 <body>
@@ -96,20 +125,31 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="mb-3 text-start">
+
+                <!-- Campo de senha -->
+                <div class="mb-3 text-start password-container">
                     <label for="password" class="form-label">Senha</label>
                     <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Digite sua senha" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('password', 'password-icon')">
+                        <i id="password-icon" class="bi bi-eye"></i>
+                    </button>
                     @error('password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="mb-3 text-start">
+
+                <!-- Campo de confirmação de senha -->
+                <div class="mb-3 text-start password-container">
                     <label for="password_confirmation" class="form-label">Confirme sua Senha</label>
                     <input type="password" id="password_confirmation" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Digite sua senha novamente" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation', 'password-icon-confirm')">
+                        <i id="password-icon-confirm" class="bi bi-eye"></i>
+                    </button>
                     @error('password_confirmation')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
                 <button type="submit" class="btn btn-dark btn-lg w-100">Criar Conta</button>
             </form>
             <div class="extra-options mt-3">
@@ -120,5 +160,22 @@
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function togglePassword(inputId, iconId) {
+            const passwordField = document.getElementById(inputId);
+            const passwordIcon = document.getElementById(iconId);
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordIcon.classList.remove("bi-eye");
+                passwordIcon.classList.add("bi-eye-slash");
+            } else {
+                passwordField.type = "password";
+                passwordIcon.classList.remove("bi-eye-slash");
+                passwordIcon.classList.add("bi-eye");
+            }
+        }
+    </script>
 </body>
 </html>
