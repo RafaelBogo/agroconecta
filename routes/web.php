@@ -106,4 +106,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/email/verify', function () {
     return view('auth.verify'); // Certifique-se de que o arquivo 'verify.blade.php' está em 'resources/views/auth'
-})->name('verification.notice');
+})->name('verify');
+
+Route::post('/email/verify', [AuthController::class, 'verifyCode'])->name('verify.code');

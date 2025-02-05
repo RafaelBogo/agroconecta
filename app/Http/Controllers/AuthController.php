@@ -79,7 +79,7 @@ class AuthController extends Controller
         });
 
         // Redirecionar para a view de verificação
-        return redirect()->route('verification.notice')->with('message', 'Código de verificação enviado para o e-mail.');
+        return redirect()->route('verify')->with('message', 'Código de verificação enviado para o e-mail.');
     }
 
     // Exibir o formulário de verificação
