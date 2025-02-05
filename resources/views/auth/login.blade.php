@@ -38,9 +38,6 @@
 
         .extra-options a {
             color: #222;
-        }
-
-        .extra-options a {
             text-decoration: underline;
         }
 
@@ -54,6 +51,32 @@
 
         .alert-success {
             text-align: left;
+        }
+
+        /* Estilização do campo de senha com botão de exibição */
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 40px; /* Espaço para o botão de exibir senha */
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-24%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #6c757d; /* Cor neutra */
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        .toggle-password:hover {
+            color: #343a40; /* Cor mais escura */
         }
     </style>
 </head>
@@ -75,10 +98,15 @@
                     <label for="email" class="form-label">Email</label>
                     <input type="email" id="email" name="email" class="form-control" placeholder="Digite seu email" required>
                 </div>
-                <div class="mb-3 text-start">
+
+                <div class="mb-3 text-start password-container">
                     <label for="password" class="form-label">Senha</label>
                     <input type="password" id="password" name="password" class="form-control" placeholder="Digite sua senha" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword()">
+                        <i id="password-icon" class="bi bi-eye"></i>
+                    </button>
                 </div>
+
                 <button type="submit" class="btn btn-success btn-lg w-100">Iniciar Sessão</button>
                 <a href="{{ route('register') }}" class="btn btn-dark btn-lg w-100 border-0 mt-2">Registre-se</a>
             </form>
@@ -90,5 +118,24 @@
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById("password");
+            const passwordIcon = document.getElementById("password-icon");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordIcon.classList.remove("bi-eye");
+                passwordIcon.classList.add("bi-eye-slash");
+            } else {
+                passwordField.type = "password";
+                passwordIcon.classList.remove("bi-eye-slash");
+                passwordIcon.classList.add("bi-eye");
+            }
+        }
+    </script>
 </body>
 </html>
