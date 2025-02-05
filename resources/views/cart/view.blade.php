@@ -96,6 +96,8 @@
             color: #555;
             margin-top: 20px;
         }
+
+        
     </style>
 </head>
 
@@ -146,15 +148,22 @@
                         $subtotal = $item['price'] * $item['quantity'];
                         $total += $subtotal;
                         @endphp
-                        <tr>
+                        <tr data-item-id="{{ $id }}">
                             <td>
                                 <img src="{{ asset('storage/' . $item['photo']) }}" alt="{{ $item['name'] }}"
                                     style="width: 50px; height: 50px; border-radius: 5px;">
                                 {{ $item['name'] }}
                             </td>
                             <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
-                            <td>{{ $item['quantity'] }}</td>
-                            <td>R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
+                            <td class="quantity-controls">
+                                <div class="input-group" style="max-width: 120px;">
+                                    <button class="btn btn-outline-secondary btn-sm btn-decrease" type="button">-</button>
+                                    <input type="text" class="form-control text-center quantity-input" value="{{ $item['quantity'] }}" readonly>
+                                    <button class="btn btn-outline-secondary btn-sm btn-increase" type="button">+</button>
+                                </div>
+                            </td>
+
+                            <td class="subtotal">R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm delete-button"
                                     data-item-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
@@ -164,6 +173,7 @@
                         </tr>
                         @endforeach
                     </tbody>
+
                 </table>
                 @endif
             </div>
@@ -309,6 +319,67 @@
         function updateCartSummary() {
             // Atualizar o resumo do carrinho
         }
+
+        document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('tr');
+                const itemId = row.getAttribute('data-item-id');
+                const quantityInput = row.querySelector('.quantity-input');
+                let quantity = parseInt(quantityInput.value);
+                const isIncrease = this.classList.contains('btn-increase');
+
+                if (isIncrease) {
+                    quantity += 1;
+                } else if (quantity > 1) {
+                    quantity -= 1;
+                }
+
+                quantityInput.value = quantity;
+
+                // Atualizar subtotal e total
+                updateSubtotal(row, quantity);
+
+                // Enviar atualização para o backend
+                fetch(`{{ url('cart/update') }}/${itemId}`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ item_id: itemId, quantity: quantity })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Erro ao atualizar o carrinho. Tente novamente.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao atualizar a quantidade:', error);
+                    alert('Erro ao atualizar o carrinho. Verifique sua conexão.');
+                });
+            });
+        });
+
+        function updateSubtotal(row, quantity) {
+            const price = parseFloat(row.querySelector('td:nth-child(2)').innerText.replace('R$ ', '').replace(',', '.'));
+            const subtotalElement = row.querySelector('.subtotal');
+            const subtotal = (price * quantity).toFixed(2).replace('.', ',');
+            subtotalElement.innerText = `R$ ${subtotal}`;
+
+            updateCartTotal();
+        }
+
+        function updateCartTotal() {
+            let total = 0;
+            document.querySelectorAll('.subtotal').forEach(subtotalElement => {
+                total += parseFloat(subtotalElement.innerText.replace('R$ ', '').replace(',', '.'));
+            });
+
+            document.getElementById('total-value').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            document.getElementById('grand-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
     </script>
 </body>
 
