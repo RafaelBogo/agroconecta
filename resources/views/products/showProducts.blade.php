@@ -53,6 +53,21 @@
             padding-bottom: 20px;
         }
 
+        .products-container {
+            background: rgba(255, 255, 255, 0.9); /* Fundo branco com transparência */
+            padding: 20px; /* Espaçamento interno */
+            border-radius: 15px; /* Cantos arredondados */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra */
+            margin-top: 20px; /* Espaçamento superior */
+            width: 80%; /* Largura ajustada */
+            max-width: 1200px; /* Limite de largura máxima */
+            margin-left: auto;
+            margin-right: auto;
+            /* Remova o overflow-y da classe .products-container */
+            overflow: hidden;
+            margin-bottom: 50px
+        }
+
         /* Barra de rolagem personalizada */
         .products::-webkit-scrollbar {
             width: 35px;
@@ -138,17 +153,19 @@
     </div>
 
     <div class="container text-center">
-        <div class="products">
-        @foreach($products as $product)
-            <div class="product-card">
-                <a href="{{ route('products.details', $product->id) }}" style="text-decoration: none; color: inherit;">
-                    <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
-                    <h5>{{ $product->name }}</h5>
-                    <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
-                    <p><strong>Disponível em:</strong> {{ $product->city }}</p>
-                </a>
+        <div class="products-container">
+            <div class="products">
+                @foreach($products as $product)
+                    <div class="product-card">
+                        <a href="{{ route('products.details', $product->id) }}" style="text-decoration: none; color: inherit;">
+                            <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
+                            <h5>{{ $product->name }}</h5>
+                            <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
+                            <p><strong>Disponível em:</strong> {{ $product->city }}</p>
+                        </a>
+                    </div>
+                @endforeach
             </div>
-        @endforeach
         </div>
     </div>
 

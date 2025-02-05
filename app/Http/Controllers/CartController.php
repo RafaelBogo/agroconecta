@@ -30,8 +30,24 @@ class CartController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
-        // Obtém o carrinho da sessão
+        // Verifica se a quantidade solicitada excede o estoque disponível
         $cart = session()->get('cart', []);
+
+        // Soma a quantidade no carrinho com a quantidade solicitada
+        $currentCartQuantity = 0;
+        foreach ($cart as $item) {
+            if ($item['id'] == $product->id) {
+                $currentCartQuantity = $item['quantity'];
+                break;
+            }
+        }
+
+        if ($currentCartQuantity + $request->quantity > $product->stock) {
+            return response()->json([
+                'success' => false,
+                'error' => "Estoque insuficiente! Apenas {$product->stock} unidade(s) disponível(is)."
+            ], 400);
+        }
 
         // Adiciona ou atualiza o produto no carrinho
         $found = false;
@@ -45,7 +61,7 @@ class CartController extends Controller
 
         if (!$found) {
             $cart[] = [
-                'id' => $product->id, // Garante que o ID do produto é salvo como valor
+                'id' => $product->id,
                 'name' => $product->name,
                 'price' => $product->price,
                 'photo' => $product->photo,
@@ -56,12 +72,13 @@ class CartController extends Controller
         // Atualiza a sessão do carrinho
         session()->put('cart', $cart);
 
-        // Log para verificar o carrinho atualizado
         Log::info('Carrinho atualizado após adicionar produto:', session('cart'));
 
-        return response()->json(['message' => 'Produto adicionado ao carrinho com sucesso!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Produto adicionado ao carrinho com sucesso!'
+        ]);
     }
-
 
 
     public function deleteItem(Request $request)

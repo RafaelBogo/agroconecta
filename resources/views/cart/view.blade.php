@@ -97,7 +97,7 @@
             margin-top: 20px;
         }
 
-        
+
     </style>
 </head>
 
@@ -379,6 +379,7 @@
             document.getElementById('total-value').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
             document.getElementById('grand-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
+
 
     </script>
 </body>
