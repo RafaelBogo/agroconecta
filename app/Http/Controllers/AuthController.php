@@ -78,8 +78,8 @@ class AuthController extends Controller
                     ->subject('Código de Verificação - AgroConecta');
         });
 
-        // Redirecionar para o formulário de verificação
-        return redirect()->route('verify')->with('message', 'Código de verificação enviado para o e-mail.');
+        // Redirecionar para a view de verificação
+        return redirect()->route('verification.notice')->with('message', 'Código de verificação enviado para o e-mail.');
     }
 
     // Exibir o formulário de verificação

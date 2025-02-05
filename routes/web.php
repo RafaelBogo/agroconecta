@@ -103,3 +103,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit'); // Adicione esta rota
     Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update'); // Para salvar as edições
 });
+
+Route::get('/email/verify', function () {
+    return view('auth.verify'); // Certifique-se de que o arquivo 'verify.blade.php' está em 'resources/views/auth'
+})->name('verification.notice');
