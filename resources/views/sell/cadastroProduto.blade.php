@@ -158,6 +158,30 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="saved_addresses">Endereços Salvos</label>
+                    <select id="saved_addresses" class="form-control" onchange="populateAddressField()">
+                        <option value="">Selecione um endereço salvo (ou digite um novo)</option>
+                        @foreach (auth()->user()->addresses as $address)
+                            <option value="{{ $address }}">{{ $address }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Endereço</label>
+                    <input list="saved_addresses" id="address" name="address" class="form-control" placeholder="Insira ou selecione um endereço" value="{{ old('address') }}" required>
+
+                    <datalist id="saved_addresses">
+                        @if (!empty(auth()->user()->addresses))
+                            @foreach (auth()->user()->addresses as $address)
+                                <option value="{{ $address }}">{{ $address }}</option>
+                            @endforeach
+                        @endif
+                    </datalist>
+                </div>
+
+
+                <div class="form-group">
                     <label for="stock">Estoque</label>
                     <input type="number" id="stock" name="stock" class="form-control" placeholder="Insira a quantidade em estoque" required>
                 </div>
@@ -178,19 +202,24 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="address">Endereço</label>
-                    <input type="text" id="address" name="address" class="form-control" placeholder="Insira o endereço" required>
-                </div>
-
-                <div class="form-group">
                     <label for="photo">Foto do Produto</label>
                     <input type="file" id="photo" name="photo" class="form-control" required>
                 </div>
 
-                <button onclick="window.location='{{ route('sell.complete') }}'" class="btn btn-success">Avançar</button>
+                <button type="submit" class="btn btn-success">Cadastrar Produto</button>
             </form>
+
         </div>
     </div>
+    <script>
+        function populateAddressField() {
+            const savedAddressesDropdown = document.getElementById("saved_addresses");
+            const addressField = document.getElementById("address");
+
+            // Define o valor do campo de endereço com o valor selecionado no dropdown
+            addressField.value = savedAddressesDropdown.value;
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
