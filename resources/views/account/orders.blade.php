@@ -170,19 +170,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    // Função principal para iniciar todos os cronômetros
     function startCountdown() {
         document.querySelectorAll('.cancel-timer').forEach(timer => {
             const cancelTimeLeft = parseInt(timer.getAttribute('data-cancel-time-left'), 10);
             const status = timer.getAttribute('data-status');
 
-            // Exibe "Não aplicável" se o pedido não estiver processando
             if (status !== 'Processando') {
                 timer.textContent = 'Não aplicável';
                 return;
             }
 
-            // Configura o cronômetro se houver tempo restante
             if (cancelTimeLeft > 0) {
                 let timeLeft = cancelTimeLeft;
 
@@ -196,7 +193,7 @@
                         clearInterval(interval);
                         timer.textContent = 'Tempo para cancelamento expirado.';
                         const button = timer.closest('.order-item').querySelector('.btn-danger');
-                        if (button) button.remove(); // Remove o botão de cancelar
+                        if (button) button.remove();
                     }
                 }, 1000);
             } else {
@@ -205,7 +202,6 @@
         });
     }
 
-    // Configura os botões de cancelamento
     function setupCancelButtons() {
         document.querySelectorAll('.cancel-button').forEach(button => {
             button.addEventListener('click', function (e) {
@@ -233,7 +229,7 @@
                         if (statusElement) {
                             statusElement.textContent = 'Cancelado';
                         }
-                        this.remove(); // Remove o botão de cancelamento
+                        this.remove();
                     } else {
                         alert('Erro ao cancelar o pedido. Tente novamente.');
                     }
@@ -246,7 +242,6 @@
         });
     }
 
-    // Inicializa o cronômetro e os botões de cancelamento ao carregar a página
     document.addEventListener('DOMContentLoaded', function () {
         startCountdown();
         setupCancelButtons();

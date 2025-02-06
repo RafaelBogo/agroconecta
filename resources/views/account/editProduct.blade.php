@@ -178,7 +178,6 @@
         </div>
     </div>
     <script>
-        // Exibe o modal de sucesso se a sessão 'success' existir
         @if (session('success'))
             window.onload = function() {
                 var successModal = new bootstrap.Modal(document.getElementById('successModal'));

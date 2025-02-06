@@ -63,6 +63,12 @@
             background-color: #45a049;
             border-color: #45a049;
         }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -126,6 +132,9 @@
                 </tbody>
             </table>
         @endif
+        <div class="btn-container">
+            <a href="{{ route('minha.conta') }}" class="btn btn-dark">Voltar</a>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
