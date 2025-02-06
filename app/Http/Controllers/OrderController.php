@@ -11,7 +11,14 @@ class OrderController extends Controller
     // Listar pedidos do usuário logado
     public function index()
     {
-        $orders = Order::where('user_id', Auth::id())->with('product')->get();
+        $orders = Order::where('user_id', Auth::id())
+            ->with('product')
+            ->get()
+            ->map(function ($order) {
+                // Adiciona o tempo restante para cancelamento (10 minutos)
+                $order->cancel_time_left = max(0, 10 * 60 - now()->diffInSeconds($order->created_at));
+                return $order;
+            });
 
         return view('account.orders', compact('orders'));
     }

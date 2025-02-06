@@ -63,7 +63,6 @@
             max-width: 1200px; /* Limite de largura máxima */
             margin-left: auto;
             margin-right: auto;
-            /* Remova o overflow-y da classe .products-container */
             overflow: hidden;
             margin-bottom: 50px
         }
