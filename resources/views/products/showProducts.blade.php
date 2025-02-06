@@ -45,22 +45,22 @@
             margin-left: auto;
             margin-right: auto;
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 itens por linha */
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            max-height: 500px; /* Altura máxima */
-            overflow-y: auto; /* Barra de rolagem vertical */
+            max-height: 500px;
+            overflow-y: auto;
             padding-right: 10px;
             padding-bottom: 20px;
         }
 
         .products-container {
-            background: rgba(255, 255, 255, 0.9); /* Fundo branco com transparência */
-            padding: 20px; /* Espaçamento interno */
-            border-radius: 15px; /* Cantos arredondados */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra */
-            margin-top: 20px; /* Espaçamento superior */
-            width: 80%; /* Largura ajustada */
-            max-width: 1200px; /* Limite de largura máxima */
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            width: 80%;
+            max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
             overflow: hidden;
@@ -104,12 +104,12 @@
         }
 
         .product-card:hover {
-            transform: scale(1.02); /* Reduzi o scale para evitar cortes */
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Aumentei o shadow para destaque */
+            transform: scale(1.02);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
 
         .products {
-            padding: 10px; /* Adicionei espaçamento interno para evitar cortes */
+            padding: 10px;
         }
     </style>
 </head>

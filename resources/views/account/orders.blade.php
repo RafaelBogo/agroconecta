@@ -42,11 +42,10 @@
             max-width: 900px;
             padding: 30px;
             margin: 50px auto;
-            max-height: 70vh; /* Altura máxima para barra de rolagem */
-            overflow-y: auto; /* Barra de rolagem vertical */
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
-        /* Estilo personalizado da barra de rolagem */
         .orders-container::-webkit-scrollbar {
             width: 35px;
         }
@@ -141,9 +140,14 @@
                     <p><strong>Total:</strong> R$ {{ number_format($order->total_price, 2, ',', '.') }}</p>
                     <p><strong>Quantidade:</strong> {{ $order->quantity }}</p>
                     <p><strong>Status:</strong> {{ $order->status }}</p>
-                    @if ($order->cancel_time_left > 0)
-                        <p class="timer" data-time-left="{{ $order->cancel_time_left }}">Tempo restante para cancelar: <span></span></p>
-                    @endif
+                    <p>
+                        <strong>Tempo restante para cancelar:</strong>
+                        <div class="cancel-timer" id="timer-{{ $order->id }}" data-cancel-time-left="{{ $order->cancel_time_left }}" data-status="{{ $order->status }}">
+                            <span>{{ gmdate('i:s', $order->cancel_time_left) }}</span>
+                        </div>
+
+                    </p>
+
                 </div>
                 @if ($order->status === 'Processando' && $order->cancel_time_left > 0)
                     <div class="order-actions">
@@ -166,29 +170,90 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.querySelectorAll('.timer').forEach(timerElement => {
-            const timeLeft = parseInt(timerElement.getAttribute('data-time-left'), 10);
-            const span = timerElement.querySelector('span');
+    // Função principal para iniciar todos os cronômetros
+    function startCountdown() {
+        document.querySelectorAll('.cancel-timer').forEach(timer => {
+            const cancelTimeLeft = parseInt(timer.getAttribute('data-cancel-time-left'), 10);
+            const status = timer.getAttribute('data-status');
 
-            let remainingTime = timeLeft;
+            // Exibe "Não aplicável" se o pedido não estiver processando
+            if (status !== 'Processando') {
+                timer.textContent = 'Não aplicável';
+                return;
+            }
 
-            const updateTimer = () => {
-                if (remainingTime > 0) {
-                    const minutes = Math.floor(remainingTime / 60);
-                    const seconds = remainingTime % 60;
-                    span.textContent = `${minutes}m ${seconds < 10 ? '0' : ''}${seconds}s`; // Corrige a exibição
-                    remainingTime--;
-                } else {
-                    timerElement.textContent = 'Tempo para cancelamento expirado.';
-                    const button = timerElement.closest('.order-item').querySelector('.btn-danger');
-                    if (button) button.remove();
-                }
-            };
+            // Configura o cronômetro se houver tempo restante
+            if (cancelTimeLeft > 0) {
+                let timeLeft = cancelTimeLeft;
 
-            updateTimer();
-            setInterval(updateTimer, 1000);
+                const interval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        const minutes = Math.floor(timeLeft / 60);
+                        const seconds = timeLeft % 60;
+                        timer.textContent = `${minutes}m ${seconds.toString().padStart(2, '0')}s`;
+                    } else {
+                        clearInterval(interval);
+                        timer.textContent = 'Tempo para cancelamento expirado.';
+                        const button = timer.closest('.order-item').querySelector('.btn-danger');
+                        if (button) button.remove(); // Remove o botão de cancelar
+                    }
+                }, 1000);
+            } else {
+                timer.textContent = 'Tempo para cancelamento expirado.';
+            }
         });
+    }
 
-    </script>
+    // Configura os botões de cancelamento
+    function setupCancelButtons() {
+        document.querySelectorAll('.cancel-button').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const orderId = this.getAttribute('data-order-id');
+                const timerElement = document.getElementById(`timer-${orderId}`);
+                const form = this.closest('form');
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: new FormData(form)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Pedido cancelado com sucesso!');
+                        if (timerElement) {
+                            timerElement.textContent = 'Cancelado';
+                        }
+                        const statusElement = document.querySelector(`#status-${orderId}`);
+                        if (statusElement) {
+                            statusElement.textContent = 'Cancelado';
+                        }
+                        this.remove(); // Remove o botão de cancelamento
+                    } else {
+                        alert('Erro ao cancelar o pedido. Tente novamente.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao cancelar o pedido. Verifique sua conexão.');
+                });
+            });
+        });
+    }
+
+    // Inicializa o cronômetro e os botões de cancelamento ao carregar a página
+    document.addEventListener('DOMContentLoaded', function () {
+        startCountdown();
+        setupCancelButtons();
+    });
+
+
+</script>
+
 </body>
 </html>

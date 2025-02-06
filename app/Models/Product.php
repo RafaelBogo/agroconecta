@@ -9,10 +9,8 @@ class Product extends Model
 {
     use HasFactory;
 
-    // Nome da tabela no banco de dados
     protected $table = 'products';
 
-    // Colunas que podem ser preenchidas
     protected $fillable = [
         'name',
         'price',
