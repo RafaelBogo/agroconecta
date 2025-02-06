@@ -109,3 +109,11 @@ Route::get('/email/verify', function () {
 })->name('verify');
 
 Route::post('/email/verify', [AuthController::class, 'verifyCode'])->name('verify.code');
+
+// Rotas para Minhas Vendas (vendedor)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/minha-conta/minhas-vendas', [OrderController::class, 'mySales'])->name('seller.mySales');
+    Route::post('/minha-conta/minhas-vendas/confirmar-retirada', [OrderController::class, 'confirmRetirada'])->name('seller.confirmRetirada');
+});
+
+

@@ -48,11 +48,12 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             width: 100%;
+            margin-bottom: 50px;
         }
 
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
 
@@ -116,14 +117,13 @@
     <div class="container account-container">
         <div class="account-box">
             <div class="options-grid">
-            <div class="option-card">
-                <a href="{{ route('orders.index') }}" style="text-decoration: none; color: inherit;">
-                    <i class="bi bi-cart"></i>
-                    <h5>Meus Pedidos</h5>
-                    <p>Verifique os produtos que você comprou.</p>
-                </a>
-            </div>
-
+                <div class="option-card">
+                    <a href="{{ route('orders.index') }}" style="text-decoration: none; color: inherit;">
+                        <i class="bi bi-cart"></i>
+                        <h5>Meus Pedidos</h5>
+                        <p>Verifique os produtos que você comprou.</p>
+                    </a>
+                </div>
                 <div class="option-card">
                     <a href="{{ route('user.data') }}" style="text-decoration: none; color: inherit;">
                         <i class="bi bi-person"></i>
@@ -143,6 +143,14 @@
                     <h5>Avaliações</h5>
                     <p>Avalie produtos que você comprou.</p>
                 </div>
+                <div class="option-card">
+                    <a href="{{ route('seller.mySales') }}" style="text-decoration: none; color: inherit;">
+                        <i class="bi bi-bag"></i>
+                        <h5>Minhas Vendas</h5>
+                        <p>Gerencie as vendas e confirme as retiradas.</p>
+                    </a>
+                </div>
+
             </div>
             <a href="{{ route('dashboard') }}" class="btn btn-dark">Voltar</a>
         </div>

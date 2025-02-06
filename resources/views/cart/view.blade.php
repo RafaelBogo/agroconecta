@@ -180,17 +180,18 @@
 
             <div class="cart-summary">
                 <h4>Resumo</h4>
-                <p>Valor dos produtos: <span>R$ {{ number_format($total, 2, ',', '.') }}</span></p>
+                <p>Valor dos produtos: <span id="total-value">R$ {{ number_format($total, 2, ',', '.') }}</span></p>
                 <p>Entrega: <span>Retirada com o produtor</span></p>
-                <p>Desconto: <span>R$ 0,00</span></p>
+                <p>Desconto: <span id="discount-value">R$ 0,00</span></p>
                 <hr>
-                <p><strong>Total: R$ {{ number_format($total, 2, ',', '.') }}</strong></p>
+                <p><strong>Total: <span id="grand-total">R$ {{ number_format($total, 2, ',', '.') }}</span></strong></p>
                 <button class="btn btn-success btn-finalize" id="finalizarPedido">
                     <span id="finalizarText">Finalizar Pedido</span>
                     <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                 </button>
                 <a class="btn btn-dark btn-finalize" href="{{ route('products.show') }}">Continuar Comprando</a>
             </div>
+
         </div>
     </div>
 
