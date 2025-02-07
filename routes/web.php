@@ -10,110 +10,100 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 
+// ==================================
+// Rotas de Autenticação
+// ==================================
+Route::prefix('auth')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/email/verify', function () {
+        return view('auth.verify');
+    })->name('verify');
+    Route::post('/email/verify', [AuthController::class, 'verifyCode'])->name('verify.code');
+});
 
-// Rota para exibir o formulário de login
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+// ==================================
+// Rotas de Recuperação de Senha
+// ==================================
+Route::prefix('password')->group(function () {
+    Route::get('/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+});
 
-// Rota para exibir o formulário de registro
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
-
-// Rotas para recuperação de senha
-Route::get('/password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('/password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
-
-// Rota para dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
-
-// Rota de busca no dashboard
-Route::get('/dashboard/search', function (Illuminate\Http\Request $request) {
-    $query = [];
-    if ($request->filled('product')) {
-        $query['product'] = $request->product;
-    }
-    if ($request->filled('city')) {
-        $query['city'] = $request->city;
-    }
-    return redirect()->route('products.show', $query);
-})->name('dashboard.search');
-
-// Rota para logout
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-// Rotas do processo de venda
-Route::get('/vender', [ProductController::class, 'showImportant'])->name('sell.important');
-Route::get('/vender/cadastro', [ProductController::class, 'showCadastroProduto'])
-    ->name('sell.cadastroProduto')
-    ->middleware('auth');
-Route::post('/vender/cadastro', [ProductController::class, 'storeCadastroProduto'])
-    ->name('sell.store')
-    ->middleware('auth');
-Route::get('/vender/concluido', function () {
-    return view('sell.complete');
-})->name('sell.complete');
-
-// Rotas para produtos
-Route::get('/produtos', [ProductController::class, 'showProducts'])->name('products.show');
-Route::get('/produtos/buscar', [ProductController::class, 'search'])->name('products.search');
-
-// Rota para a Minha Conta
-Route::get('/minha-conta', [DashboardController::class, 'minhaConta'])->name('minha.conta');
-
-// Exibe o produto
-Route::get('/produtos/{id}', [ProductController::class, 'showProductDetails'])->name('products.details');
-
+// ==================================
+// Rotas de Dashboard
+// ==================================
 Route::middleware('auth')->group(function () {
-    // Visualizar o carrinho
-    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
-
-    // Adicionar ao carrinho
-    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-
-    // Remover do carrinho
-    Route::delete('/cart/delete', [CartController::class, 'deleteItem'])->name('cart.delete');
-
-    // Atualizar quantidade no carrinho
-    Route::put('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
-
-    // Resumo do carrinho
-    Route::get('/cart/summary', [CartController::class, 'getCartSummary'])->name('cart.summary');
-
-    // Finalizar o pedido
-    Route::post('/cart/finalizar', [CartController::class, 'finalizarPedido'])->name('cart.finalizar');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/search', function (Illuminate\Http\Request $request) {
+        $query = $request->only(['product', 'city']);
+        return redirect()->route('products.show', $query);
+    })->name('dashboard.search');
 });
 
-//Rotas para orders
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/account/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::put('/account/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+// ==================================
+// Rotas para Produtos
+// ==================================
+Route::prefix('produtos')->group(function () {
+    Route::get('/', [ProductController::class, 'showProducts'])->name('products.show');
+    Route::get('/buscar', [ProductController::class, 'search'])->name('products.search');
+    Route::get('/{id}', [ProductController::class, 'showProductDetails'])->name('products.details');
 });
 
-//Rota para Meus Dados
-Route::get('/meus-dados', action: [UserController::class, 'show'])->name('user.data');
-Route::put('/meus-dados', [UserController::class, 'update'])->name('user.update');
-
-// Rotas para Meus Produtos
-Route::middleware(['auth'])->group(function () {
-    Route::get('/account/my-products', [ProductController::class, 'myProducts'])->name('account.myProducts');
-    Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
-    Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit'); // Adicione esta rota
-    Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update'); // Para salvar as edições
+// ==================================
+// Rotas de Venda
+// ==================================
+Route::prefix('vender')->middleware('auth')->group(function () {
+    Route::get('/', [ProductController::class, 'showImportant'])->name('sell.important');
+    Route::get('/cadastro', [ProductController::class, 'showCadastroProduto'])->name('sell.cadastroProduto');
+    Route::post('/cadastro', [ProductController::class, 'storeCadastroProduto'])->name('sell.store');
+    Route::get('/concluido', function () {
+        return view('sell.complete');
+    })->name('sell.complete');
 });
 
-Route::get('/email/verify', function () {
-    return view('auth.verify'); // Certifique-se de que o arquivo 'verify.blade.php' está em 'resources/views/auth'
-})->name('verify');
-
-Route::post('/email/verify', [AuthController::class, 'verifyCode'])->name('verify.code');
-
-// Rotas para Minhas Vendas (vendedor)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/minha-conta/minhas-vendas', [OrderController::class, 'mySales'])->name('seller.mySales');
-    Route::post('/minha-conta/minhas-vendas/confirmar-retirada', [OrderController::class, 'confirmRetirada'])->name('seller.confirmRetirada');
+// ==================================
+// Rotas de Carrinho
+// ==================================
+Route::prefix('cart')->middleware('auth')->group(function () {
+    Route::get('/', [CartController::class, 'viewCart'])->name('cart.view');
+    Route::post('/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::delete('/delete', [CartController::class, 'deleteItem'])->name('cart.delete');
+    Route::put('/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::get('/summary', [CartController::class, 'getCartSummary'])->name('cart.summary');
+    Route::post('/finalizar', [CartController::class, 'finalizarPedido'])->name('cart.finalizar');
 });
 
+// ==================================
+// Rotas de Pedidos
+// ==================================
+Route::prefix('account/orders')->middleware('auth')->group(function () {
+    Route::get('/', [OrderController::class, 'index'])->name('orders.index');
+    Route::put('/{order}', [OrderController::class, 'update'])->name('orders.update');
+});
 
+// ==================================
+// Rotas de Conta do Usuário
+// ==================================
+Route::prefix('minha-conta')->middleware('auth')->group(function () {
+    Route::get('/', [DashboardController::class, 'minhaConta'])->name('minha.conta');
+    Route::get('/meus-dados', [UserController::class, 'show'])->name('user.data');
+    Route::put('/meus-dados', [UserController::class, 'update'])->name('user.update');
+    Route::get('/minhas-vendas', [OrderController::class, 'mySales'])->name('seller.mySales');
+    Route::post('/minhas-vendas/confirmar-retirada', [OrderController::class, 'confirmRetirada'])->name('seller.confirmRetirada');
+});
+
+// ==================================
+// Rotas de Meus Produtos
+// ==================================
+Route::prefix('account/my-products')->middleware('auth')->group(function () {
+    Route::get('/', [ProductController::class, 'myProducts'])->name('account.myProducts');
+    Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/{id}', [ProductController::class, 'update'])->name('products.update');
+});

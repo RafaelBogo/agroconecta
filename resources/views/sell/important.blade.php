@@ -104,27 +104,26 @@
             margin-top: 300px ;
         }
 
-        /* Barra de rolagem personalizada */
         .right-section::-webkit-scrollbar {
-            width: 35px; /* Reduz a largura para algo mais minimalista */
+            width: 35px;
         }
 
 
         .right-section::-webkit-scrollbar-track {
-            background: rgba(200, 200, 200, 0.2); /* Fundo sutil para a barra de rolagem */
-            border-radius: 20px; /* Deixa o track arredondado */
+            background: rgba(200, 200, 200, 0.2);
+            border-radius: 20px;
             padding-left: 50px;
 
         }
 
         .right-section::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.3); /* Cor verde para o thumb */
-            border-radius: 20px; /* Deixa o thumb arredondado */
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
             padding-left: 50px;
         }
 
         .right-section::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(120, 123, 123, 0.9); /* Altera a cor do thumb ao passar o mouse */
+            background-color: rgba(120, 123, 123, 0.9);
         }
     </style>
 </head>

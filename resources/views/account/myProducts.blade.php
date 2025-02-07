@@ -190,28 +190,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Variável global para armazenar o ID do produto atual
         let currentProductId = null;
-
-        // Adiciona eventos de clique em todos os botões de exclusão
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function () {
-                // Obtém o ID do produto a partir do botão clicado
                 currentProductId = this.getAttribute('data-id');
 
-                // Exibe o modal de confirmação de exclusão
                 const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
                 modal.show();
             });
         });
 
-        // Evento de clique no botão "Delete" dentro do modal
         document.querySelector('.confirm-delete').addEventListener('click', function () {
             if (currentProductId) {
-                // Obtém o token CSRF da meta tag no HTML
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-                // Envia a requisição DELETE para o servidor
                 fetch(`/products/${currentProductId}`, {
                     method: 'DELETE',
                     headers: {
@@ -230,7 +222,6 @@
                         // Remove o produto do DOM
                         document.querySelector(`.delete-button[data-id="${currentProductId}"]`).closest('.product-item').remove();
 
-                        // Fecha o modal de confirmação
                         const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
                         modal.hide();
                     } else {

@@ -45,12 +45,11 @@
             max-width: 900px;
             padding: 30px;
             margin: 50px auto;
-            max-height: 80vh; /* Define a altura máxima */
-            overflow-y: auto; /* Adiciona a barra de rolagem */
+            max-height: 80vh;
+            overflow-y: auto;
             padding-right: 20px;
         }
 
-        /* Personalização da barra de rolagem */
         .content-box::-webkit-scrollbar {
             width: 35px;
         }

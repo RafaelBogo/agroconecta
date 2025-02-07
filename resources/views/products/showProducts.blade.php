@@ -67,7 +67,6 @@
             margin-bottom: 50px
         }
 
-        /* Barra de rolagem personalizada */
         .products::-webkit-scrollbar {
             width: 35px;
         }
@@ -111,6 +110,14 @@
         .products {
             padding: 10px;
         }
+
+        .product-image {
+            width: 300px;
+            height: px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -157,7 +164,7 @@
                 @foreach($products as $product)
                     <div class="product-card">
                         <a href="{{ route('products.details', $product->id) }}" style="text-decoration: none; color: inherit;">
-                            <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
+                            <img class="product-image" src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
                             <h5>{{ $product->name }}</h5>
                             <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
                             <p><strong>Disponível em:</strong> {{ $product->city }}</p>

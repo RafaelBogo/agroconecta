@@ -25,7 +25,7 @@
         }
 
         .password-container input {
-            padding-right: 40px; /* Espaço para o botão de exibir senha */
+            padding-right: 40px;
         }
 
         .toggle-password {

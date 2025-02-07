@@ -195,7 +195,7 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmação de Remoção -->
+    <!-- Popup de remoção -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -214,7 +214,7 @@
         </div>
     </div>
 
-    <!-- Modal de Finalização -->
+    <!-- Popup de finalização -->
     <div class="modal fade" id="finalizarModal" tabindex="-1" aria-labelledby="finalizarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -236,14 +236,12 @@
     <script>
         let currentItemId = null;
 
-        // Configuração do botão de remoção
         document.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', function () {
                 currentItemId = this.getAttribute('data-item-id');
             });
         });
 
-        // Confirmação de remoção
         document.querySelector('.confirm-delete').addEventListener('click', function () {
             if (currentItemId) {
                 fetch("{{ route('cart.delete') }}", {
@@ -267,13 +265,11 @@
             }
         });
 
-        // Finalizar Pedido
         document.getElementById('finalizarPedido').addEventListener('click', function () {
             const finalizarButton = this;
             const spinner = document.getElementById('finalizarSpinner');
             const finalizarText = document.getElementById('finalizarText');
 
-            // Exibe o spinner e oculta o texto
             spinner.style.display = 'inline-block';
             finalizarText.style.display = 'none';
             finalizarButton.disabled = true;
@@ -287,17 +283,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Exibe o modal de finalização
                     const modal = new bootstrap.Modal(document.getElementById('finalizarModal'));
                     modal.show();
 
-                    // Remove os itens do carrinho do DOM
                     document.querySelectorAll('.cart-table tbody tr').forEach(row => row.remove());
 
-                    // Atualiza o resumo do carrinho
                     updateCartSummary();
 
-                    // Exibe mensagem de carrinho vazio
                     const cartTable = document.querySelector('.cart-table');
                     cartTable.innerHTML = '<p>O carrinho está vazio.</p>';
                 } else {
@@ -309,7 +301,6 @@
                 alert('Houve um erro ao finalizar o pedido.');
             })
             .finally(() => {
-                // Oculta o spinner e restaura o botão
                 spinner.style.display = 'none';
                 finalizarText.style.display = 'inline-block';
                 finalizarButton.disabled = false;
@@ -318,7 +309,6 @@
 
 
         function updateCartSummary() {
-            // Atualizar o resumo do carrinho
         }
 
         document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
@@ -337,10 +327,8 @@
 
                 quantityInput.value = quantity;
 
-                // Atualizar subtotal e total
                 updateSubtotal(row, quantity);
 
-                // Enviar atualização para o backend
                 fetch(`{{ url('cart/update') }}/${itemId}`, {
                     method: "POST",
                     headers: {

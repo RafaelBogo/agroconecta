@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgroConecta - Login</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -42,24 +41,23 @@
         }
 
         .btn-dark {
-            background-color: #343a40; /* Cinza escuro */
+            background-color: #343a40;
         }
 
         .btn-dark:hover {
-            background-color: #23272b; /* Cinza mais escuro */
+            background-color: #23272b;
         }
 
         .alert-success {
             text-align: left;
         }
 
-        /* Estilização do campo de senha com botão de exibição */
         .password-container {
             position: relative;
         }
 
         .password-container input {
-            padding-right: 40px; /* Espaço para o botão de exibir senha */
+            padding-right: 40px;
         }
         .toggle-password {
             position: absolute;
@@ -70,13 +68,13 @@
             border: none;
             cursor: pointer;
             font-size: 18px;
-            color: #6c757d; /* Cor neutra */
+            color: #6c757d;
             display: flex;
             align-items: center;
             height: 100%;
         }
         .toggle-password:hover {
-            color: #343a40; /* Cor mais escura */
+            color: #343a40;
         }
     </style>
 </head>
@@ -84,8 +82,6 @@
     <div class="container d-flex justify-content-center align-items-center h-100">
         <div class="login-box">
             <h1>AgroConecta</h1>
-
-            <!-- Mensagem de sucesso -->
             @if(session('message'))
                 <div class="alert alert-success">
                     {{ session('message') }}
@@ -116,9 +112,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <script>

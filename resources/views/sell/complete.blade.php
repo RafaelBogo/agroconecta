@@ -38,16 +38,16 @@
 
         .content-box {
             display: flex;
-            justify-content: center; /* Centraliza horizontalmente */
-            align-items: center; /* Centraliza verticalmente */
+            justify-content: center;
+            align-items: center;
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
             max-width: 800px;
             padding: 50px;
             margin: 50px auto;
-            min-height: 400px; /* Garante altura mínima para centralização */
-            text-align: center; /* Centraliza o texto */
+            min-height: 400px;
+            text-align: center;
         }
 
         .content-box h2 {

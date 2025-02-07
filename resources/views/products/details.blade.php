@@ -14,7 +14,7 @@
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
             margin: 0;
-            padding-top: 70px; /* Espaço para evitar sobreposição com a navbar */
+            padding-top: 70px;
         }
 
         .navbar {
@@ -48,11 +48,10 @@
             display: flex;
             gap: 30px;
             flex-wrap: wrap;
-            max-height: 600px; /* Altura máxima do contêiner */
-            overflow-y: auto; /* Habilita a barra de rolagem */
+            max-height: 600px;
+            overflow-y: auto;
         }
 
-        /* Barra de rolagem personalizada */
         .product-container::-webkit-scrollbar {
             width: 35px;
         }
@@ -173,12 +172,9 @@
     </nav>
 
     <div class="product-container">
-        <!-- Imagem do Produto -->
         <div class="product-image">
             <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
         </div>
-
-        <!-- Informações do Produto -->
         <div class="product-info">
             <div>
                 <h1>{{ $product->name }}</h1>
@@ -223,14 +219,10 @@
                     });
                 </script>
             </div>
-
-            <!-- Descrição -->
             <div class="description mt-4">
                 <h4>Descrição</h4>
                 <p>{{ $product->description }}</p>
             </div>
-
-            <!-- Informações adicionais -->
             <div class="additional-info mt-4">
                 <h4>Informações Adicionais</h4>
                 <p><strong>Validade:</strong> {{ $product->validity }}</p>
@@ -242,7 +234,7 @@
         </div>
     </div>
 
-    <!-- Modal de Sucesso -->
+    <!-- PopUp de Sucesso -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

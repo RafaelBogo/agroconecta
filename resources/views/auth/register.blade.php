@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgroConecta - Registro</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         body {
@@ -65,13 +63,12 @@
             display: block;
         }
 
-        /* Estilização do campo de senha com botão de exibição */
         .password-container {
             position: relative;
         }
 
         .password-container input {
-            padding-right: 40px; /* Espaço para o botão de exibir senha */
+            padding-right: 40px;
         }
 
         .toggle-password {
@@ -83,13 +80,13 @@
             border: none;
             cursor: pointer;
             font-size: 18px;
-            color: #6c757d; /* Cor neutra */
+            color: #6c757d;
             display: flex;
             align-items: center;
         }
 
         .toggle-password:hover {
-            color: #343a40; /* Cor mais escura */
+            color: #343a40;
         }
     </style>
 </head>
@@ -97,8 +94,6 @@
     <div class="container d-flex justify-content-center align-items-center h-100">
         <div class="register-box">
             <h1>AgroConecta</h1>
-
-            <!-- Exibe mensagens de erro, se existirem -->
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">
