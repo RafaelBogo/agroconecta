@@ -381,7 +381,6 @@
             document.getElementById('grand-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
 
-
     </script>
 </body>
 
