@@ -150,6 +150,14 @@
                         <p>Gerencie as vendas e confirme as retiradas.</p>
                     </a>
                 </div>
+                <div class="option-card">
+                    <a href="{{ route('support') }}" style="text-decoration: none; color: inherit;">
+                        <i class="bi bi-headset"></i>
+                        <h5>Suporte</h5>
+                        <p>Entre em contato com nosso suporte para obter ajuda.</p>
+                    </a>
+                </div>
+
 
             </div>
             <a href="{{ route('dashboard') }}" class="btn btn-dark">Voltar</a>
