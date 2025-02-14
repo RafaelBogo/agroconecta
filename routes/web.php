@@ -9,6 +9,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReviewController;
+
 
 // ===============================
 // Rotas de Autenticação
@@ -128,3 +130,6 @@ Route::get('/suporte', function () {
     return view('account.support');
 })->name('support');
 
+
+Route::get('/account/myRatings', [ReviewController::class, 'index'])->name('account.myRatings')->middleware('auth');
+Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('products.reviews.store')->middleware('auth');

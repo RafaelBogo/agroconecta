@@ -61,4 +61,16 @@ class User extends Authenticatable
     {
         return $this->products()->pluck('address')->unique()->toArray();
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+
 }

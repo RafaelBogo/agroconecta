@@ -139,9 +139,11 @@
                     </a>
                 </div>
                 <div class="option-card">
-                    <i class="bi bi-star"></i>
-                    <h5>Avaliações</h5>
-                    <p>Avalie produtos que você comprou.</p>
+                    <a href="{{ route('account.myRatings') }}" style="text-decoration: none; color: inherit;">
+                        <i class="bi bi-star"></i>
+                        <h5>Avaliações</h5>
+                        <p>Avalie produtos que você comprou.</p>
+                    </a>
                 </div>
                 <div class="option-card">
                     <a href="{{ route('seller.mySales') }}" style="text-decoration: none; color: inherit;">
