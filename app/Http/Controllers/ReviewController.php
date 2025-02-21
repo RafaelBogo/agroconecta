@@ -10,16 +10,15 @@ class ReviewController extends Controller
 {
     public function index()
     {
-        // Buscar os produtos comprados em pedidos concluídos
         $products = \App\Models\Order::where('user_id', auth()->id())
-            ->where('status', 'Processando') // ou 'Concluído', se for o caso
+            ->where('status', 'Processando')
             ->with('product')
             ->get()
             ->map(function ($order) {
                 return $order->product;
-            });
+            })
+            ->unique('id');
 
-        // Obter os IDs dos produtos já avaliados
         $reviews = auth()->user()->reviews()->pluck('product_id')->toArray();
 
         return view('account.myRatings', compact('products', 'reviews'));

@@ -98,8 +98,8 @@ class ProductController extends Controller
             $query->where('city', $request->city);
         }
 
-        $products = $query->get(); // Produtos filtrados
-        $cities = Product::select('city')->distinct()->pluck('city'); // Lista de cidades
+        $products = $query->get();
+        $cities = Product::select('city')->distinct()->pluck('city');
 
         return view('products.showProducts', compact('products', 'cities'));
     }
@@ -118,7 +118,6 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        // Busca o produto pelo ID e verifica se pertence ao usuário autenticado
         $product = Product::where('id', $id)->where('user_id', auth()->id())->first();
 
         if ($product) {
@@ -131,16 +130,13 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        // Busca o produto pelo ID e verifica se pertence ao usuário autenticado
         $product = Product::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
 
-        // Retorna a view de edição com o produto
         return view('account.editProduct', compact('product'));
     }
 
     public function update(Request $request, $id)
     {
-        // Validação dos dados
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -154,10 +150,8 @@ class ProductController extends Controller
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Busca o produto
         $product = Product::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
 
-        // Atualiza os campos
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = $request->price;
@@ -175,7 +169,6 @@ class ProductController extends Controller
 
         $product->save();
 
-        // Define uma sessão indicando sucesso
         return redirect()->back()->with('success', 'Produto atualizado com sucesso!');
     }
 

@@ -171,70 +171,82 @@
         </div>
     </nav>
 
-    <div class="product-container">
-        <div class="product-image">
-            <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
+    <div class="product-container d-flex">
+    <!-- Coluna Esquerda: Imagem e Avaliações -->
+    <div class="left-column" style="flex: 1; padding-right: 20px;">
+        <!-- Imagem do Produto -->
+        <div class="product-image mb-4">
+            <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}" style="width: 100%; border-radius: 10px;">
         </div>
+
+        <!-- Avaliações -->
+        <div class="product-reviews mt-3">
+            <h4 class="mb-3">Avaliações dos Clientes</h4>
+            <div class="reviews-container" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                @forelse($product->reviews as $review)
+                    <div class="review-item mb-3 p-3 border rounded">
+                        <strong>{{ $review->user->name }}</strong> - {{ $review->created_at->format('d/m/Y') }}<br>
+                        <span class="text-warning">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <i class="bi {{ $i <= $review->rating ? 'bi-star-fill' : 'bi-star' }}"></i>
+                            @endfor
+                        </span>
+                        <p class="mt-2">{{ $review->comment }}</p>
+                    </div>
+                @empty
+                    <div class="text-center">Ainda não há avaliações para este produto.</div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    <!-- Coluna Direita: Detalhes do Produto -->
+    <div class="right-column" style="flex: 1;">
         <div class="product-info">
-            <div>
-                <h1>{{ $product->name }}</h1>
-                <h2>R$ {{ number_format($product->price, 2, ',', '.') }}</h2>
-                <form id="add-to-cart-form">
-                    <label for="quantity">Quantidade</label>
-                    <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Insira aqui a quantidade" value="1" min="1">
-                    <button type="submit" class="btn btn-success mt-3">Adicionar ao Carrinho</button>
-                    <a href="{{route('products.show')}}" class="btn btn-dark mt-3">Continuar Comprando</a>
-                </form>
-                <script>
-                    document.getElementById('add-to-cart-form').addEventListener('submit', function (e) {
-                        e.preventDefault();
+            <h1>{{ $product->name }}</h1>
+            <h2 class="text-success">R$ {{ number_format($product->price, 2, ',', '.') }}</h2>
 
-                        const quantity = document.getElementById('quantity').value;
-
-                        fetch("{{ route('cart.add') }}", {
-                            method: "POST",
-                            headers: {
-                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                product_id: {{ $product->id }},
-                                quantity: quantity
-                            })
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                return response.json();
-                            }
-                            throw new Error('Erro ao adicionar ao carrinho.');
-                        })
-                        .then(data => {
-                            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                            successModal.show();
-                        })
-                        .catch(error => {
-                            console.error('Erro:', error);
-                            alert('Houve um erro ao adicionar o produto ao carrinho.');
-                        });
-                    });
-                </script>
+            <!-- Formulário de Adição ao Carrinho Mantido na Mesma Posição -->
+            <form id="add-to-cart-form" class="mt-3">
+                <label for="quantity" class="form-label">Quantidade</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Insira a quantidade" value="1" min="1" required>
+                <button type="submit" class="btn btn-success mt-3">Adicionar ao Carrinho</button>
+                <a href="{{ route('products.show') }}" class="btn btn-dark mt-3">Continuar Comprando</a>
+            </form>
+            <!-- Modal de Sucesso -->
+            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Produto adicionado ao carrinho com sucesso!
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="description mt-4">
                 <h4>Descrição</h4>
                 <p>{{ $product->description }}</p>
             </div>
+
             <div class="additional-info mt-4">
                 <h4>Informações Adicionais</h4>
                 <p><strong>Validade:</strong> {{ $product->validity }}</p>
                 <p><strong>Unidade:</strong> {{ $product->unit }}</p>
-                <p><strong>Contato do Vendedor:</strong> {{ $product->contact }}</p>
+                <p><strong>Contato:</strong> {{ $product->contact }}</p>
                 <p><strong>Endereço:</strong> {{ $product->address }}, {{ $product->city }}</p>
                 <p><strong>Estoque Disponível:</strong> {{ $product->stock }}</p>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- PopUp de Sucesso -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -251,7 +263,41 @@
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.getElementById('add-to-cart-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const quantity = document.getElementById('quantity').value;
+
+        fetch("{{ route('cart.add') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                product_id: {{ $product->id }},
+                quantity: quantity
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Erro ao adicionar ao carrinho.');
+        })
+        .then(data => {
+            // Exibir o modal de sucesso
+            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Houve um erro ao adicionar o produto ao carrinho.');
+        });
+    });
+</script>
+
 </body>
 </html>

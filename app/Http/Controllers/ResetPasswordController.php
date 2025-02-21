@@ -8,13 +8,11 @@ use Illuminate\Support\Facades\Hash;
 
 class ResetPasswordController extends Controller
 {
-    // Exibe o formulário para redefinir a senha
     public function showResetForm($token)
     {
         return view('auth.passwords.reset', ['token' => $token]);
     }
 
-    // Processa a redefinição de senha
     public function reset(Request $request)
     {
         $request->validate([

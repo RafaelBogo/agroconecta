@@ -80,6 +80,10 @@
         .copy-btn:hover {
             background-color: #218838;
         }
+
+        .btn-container{
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -115,7 +119,11 @@
                     <i class="bi bi-envelope"></i> Enviar E-mail
                 </a>
             </div>
+            <div class="btn-container">
+                <a href="{{ route('minha.conta') }}" class="btn btn-dark">Voltar</a>
+            </div>
         </div>
+
     </div>
 
     <script>
