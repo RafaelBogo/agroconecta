@@ -16,7 +16,7 @@
 Caso ainda não tenha o projeto na sua máquina:
 
 ```bash
-git clone [link-do-repositório]
+git clone [https://github.com/RafaelBogo/agroconecta.git]
 cd AgroConecta
 ```
 
