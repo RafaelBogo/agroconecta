@@ -126,10 +126,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/minha-conta/minhas-vendas/confirmar-retirada', [OrderController::class, 'confirmRetirada'])->name('seller.confirmRetirada');
 });
 
+// ===============================
+// Rotas de Suporte
+// ===============================
 Route::get('/suporte', function () {
     return view('account.support');
 })->name('support');
 
-
+// ===============================
+// Rotas de Avaliações
+// ===============================
 Route::get('/account/myRatings', [ReviewController::class, 'index'])->name('account.myRatings')->middleware('auth');
 Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('products.reviews.store')->middleware('auth');

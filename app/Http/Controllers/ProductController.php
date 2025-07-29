@@ -11,12 +11,12 @@ class ProductController extends Controller
 {
     public function showImportant()
     {
-        return view('sell.important'); // Certifique-se de que a view 'important' existe
+        return view('sell.important');
     }
 
     public function showCadastroProduto()
     {
-        return view('sell.cadastroProduto'); // Certifique-se de que a view existe
+        return view('sell.cadastroProduto');
     }
 
     public function storeCadastroProduto(Request $request)

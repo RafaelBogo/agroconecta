@@ -154,7 +154,7 @@
     <div class="container">
         <div class="content-box">
             <div class="left-section">
-                <h2>IMPORtANTE</h2>
+                <h2>IMPORTANTE</h2>
                 <p>Confira algumas <strong>dicas</strong> antes de cadastrar seu produto para venda:</p>
                 <button onclick="window.location='{{ route('sell.cadastroProduto') }}'" class="btn btn-success">Avançar</button>
             </div>
