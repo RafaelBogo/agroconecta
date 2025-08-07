@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ChatController;
 
 
 // ===============================
@@ -138,3 +139,10 @@ Route::get('/suporte', function () {
 // ===============================
 Route::get('/account/myRatings', [ReviewController::class, 'index'])->name('account.myRatings')->middleware('auth');
 Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('products.reviews.store')->middleware('auth');
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/chat/{userId}', [ChatController::class, 'showChat'])->name('chat.with');
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+});

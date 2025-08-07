@@ -147,6 +147,9 @@
                         </div>
 
                     </p>
+                    <a href="{{ route('chat.with', ['userId' => $order->seller_id]) }}" class="btn btn-sm btn-outline-primary mt-2">
+                        Entrar em contato com o vendedor
+                    </a>
 
                 </div>
                 @if ($order->status === 'Processando' && $order->cancel_time_left > 0)
@@ -171,7 +174,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 
-       
+
     function startCountdown() {
         document.querySelectorAll('.cancel-timer').forEach(timer => {
             const cancelTimeLeft = parseInt(timer.getAttribute('data-cancel-time-left'), 10);
