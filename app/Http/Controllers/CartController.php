@@ -157,6 +157,7 @@ class CartController extends Controller
                 Order::create([
                     'user_id' => Auth::id(),
                     'product_id' => $item['id'],
+                    'seller_id'   => $product->user_id,
                     'quantity' => $item['quantity'],
                     'total_price' => $item['price'] * $item['quantity'],
                     'status' => 'Processando',

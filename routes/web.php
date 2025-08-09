@@ -13,6 +13,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ChatController;
 
 
+
 // ===============================
 // Rotas de Autenticação
 // ===============================
@@ -146,3 +147,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/{userId}', [ChatController::class, 'showChat'])->name('chat.with');
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
 });
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.inbox'); // inbox
+    Route::get('/chat/{userId}', [ChatController::class, 'showChat'])->name('chat.with'); // conversa
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+});
+

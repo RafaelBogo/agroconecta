@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
@@ -32,5 +33,22 @@ class ChatController extends Controller
         ]);
 
         return redirect()->back();
+    }
+
+    public function index()
+    {
+        $myId = Auth::id();
+
+        // lista distintos "outros usuários" com quem já troquei mensagens
+        $threads = Message::selectRaw('IF(sender_id = ?, receiver_id, sender_id) as other_id', [$myId])
+            ->where(function ($q) use ($myId) {
+                $q->where('sender_id', $myId)->orWhere('receiver_id', $myId);
+            })
+            ->groupBy('other_id')
+            ->get();
+
+        $users = User::whereIn('id', $threads->pluck('other_id'))->orderBy('name')->get();
+
+        return view('chat.inbox', compact('users'));
     }
 }
