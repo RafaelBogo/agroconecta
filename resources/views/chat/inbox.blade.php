@@ -93,7 +93,6 @@
 @endsection
 
 @push('styles')
-{{-- ícones bootstrap (se já tiver no layout, pode remover) --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <style>
   .list-group .list-group-item + .list-group-item { border-top: 1px solid #eee; }

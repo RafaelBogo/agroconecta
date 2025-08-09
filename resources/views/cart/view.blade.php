@@ -1,79 +1,77 @@
 @extends('layouts.app')
 
 @section('title', 'Meu Carrinho')
-@section('boxed', false)
+@section('boxed', true)
 
 @section('content')
-  <div class="cart-container">
-    <h1 class="cart-title">Meu Carrinho</h1>
+<h1 class="cart-title">Meu Carrinho</h1>
 
-    @php $total = 0; @endphp
+@php $total = 0; @endphp
 
-    <div class="cart-content">
-      <div class="cart-table">
-        @if (empty($cartItems))
-          <p class="empty-cart">O carrinho está vazio.</p>
-        @else
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Preço</th>
-                <th>Quantidade</th>
-                <th>Subtotal</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach ($cartItems as $id => $item)
-                @php
-                  $subtotal = $item['price'] * $item['quantity'];
-                  $total += $subtotal;
-                @endphp
-                <tr data-item-id="{{ $id }}">
-                  <td>
-                    <img src="{{ asset('storage/' . $item['photo']) }}" alt="{{ $item['name'] }}"
-                         style="width: 50px; height: 50px; border-radius: 5px;">
-                    {{ $item['name'] }}
-                  </td>
-                  <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
-                  <td class="quantity-controls">
-                    <div class="input-group" style="max-width: 120px;">
-                      <button class="btn btn-outline-secondary btn-sm btn-decrease" type="button">-</button>
-                      <input type="text" class="form-control text-center quantity-input"
-                             value="{{ $item['quantity'] }}" readonly>
-                      <button class="btn btn-outline-secondary btn-sm btn-increase" type="button">+</button>
-                    </div>
-                  </td>
-                  <td class="subtotal">R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
-                  <td>
-                    <button type="button" class="btn btn-danger btn-sm delete-button"
-                            data-item-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                      Remover
-                    </button>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        @endif
-      </div>
-
-      <div class="cart-summary">
-        <h4>Resumo</h4>
-        <p>Valor dos produtos: <span id="total-value">R$ {{ number_format($total, 2, ',', '.') }}</span></p>
-        <p>Entrega: <span>Retirada com o produtor</span></p>
-        <p>Desconto: <span id="discount-value">R$ 0,00</span></p>
-        <hr>
-        <p><strong>Total: <span id="grand-total">R$ {{ number_format($total, 2, ',', '.') }}</span></strong></p>
-        <button class="btn btn-success btn-finalize" id="finalizarPedido">
-          <span id="finalizarText">Finalizar Pedido</span>
-          <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
-        </button>
-        <a class="btn btn-dark btn-finalize mt-2" href="{{ route('products.show') }}">Continuar Comprando</a>
-      </div>
+<div class="cart-content">
+    <div class="cart-table">
+    @if (empty($cartItems))
+        <p class="empty-cart">O carrinho está vazio.</p>
+    @else
+        <table class="table">
+        <thead>
+            <tr>
+            <th>Produto</th>
+            <th>Preço</th>
+            <th>Quantidade</th>
+            <th>Subtotal</th>
+            <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($cartItems as $id => $item)
+            @php
+                $subtotal = $item['price'] * $item['quantity'];
+                $total += $subtotal;
+            @endphp
+            <tr data-item-id="{{ $id }}">
+                <td>
+                <img src="{{ asset('storage/' . $item['photo']) }}" alt="{{ $item['name'] }}"
+                        style="width: 50px; height: 50px; border-radius: 5px;">
+                {{ $item['name'] }}
+                </td>
+                <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
+                <td class="quantity-controls">
+                <div class="input-group" style="max-width: 120px;">
+                    <button class="btn btn-outline-secondary btn-sm btn-decrease" type="button">-</button>
+                    <input type="text" class="form-control text-center quantity-input"
+                            value="{{ $item['quantity'] }}" readonly>
+                    <button class="btn btn-outline-secondary btn-sm btn-increase" type="button">+</button>
+                </div>
+                </td>
+                <td class="subtotal">R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
+                <td>
+                <button type="button" class="btn btn-danger btn-sm delete-button"
+                        data-item-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    Remover
+                </button>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+        </table>
+    @endif
     </div>
-  </div>
+
+    <div class="cart-summary">
+    <h4>Resumo</h4>
+    <p>Valor dos produtos: <span id="total-value">R$ {{ number_format($total, 2, ',', '.') }}</span></p>
+    <p>Entrega: <span>Retirada com o produtor</span></p>
+    <p>Desconto: <span id="discount-value">R$ 0,00</span></p>
+    <hr>
+    <p><strong>Total: <span id="grand-total">R$ {{ number_format($total, 2, ',', '.') }}</span></strong></p>
+    <button class="btn btn-success btn-finalize" id="finalizarPedido">
+        <span id="finalizarText">Finalizar Pedido</span>
+        <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+    </button>
+    <a class="btn btn-dark btn-finalize mt-2" href="{{ route('products.show') }}">Continuar Comprando</a>
+    </div>
+</div>
 
   {{-- Modal: remover item --}}
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

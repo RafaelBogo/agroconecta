@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Produtos')
-{{-- se quiser a caixa branca padrão, descomente a linha abaixo --}}
-{{-- @section('boxed', true) --}}
+@section('boxed', true)
 
 @section('content')
   <div class="container text-center">
@@ -53,7 +52,6 @@
 
 @push('styles')
 <style>
-  /* Usa o fundo do layout; aqui só estilizamos a página */
   .search-bar{
     max-width: 900px;
     margin: 50px auto 20px;
@@ -82,7 +80,7 @@
 
   .product-image{
     width: 100%;
-    height: 180px;         /* antes estava "height: px;" */
+    height: 180px;
     object-fit: cover;
     border-top-left-radius: .5rem;
     border-top-right-radius: .5rem;
