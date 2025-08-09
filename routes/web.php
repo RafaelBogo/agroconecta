@@ -66,12 +66,11 @@ Route::get('/produtos/{id}', [ProductController::class, 'showProductDetails'])->
 // ===============================
 // Rotas de Venda
 // ===============================
-Route::get('/vender', [ProductController::class, 'showImportant'])->name('sell.important');
 Route::middleware('auth')->group(function () {
+    Route::get('/vender', fn () => redirect()->route('sell.cadastroProduto'))->name('sell.important');
     Route::get('/vender/cadastro', [ProductController::class, 'showCadastroProduto'])->name('sell.cadastroProduto');
     Route::post('/vender/cadastro', [ProductController::class, 'storeCadastroProduto'])->name('sell.store');
 });
-Route::get('/vender/concluido', fn() => view('sell.complete'))->name('sell.complete');
 
 // ===============================
 // Rotas de Minha Conta

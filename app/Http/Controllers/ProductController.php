@@ -54,8 +54,11 @@ class ProductController extends Controller
                 'stock' => $validatedData['stock'],
             ]);
 
-            // Redirecionar para a página de conclusão
-            return redirect()->route('sell.complete');
+            return redirect()
+                ->back()
+                ->with('product_created', true)
+                ->with('success_message', 'Produto cadastrado com sucesso!');
+
         } catch (\Exception $e) {
             Log::error('Erro ao cadastrar produto:', [
                 'error' => $e->getMessage(),

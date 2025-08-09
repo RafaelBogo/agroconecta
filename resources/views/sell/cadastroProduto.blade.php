@@ -1,225 +1,185 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Produto</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-image: url('{{ asset("images/background2.jpg") }}');
-            background-size: cover;
-            background-position: center;
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
-            margin: 0;
-            padding-top: 70px;
-        }
+@extends('layouts.app')
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1030;
-            background-color: rgba(120, 123, 123, 0.9);
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            opacity: 0.9;
-        }
+@section('title', 'Cadastro de Produto')
+@section('boxed', true)
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-        }
+@section('content')
+  <h2 class="text-center mb-4">Cadastro de Produto</h2>
 
-        .navbar a:hover {
-            text-decoration: underline;
-            color: #ccc;
-        }
-
-        .content-box {
-            display: flex;
-            flex-direction: column;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
-            padding: 30px;
-            margin: 50px auto;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding-right: 20px;
-        }
-
-        .content-box::-webkit-scrollbar {
-            width: 35px;
-        }
-
-        .content-box::-webkit-scrollbar-track {
-            background: rgba(245, 245, 245, 0.9);
-            border-radius: 20px;
-        }
-
-        .content-box::-webkit-scrollbar-thumb {
-            background-color: rgba(120, 120, 120, 0.6);
-            border-radius: 20px;
-        }
-
-        .content-box::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(100, 100, 100, 0.9);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            padding: 15px;
-            font-size: 16px;
-            width: 100%;
-        }
-
-        .form-control:focus {
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-        }
-
-        .btn-success {
-            width: 100%;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('dashboard') }}">AgroConecta</a>
-            <div class="navbar-nav mx-auto">
-                <a class="nav-link" href="{{ route('dashboard') }}">Início</a>
-                <a class="nav-link" href="{{ route('products.show')}}">Produtos</a>
-                <a class="nav-link" href="{{ route(name: 'sell.important') }}">Vender</a>
-                <a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a>
-            </div>
-            <div class="d-flex align-items-center">
-                <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
-                    @csrf
-                    <a href="#" class="nav-link text-white" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        Sair
-                    </a>
-                </form>
-            </div
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="content-box">
-            <h2 class="text-center">Cadastro de Produto</h2>
-
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            <form action="{{ route('sell.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-
-                <div class="form-group">
-                    <label for="name">Nome do Produto</label>
-                    <input type="text" id="name" name="name" class="form-control" placeholder="Insira o nome do produto" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Descrição</label>
-                    <textarea id="description" name="description" class="form-control" placeholder="Insira a descrição do produto" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="price">Preço</label>
-                    <input type="number" id="price" name="price" class="form-control" placeholder="Insira o preço" step="0.01" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="city">Cidade</label>
-                    <input type="text" id="city" name="city" class="form-control" placeholder="Insira a cidade" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="saved_addresses">Endereços Salvos</label>
-                    <select id="saved_addresses" class="form-control" onchange="populateAddressField()">
-                        <option value="">Selecione um endereço salvo (ou digite um novo)</option>
-                        @foreach (auth()->user()->addresses as $address)
-                            <option value="{{ $address }}">{{ $address }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="address">Endereço</label>
-                    <input list="saved_addresses" id="address" name="address" class="form-control" placeholder="Insira ou selecione um endereço" value="{{ old('address') }}" required>
-
-                    <datalist id="saved_addresses">
-                        @if (!empty(auth()->user()->addresses))
-                            @foreach (auth()->user()->addresses as $address)
-                                <option value="{{ $address }}">{{ $address }}</option>
-                            @endforeach
-                        @endif
-                    </datalist>
-                </div>
-
-
-                <div class="form-group">
-                    <label for="stock">Estoque</label>
-                    <input type="number" id="stock" name="stock" class="form-control" placeholder="Insira a quantidade em estoque" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="unit">Unidade de Medida</label>
-                    <input type="text" id="unit" name="unit" class="form-control" placeholder="Exemplo: kg ou unidade" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="validity">Validade</label>
-                    <input type="date" id="validity" name="validity" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="contact">Telefone para Contato</label>
-                    <input type="text" id="contact" name="contact" class="form-control" placeholder="Insira o telefone para contato" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="photo">Foto do Produto</label>
-                    <input type="file" id="photo" name="photo" class="form-control" required>
-                </div>
-
-                <button type="submit" class="btn btn-success">Cadastrar Produto</button>
-            </form>
-
-        </div>
+  @if ($errors->any())
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+      </ul>
     </div>
-    <script>
-        function populateAddressField() {
-            const savedAddressesDropdown = document.getElementById("saved_addresses");
-            const addressField = document.getElementById("address");
+  @endif
 
-            // Define o valor do campo de endereço com o valor selecionado no dropdown
-            addressField.value = savedAddressesDropdown.value;
-        }
-    </script>
+  {{-- Removido o alerta antigo de success, agora usamos modal --}}
+  {{-- @if (session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+  @endif --}}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  <form action="{{ route('sell.store') }}" method="POST" enctype="multipart/form-data" class="row g-3">
+    @csrf
+
+    <div class="col-12">
+      <label for="name" class="form-label">Nome do Produto</label>
+      <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
+    </div>
+
+    <div class="col-12">
+      <label for="description" class="form-label">Descrição</label>
+      <textarea id="description" name="description" class="form-control" rows="3" required>{{ old('description') }}</textarea>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label for="price" class="form-label">Preço</label>
+      <input type="number" id="price" name="price" class="form-control" step="0.01" value="{{ old('price') }}" required>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label for="city" class="form-label">Cidade</label>
+      <input type="text" id="city" name="city" class="form-control" value="{{ old('city') }}" required>
+    </div>
+
+    <div class="col-12">
+      <label for="address" class="form-label">Endereço</label>
+      <input list="saved_addresses_list" id="address" name="address" class="form-control" placeholder="Insira ou selecione um endereço" value="{{ old('address') }}" required>
+      <datalist id="saved_addresses_list">
+        @if (!empty(auth()->user()->addresses))
+          @foreach (auth()->user()->addresses as $addr)
+            <option value="{{ $addr }}">{{ $addr }}</option>
+          @endforeach
+        @endif
+      </datalist>
+      {{-- se quiser um select separado, adicione e copie o valor para o input via JS --}}
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label for="stock" class="form-label">Estoque</label>
+      <input type="number" id="stock" name="stock" class="form-control" value="{{ old('stock') }}" required>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label for="unit" class="form-label">Unidade de Medida</label>
+      <select id="unit" name="unit" class="form-select" required>
+        <option value="" disabled {{ old('unit') ? '' : 'selected' }}>Selecione…</option>
+
+        <option value="un"     @selected(old('unit')==='un')>Unidade (un)</option>
+        <option value="dz"     @selected(old('unit')==='dz')>Dúzia (dz)</option>
+        <option value="kg"     @selected(old('unit')==='kg')>Quilo (kg)</option>
+        <option value="g"      @selected(old('unit')==='g')>Grama (g)</option>
+        <option value="t"      @selected(old('unit')==='t')>Tonelada (t)</option>
+        <option value="l"      @selected(old('unit')==='l')>Litro (L)</option>
+        <option value="ml"     @selected(old('unit')==='ml')>Mililitro (mL)</option>
+        <option value="saca60" @selected(old('unit')==='saca60')>Saca 60 kg</option>
+        <option value="caixa"  @selected(old('unit')==='caixa')>Caixa</option>
+        <option value="maco"   @selected(old('unit')==='maco')>Maço</option>
+        <option value="bandeja"@selected(old('unit')==='bandeja')>Bandeja</option>
+      </select>
+
+      <input
+        type="text"
+        id="unit_custom"
+        name="unit_custom"
+        class="form-control mt-2 {{ old('unit')==='custom' ? '' : 'd-none' }}"
+        placeholder="Digite a unidade (ex.: 'arroba 15 kg')"
+        value="{{ old('unit_custom') }}"
+      >
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label for="validity" class="form-label">Validade</label>
+      <input type="date" id="validity" name="validity" class="form-control" value="{{ old('validity') }}" required>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <label for="contact" class="form-label">Telefone para Contato</label>
+      <input type="text" id="contact" name="contact" class="form-control" value="{{ old('contact') }}" required>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <label for="photo" class="form-label">Foto do Produto</label>
+      <input type="file" id="photo" name="photo" class="form-control" required>
+    </div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-success w-100">Cadastrar Produto</button>
+    </div>
+  </form>
+
+  {{-- Modal de Dicas --}}
+  <div class="modal fade" id="sellTipsModal" tabindex="-1" aria-labelledby="sellTipsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header">
+          <h5 class="modal-title" id="sellTipsLabel">Dicas rápidas para vender melhor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Use boas fotos:</strong> claras, com fundo neutro; mostre detalhes.</li>
+            <li class="list-group-item"><strong>Descreva bem:</strong> tipo, quantidade, origem, diferenciais (ex.: orgânico).</li>
+            <li class="list-group-item"><strong>Preço justo:</strong> pesquise o mercado e considere seus custos.</li>
+            <li class="list-group-item"><strong>Localização clara:</strong> cidade/bairro e referência ajudam o cliente.</li>
+            <li class="list-group-item"><strong>Qualidade & validade:</strong> mantenha estoque e informações atualizadas.</li>
+            <li class="list-group-item"><strong>Responda rápido:</strong> agilidade nas dúvidas converte mais.</li>
+            <li class="list-group-item"><strong>Embale bem:</strong> se for enviar, proteja o produto no transporte.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button id="tips-ok-btn" type="button" class="btn btn-success" data-bs-dismiss="modal">OK, entendi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{-- Modal de Sucesso --}}
+  <div class="modal fade" id="sellSuccessModal" tabindex="-1" aria-labelledby="sellSuccessLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header">
+          <h5 class="modal-title" id="sellSuccessLabel">Tudo certo!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          {{ session('success_message') ?? 'Produto cadastrado com sucesso!' }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+@endsection
+
+@push('styles')
+<style>
+  /* deixa a caixa um pouco mais larga só aqui */
+  .content-box { max-width: 900px; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const productCreated = @json(session('product_created', false));
+
+    if (productCreated) {
+      const successEl = document.getElementById('sellSuccessModal');
+      if (successEl) {
+        const successModal = new bootstrap.Modal(successEl, { backdrop: 'static', keyboard: false });
+        successModal.show();
+      }
+      return; // não mostra dicas nesta situação
+    }
+
+    // Caso não tenha acabado de cadastrar, mostra o modal de dicas
+    const tipsEl = document.getElementById('sellTipsModal');
+    if (tipsEl) {
+      const tipsModal = new bootstrap.Modal(tipsEl, { backdrop: 'static', keyboard: false });
+      tipsModal.show(); // sempre mostra ao abrir a página
+    }
+  });
+</script>
+@endpush
