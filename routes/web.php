@@ -157,7 +157,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/mensagens', [ChatController::class, 'index'])->name('messages');
-    Route::get('/chat/{userId}', [ChatController::class, 'showChat'])->name('chat.with'); // << AQUI
+    Route::get('/chat/{userId}', [ChatController::class, 'showChat'])->name('chat.with');
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
     Route::delete('/chat/{userId}/end', [ChatController::class, 'endConversation'])->name('chat.end');
 });

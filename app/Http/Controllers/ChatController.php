@@ -78,4 +78,5 @@ class ChatController extends Controller
         return redirect()->route('messages')->with('success', 'Conversa encerrada com sucesso.');
     }
 
+
 }
