@@ -26,11 +26,10 @@
         @endforeach
     @endif
 
-    <div class="text-center mt-4">
-        <a href="{{ route('minha.conta') }}" class="btn btn-secondary">Voltar</a>
-    </div>
+    <a href="{{ route('minha.conta') }}" class="btn-voltar">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
 
-    <!-- Modal de Confirmação -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

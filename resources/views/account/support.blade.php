@@ -1,143 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suporte - AgroConecta</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-image: url('{{ asset("images/background2.jpg") }}');
-            background-size: cover;
-            background-position: center;
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
-            margin: 0;
-            padding-top: 70px;
-        }
+@extends('layouts.app')
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1030;
-            background-color: rgba(120, 123, 123, 0.9);
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        }
+@section('title', 'Suporte')
+@section('boxed', true)
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-        }
+@section('content')
+  <div class="d-flex flex-column align-items-center text-center">
 
-        .navbar a:hover {
-            text-decoration: underline;
-            color: #ccc;
-        }
-
-        .support-section {
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: calc(100vh - 70px);
-            text-align: center;
-        }
-
-        .support-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(5px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .email-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .email-text {
-            font-size: 1.2rem;
-            color: #333;
-        }
-
-        .copy-btn {
-            border: none;
-            background-color: #28a745;
-            color: white;
-            padding: 6px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .copy-btn:hover {
-            background-color: #218838;
-        }
-
-        .btn-container{
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('dashboard') }}">AgroConecta</a>
-            <div class="navbar-nav mx-auto">
-                <a class="nav-link" href="{{ route('dashboard') }}">Início</a>
-                <a class="nav-link" href="{{ route('products.show') }}">Produtos</a>
-                <a class="nav-link" href="{{ route('sell.important') }}">Vender</a>
-                <a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a>
-            </div>
-            <div class="d-flex align-items-center">
-                <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
-                    @csrf
-                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Sair</a>
-                </form>
-            </div>
-        </div>
-    </nav>
-
-    <div class="support-section">
-        <div class="support-card">
-            <h3 class="mb-4">Suporte ao Cliente</h3>
-            <p class="mb-3">Em caso de dúvidas, entre em contato conosco:</p>
-            <div class="email-container">
-                <span class="email-text" id="supportEmail">suporte.agroconecta@gmail.com</span>
-                <button class="copy-btn" onclick="copyEmail()">Copiar</button>
-            </div>
-            <div class="mt-3">
-                <a href="mailto:suporte.agroconecta@gmail.com" class="btn btn-outline-success mt-3">
-                    <i class="bi bi-envelope"></i> Enviar E-mail
-                </a>
-            </div>
-            <div class="btn-container">
-                <a href="{{ route('minha.conta') }}" class="btn btn-dark">Voltar</a>
-            </div>
-        </div>
-
+    <div class="mb-3" aria-hidden="true" style="font-size: 40px; line-height: 1">
+      <i class="bi bi-life-preserver"></i>
     </div>
 
-    <script>
-        function copyEmail() {
-            const emailText = document.getElementById('supportEmail').innerText;
-            navigator.clipboard.writeText(emailText).then(() => {
-                const button = document.querySelector('.copy-btn');
-                button.innerText = 'Copiado!';
-                setTimeout(() => button.innerText = 'Copiar', 2000);
-            }).catch(err => {
-                alert('Falha ao copiar o e-mail.');
-            });
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <h2 class="mb-1">Suporte ao Cliente</h2>
+    <p class="text-muted mb-4">Estamos aqui para ajudar. Fale com a gente quando precisar.</p>
+
+    <div class="mx-auto w-100" style="max-width: 600px;">
+      <div class="p-4 rounded-4 bg-white shadow-sm">
+        <h5 class="mb-3 text-start"><i class="bi bi-envelope-paper me-2"></i>Contato por e-mail</h5>
+
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+          <span class="email-text fw-medium" id="supportEmail">suporte.agroconecta@gmail.com</span>
+
+          <div class="d-flex gap-2">
+            <a href="mailto:suporte.agroconecta@gmail.com" class="btn btn-outline-success">
+              <i class="bi bi-envelope"></i> Enviar e-mail
+            </a>
+            <button class="btn btn-success" id="copyBtn" type="button" aria-live="polite">
+              <i class="bi bi-clipboard"></i> Copiar
+            </button>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="text-start">
+          <h6 class="mb-2">Dica</h6>
+          <p class="text-muted mb-0">Nosso horário de atendimento é de <strong>segunda a sexta, 9h às 18h</strong> (exceto feriados).</p>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center mt-3">
+        <a href="{{ route('minha.conta') }}" class="btn btn-dark">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+      </div>
+    </div>
+  </div>
+@endsection
+
+@push('styles')
+<style>
+  .email-text { font-size: 1.1rem; color: #333; word-break: break-word; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyBtn = document.getElementById('copyBtn');
+    const emailEl = document.getElementById('supportEmail');
+
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(emailEl.textContent.trim());
+        const original = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i class="bi bi-clipboard-check"></i> Copiado!';
+        copyBtn.classList.remove('btn-success');
+        copyBtn.classList.add('btn-outline-success');
+        setTimeout(() => {
+          copyBtn.innerHTML = original;
+          copyBtn.classList.remove('btn-outline-success');
+          copyBtn.classList.add('btn-success');
+        }, 1800);
+      } catch (e) {
+        alert('Não foi possível copiar o e-mail. Tente novamente.');
+      }
+    });
+  });
+</script>
+@endpush

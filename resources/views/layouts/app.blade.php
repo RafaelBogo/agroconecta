@@ -41,7 +41,6 @@
         color: #ccc;
     }
 
-    /* Agora todos os boxes seguem o estilo do suporte */
     .content-box {
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(5px);
@@ -72,6 +71,26 @@
     .content-box::-webkit-scrollbar-thumb:hover {
         background-color: rgba(100, 100, 100, 0.9);
     }
+
+    .btn-voltar {
+        background-color: #343a40; /* cor padrão dark */
+        color: #fff;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-voltar:hover {
+        background-color: #23272b;
+        color: #fff;
+        text-decoration: none;
+        box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+    }
+
 </style>
 
     @stack('styles')

@@ -43,7 +43,7 @@
         </table>
     @endif
 
-    <div class="btn-container text-center mt-4">
-        <a href="{{ route('minha.conta') }}" class="btn btn-dark px-4">Voltar</a>
-    </div>
+    <a href="{{ route('minha.conta') }}" class="btn btn-dark">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
 @endsection

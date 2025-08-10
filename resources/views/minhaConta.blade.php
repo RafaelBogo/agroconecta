@@ -102,6 +102,8 @@
             </a>
         </div>
     </div>
-    <a href="{{ route('dashboard') }}" class="btn btn-dark">Voltar</a>
+    <a href="{{ route('minha.conta') }}" class="btn-voltar">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
 </div>
 @endsection

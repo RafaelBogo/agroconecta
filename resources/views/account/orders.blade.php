@@ -54,9 +54,10 @@
         <p class="text-center">Você ainda não realizou nenhum pedido.</p>
     @endforelse
 
-    <div class="text-center mt-4">
-        <a href="{{ route('minha.conta') }}" class="btn btn-dark px-4">Voltar</a>
-    </div>
+    <a href="{{ route('minha.conta') }}" class="btn-voltar">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+
 @endsection
 
 @push('scripts')

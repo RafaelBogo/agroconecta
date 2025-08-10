@@ -35,10 +35,11 @@
     @empty
         <div class="text-center">Você ainda não comprou nenhum produto.</div>
     @endforelse
+    <a href="{{ route('minha.conta') }}" class="btn-voltar">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
 
-    <a href="{{ route('dashboard') }}" class="btn btn-dark">Voltar</a>
 @endsection
-
 
 @push('styles')
 <style>
