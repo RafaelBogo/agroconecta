@@ -72,26 +72,32 @@
         background-color: rgba(100, 100, 100, 0.9);
     }
 
-    .btn-voltar {
-        background-color: #343a40; /* cor padrão dark */
-        color: #fff;
-        border-radius: 8px;
-        padding: 8px 14px;
+    .btn-voltar{
+        background: #fff;
+        color: #111827;
+        border: 1px solid rgba(0,0,0,.12);
+        border-radius: 10px;
+        padding: 8px 12px;
         font-weight: 500;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        transition: all 0.2s ease;
+        gap: 8px;
+        text-decoration: none;
+        transition: background .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .btn-voltar:hover{
+        background: rgba(25,135,84,.10);   /* verde translúcido */
+        color: #198754;                    /* texto verde */
+        border-color: rgba(25,135,84,.30);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(17,24,39,.08);
         text-decoration: none;
     }
-    .btn-voltar:hover {
-        background-color: #23272b;
-        color: #fff;
-        text-decoration: none;
-        box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+    .btn-voltar:focus-visible{
+        outline: 2px solid rgba(25,135,84,.35);
+        outline-offset: 2px;
     }
-
-</style>
+    .btn-voltar .bi{ font-size: 1rem; }</style>
 
     @stack('styles')
 </head>
