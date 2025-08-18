@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Meu Carrinho')
-@section('boxed', true)
+@section('boxed', content: true)
 
 @section('content')
 <h1 class="cart-title">Meu Carrinho</h1>
