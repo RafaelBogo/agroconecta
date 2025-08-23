@@ -5,18 +5,19 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void
-    {
+    public function up(): void {
         Schema::table('orders', function (Blueprint $table) {
-            $table->unsignedBigInteger('seller_id')->nullable()->after('product_id');
-            // Se quiser a FK depois, adicionamos em outra migration.
+            if (!Schema::hasColumn('orders', 'seller_id')) {
+                $table->foreignId('seller_id')->nullable()->constrained('users')->nullOnDelete();
+            }
         });
     }
-
-    public function down(): void
-    {
+    public function down(): void {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('seller_id');
+            if (Schema::hasColumn('orders', 'seller_id')) {
+                // Para versões antigas, use: $table->dropForeign(['seller_id']);
+                $table->dropConstrainedForeignId('seller_id');
+            }
         });
     }
 };
