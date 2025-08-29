@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- ajuste o nome se seu layout padrão tiver outro caminho --}}
+@extends('layouts.app')
 
 @section('title', $product->name)
 @section('boxed', content: true)
@@ -6,7 +6,6 @@
 
 @push('styles')
 <style>
-    /* container principal dentro do "content-box" do layout padrão */
     .product-wrap{
         display:grid;
         grid-template-columns: 1.1fr 1fr;
@@ -48,7 +47,7 @@
     .description h4{ font-weight:700; color:#111827; }
     .description p{ color:#374151; }
 
-    /* === INFORMAÇÕES ADICIONAIS EM DESTAQUE === */
+    /*INFORMAÇÕES ADICIONAIS EM DESTAQUE*/
     .additional-info{ margin-top:24px; }
     .additional-info h4{ font-weight:700; color:#111827; margin-bottom:14px; }
 
@@ -64,10 +63,10 @@
     .info-card{
         display:flex; align-items:flex-start; gap:12px;
         background:#ffffff;
-        border:1px solid rgba(25,135,84,.25);  /* borda com tom de verde */
+        border:1px solid rgba(25,135,84,.25);
         border-radius:16px;
         padding:14px 16px;
-        box-shadow: 0 6px 16px rgba(25,135,84,.08); /* leve brilho */
+        box-shadow: 0 6px 16px rgba(25,135,84,.08);
     }
     .info-card .icon{
         display:flex; align-items:center; justify-content:center;
@@ -79,7 +78,7 @@
     .info-card .label{ font-size:.85rem; font-weight:600; color:#065f46; text-transform:uppercase; letter-spacing:.02em; }
     .info-card .value{ font-size:1rem; color:#111827; margin:0; }
 
-    /* acessibilidade: foco visível em botões/links */
+    /* foco visível em botões links */
     .btn:focus-visible, a:focus-visible{
         outline:2px solid rgba(25,135,84,.45);
         outline-offset:2px;
@@ -87,7 +86,7 @@
 </style>
 @endpush
 
-@section('boxed') {{-- usa o "content-box" do layout padrão --}}
+@section('boxed')
 @endsection
 
 @section('content')
@@ -142,7 +141,7 @@
                     <i class="bi bi-bag me-1"></i> Continuar Comprando
                 </a>
 
-                {{-- NOVO: botão para conversar com o vendedor --}}
+                {{-- botão para conversar com o vendedor --}}
                 <a href="{{ route('chat.with', $product->user_id) }}" class="btn btn-outline-success">
                     <i class="bi bi-chat-dots me-1"></i> Conversar com o Vendedor
                 </a>

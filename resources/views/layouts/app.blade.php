@@ -27,6 +27,27 @@
         width: 100%;
         z-index: 1030;
         background-color: rgba(120, 123, 123, 0.9);
+        box-shadow: 0 4px 10px rgba(0,0,0,.1);
+        opacity: 0.95;
+    }
+
+    .navbar .nav-link, .navbar .navbar-brand { color: #fff; }
+    .navbar .nav-link:hover { color: #ddd; text-decoration: underline; }
+
+    .navbar-dark .navbar-toggler { border-color: rgba(255,255,255,.25); }
+    .navbar-dark .navbar-toggler-icon { background-image: var(--bs-navbar-toggler-icon-bg); }
+
+    @media (max-width: 991.98px) {
+        .navbar-nav .nav-link { padding: .5rem 1rem; }
+    }
+
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1030;
+        background-color: rgba(120, 123, 123, 0.9);
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         opacity: 0.9;
     }
@@ -86,8 +107,8 @@
         transition: background .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease, border-color .15s ease;
     }
     .btn-voltar:hover{
-        background: rgba(25,135,84,.10);   /* verde translúcido */
-        color: #198754;                    /* texto verde */
+        background: rgba(25,135,84,.10);
+        color: #198754;
         border-color: rgba(25,135,84,.30);
         transform: translateY(-1px);
         box-shadow: 0 6px 16px rgba(17,24,39,.08);
@@ -103,25 +124,35 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg">
+   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('dashboard') }}">AgroConecta</a>
-            <div class="navbar-nav mx-auto">
-                <a class="nav-link" href="{{ route('dashboard') }}">Início</a>
-                <a class="nav-link" href="{{ route('products.show') }}">Produtos</a>
-                <a class="nav-link" href="{{ route('sell.cadastroProduto') }}">Vender</a>
-                <a class="nav-link" href="{{ route('chat.inbox') }}">Mensagens</a>
+            <a class="navbar-brand fw-semibold" href="{{ route('dashboard') }}">AgroConecta</a>
 
-                <a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a>
-            </div>
-            <div class="d-flex align-items-center">
-                <a class="nav-link px-3" href="{{ route('minha.conta') }}">Minha Conta</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar" aria-expanded="false" aria-label="Alternar navegação">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav mx-lg-auto my-2 my-lg-0">
+                <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Início</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('products.show') }}">Produtos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('sell.cadastroProduto') }}">Vender</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('chat.inbox') }}">Mensagens</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a></li>
+            </ul>
+
+            <ul class="navbar-nav ms-lg-auto">
+                <li class="nav-item"><a class="nav-link px-lg-3" href="{{ route('minha.conta') }}">Minha Conta</a></li>
+                <li class="nav-item">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
-                    <a href="#" class="nav-link text-white" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        Sair
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Sair
                     </a>
                 </form>
+                </li>
+            </ul>
             </div>
         </div>
     </nav>
