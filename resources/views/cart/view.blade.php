@@ -159,6 +159,10 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
 
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrf = csrfMeta ? csrfMeta.getAttribute('content') : '';
+
+
     let currentItemId = null;
 
     document.querySelectorAll('.delete-button').forEach(button => {
