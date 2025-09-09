@@ -153,7 +153,7 @@ class CartController extends Controller
                 $product->stock -= $item['quantity'];
                 $product->save();
 
-                // Cria o pedido na tabela 'orders'
+                // Cria o pedido na tabela orders
                 Order::create([
                     'user_id' => Auth::id(),
                     'product_id' => $item['id'],
@@ -165,7 +165,7 @@ class CartController extends Controller
 
                 // Envia e-mail para o vendedor
                 $sellerDetails = [
-                    'seller_name' => $product->user->name, // Certifique-se de que Product->user está configurado corretamente
+                    'seller_name' => $product->user->name,
                     'seller_email' => $product->user->email,
                     'buyer_name' => Auth::user()->name,
                     'buyer_address' => Auth::user()->address ?? 'Não informado',
