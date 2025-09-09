@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Meu Carrinho')
-@section('boxed', content: true)
+@section('boxed', true)
+
 
 @section('content')
 <h1 class="cart-title">Meu Carrinho</h1>
@@ -73,13 +74,17 @@
     </div>
 </div>
 
+  
+@endsection
+
+@push('modals')
   {{-- Modal remover item --}}
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="deleteModalLabel">Confirmação</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">Tem certeza de que deseja remover este item do carrinho?</div>
         <div class="modal-footer">
@@ -96,7 +101,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="finalizarModalLabel">Pedido Finalizado</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">Pedido realizado com sucesso!</div>
         <div class="modal-footer">
@@ -105,7 +110,8 @@
       </div>
     </div>
   </div>
-@endsection
+@endpush
+
 
 @push('styles')
     <style>
@@ -157,145 +163,135 @@
 
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
+  const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
-    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-    const csrf = csrfMeta ? csrfMeta.getAttribute('content') : '';
+  // instâncias únicas dos modais
+  const deleteModalEl = document.getElementById('deleteModal');
+  const deleteModal   = bootstrap.Modal.getOrCreateInstance(deleteModalEl);
+  const finModalEl    = document.getElementById('finalizarModal');
+  const finModal      = bootstrap.Modal.getOrCreateInstance(finModalEl);
 
+  // failsafe GLOBAL: sempre que QUALQUER modal fechar, limpe backdrops e body
+  document.addEventListener('hidden.bs.modal', () => {
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('padding-right');
+  });
 
-    let currentItemId = null;
-
-    document.querySelectorAll('.delete-button').forEach(button => {
-      button.addEventListener('click', function () {
-        currentItemId = this.getAttribute('data-item-id');
-      });
+  // estado do item a remover
+  let currentItemId = null;
+  document.querySelectorAll('.delete-button').forEach(btn => {
+    btn.addEventListener('click', function () {
+      currentItemId = this.getAttribute('data-item-id');
     });
+  });
 
-    const confirmDeleteBtn = document.querySelector('.confirm-delete');
-    if (confirmDeleteBtn) {
-      confirmDeleteBtn.addEventListener('click', function () {
-        if (!currentItemId) return;
-
-        fetch("{{ route('cart.delete') }}", {
-          method: "DELETE",
-          headers: {
-            "X-CSRF-TOKEN": csrf,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ item_id: currentItemId })
-        })
-        .then(r => r.json())
-        .then(data => {
-          if (data.success) {
-            const row = document.querySelector(`button[data-item-id="${currentItemId}"]`)?.closest('tr');
-            if (row) row.remove();
-            updateCartTotal();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
-            modal?.hide();
-
-            // mostra texto de vazio
-            if (document.querySelectorAll('.cart-table tbody tr').length === 0) {
-              document.querySelector('.cart-table').innerHTML = '<p class="empty-cart">O carrinho está vazio.</p>';
-            }
-          }
-        })
-        .catch(err => console.error('Erro ao remover o item:', err));
+  // confirmar remoção
+  document.querySelector('.confirm-delete')?.addEventListener('click', async () => {
+    if (!currentItemId) return;
+    try {
+      const r = await fetch("{{ route('cart.delete') }}", {
+        method: "DELETE",
+        headers: { "X-CSRF-TOKEN": csrf, "Content-Type": "application/json", "Accept":"application/json" },
+        body: JSON.stringify({ item_id: currentItemId })
       });
-    }
+      if (!r.ok) throw new Error('Falha ao remover');
 
-    const finalizarBtn = document.getElementById('finalizarPedido');
-    finalizarBtn?.addEventListener('click', function () {
-      const spinner = document.getElementById('finalizarSpinner');
-      const finalizarText = document.getElementById('finalizarText');
+      // tolera 204 ou JSON
+      try { await r.json(); } catch (_) {}
 
-      spinner.style.display = 'inline-block';
-      finalizarText.style.display = 'none';
-      finalizarBtn.disabled = true;
+      // remove linha na UI
+      const row = document.querySelector(`tr[data-item-id="${currentItemId}"]`);
+      if (row) row.remove();
 
-      fetch("{{ route('cart.finalizar') }}", {
-        method: "POST",
-        headers: { "X-CSRF-TOKEN": csrf }
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          const modal = new bootstrap.Modal(document.getElementById('finalizarModal'));
-          modal.show();
-
-          // Limpa a tabela
-          document.querySelectorAll('.cart-table tbody tr').forEach(row => row.remove());
-          updateCartTotal();
-          document.querySelector('.cart-table').innerHTML = '<p class="empty-cart">O carrinho está vazio.</p>';
-        } else {
-          alert('Houve um erro ao finalizar o pedido.');
-        }
-      })
-      .catch(err => {
-        console.error('Erro ao finalizar o pedido:', err);
-        alert('Houve um erro ao finalizar o pedido.');
-      })
-      .finally(() => {
-        spinner.style.display = 'none';
-        finalizarText.style.display = 'inline-block';
-        finalizarBtn.disabled = false;
-      });
-    });
-
-    document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
-      button.addEventListener('click', function () {
-        const row = this.closest('tr');
-        const itemId = row.getAttribute('data-item-id');
-        const quantityInput = row.querySelector('.quantity-input');
-        let quantity = parseInt(quantityInput.value);
-        const isIncrease = this.classList.contains('btn-increase');
-
-        if (isIncrease) quantity += 1;
-        else if (quantity > 1) quantity -= 1;
-
-        quantityInput.value = quantity;
-        updateSubtotal(row, quantity);
-
-        fetch(`{{ url('cart/update') }}/${itemId}`, {
-          method: "POST",
-          headers: {
-            "X-CSRF-TOKEN": csrf,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ item_id: itemId, quantity })
-        })
-        .then(r => r.json())
-        .then(data => {
-          if (!data.success) alert('Erro ao atualizar o carrinho. Tente novamente.');
-        })
-        .catch(err => {
-          console.error('Erro ao atualizar a quantidade:', err);
-          alert('Erro ao atualizar o carrinho. Verifique sua conexão.');
-        });
-      });
-    });
-
-    function updateSubtotal(row, quantity) {
-      const price = parseFloat(
-        row.querySelector('td:nth-child(2)').innerText.replace('R$ ', '').replace('.', '').replace(',', '.')
-      );
-      const subtotalElement = row.querySelector('.subtotal');
-      const subtotal = (price * quantity).toFixed(2);
-      subtotalElement.innerText = `R$ ${subtotal.replace('.', ',')}`;
       updateCartTotal();
-    }
 
-    function updateCartTotal() {
-      let total = 0;
-      document.querySelectorAll('.subtotal').forEach(el => {
-        const val = parseFloat(el.innerText.replace('R$ ', '').replace('.', '').replace(',', '.'));
-        if (!isNaN(val)) total += val;
-      });
-      const totalText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-      const totalValue = document.getElementById('total-value');
-      const grandTotal = document.getElementById('grand-total');
-      if (totalValue) totalValue.innerText = totalText;
-      if (grandTotal) grandTotal.innerText = totalText;
+      // mostra vazio se necessário
+      if (!document.querySelector('.cart-table tbody tr')) {
+        document.querySelector('.cart-table').innerHTML = '<p class="empty-cart">O carrinho está vazio.</p>';
+      }
+
+      deleteModal.hide();
+    } catch (e) {
+      console.error(e);
+      alert('Não foi possível remover o item. Tente novamente.');
+    } finally {
+      currentItemId = null;
     }
   });
+
+  // finalizar pedido
+  const finalizarBtn   = document.getElementById('finalizarPedido');
+  const spinner        = document.getElementById('finalizarSpinner');
+  const finalizarText  = document.getElementById('finalizarText');
+
+  finalizarBtn?.addEventListener('click', async () => {
+    spinner.style.display = 'inline-block';
+    finalizarText.style.display = 'none';
+    finalizarBtn.disabled = true;
+
+    try {
+      const r = await fetch("{{ route('cart.finalizar') }}", { method: "POST", headers: { "X-CSRF-TOKEN": csrf, "Accept":"application/json" }});
+      if (!r.ok) throw new Error('Falha ao finalizar');
+      try { await r.json(); } catch (_) {}
+
+      // limpa tabela e mostra modal
+      document.querySelectorAll('.cart-table tbody tr').forEach(row => row.remove());
+      document.querySelector('.cart-table').innerHTML = '<p class="empty-cart">O carrinho está vazio.</p>';
+      updateCartTotal();
+      finModal.show();
+    } catch (e) {
+      console.error(e);
+      alert('Houve um erro ao finalizar o pedido.');
+    } finally {
+      spinner.style.display = 'none';
+      finalizarText.style.display = 'inline-block';
+      finalizarBtn.disabled = false;
+    }
+  });
+
+  // quantidade + total (mesma lógica que você já tinha)
+  document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
+    button.addEventListener('click', function () {
+      const row = this.closest('tr');
+      const itemId = row.getAttribute('data-item-id');
+      const input = row.querySelector('.quantity-input');
+      let q = parseInt(input.value, 10);
+      if (this.classList.contains('btn-increase')) q++;
+      else if (q > 1) q--;
+
+      input.value = q;
+      updateSubtotal(row, q);
+
+      fetch(`{{ url('cart/update') }}/${itemId}`, {
+        method: "POST",
+        headers: { "X-CSRF-TOKEN": csrf, "Content-Type": "application/json", "Accept":"application/json" },
+        body: JSON.stringify({ item_id: itemId, quantity: q })
+      }).then(r => r.json()).then(d => { if (!d.success) alert('Erro ao atualizar o carrinho.'); })
+        .catch(() => alert('Erro ao atualizar o carrinho. Verifique sua conexão.'));
+    });
+  });
+
+  function updateSubtotal(row, quantity) {
+    const price = parseFloat(row.querySelector('td:nth-child(2)').innerText.replace('R$ ','').replace(/\./g,'').replace(',','.'));
+    const sub = (price * quantity).toFixed(2);
+    row.querySelector('.subtotal').innerText = `R$ ${sub.replace('.', ',')}`;
+    updateCartTotal();
+  }
+
+  function updateCartTotal() {
+    let total = 0;
+    document.querySelectorAll('.subtotal').forEach(el => {
+      const v = parseFloat(el.innerText.replace('R$ ','').replace(/\./g,'').replace(',','.'));
+      if (!isNaN(v)) total += v;
+    });
+    const txt = `R$ ${total.toFixed(2).replace('.', ',')}`;
+    const totalValue = document.getElementById('total-value');
+    const grandTotal = document.getElementById('grand-total');
+    if (totalValue) totalValue.innerText = txt;
+    if (grandTotal) grandTotal.innerText = txt;
+  }
+});
 </script>
 @endpush

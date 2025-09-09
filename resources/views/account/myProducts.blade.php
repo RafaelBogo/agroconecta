@@ -30,24 +30,26 @@
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
 
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Deletar Produto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    Tem certeza que deseja deletar este produto?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger confirm-delete">Deletar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
+
+@push('modals')
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Deletar Produto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">Tem certeza que deseja deletar este produto?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger confirm-delete">Deletar</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endpush
+
 
 @push('styles')
 <style>
@@ -126,43 +128,57 @@
 
 @push('scripts')
 <script>
-    let currentProductId = null;
-    document.querySelectorAll('.delete-button').forEach(button => {
-        button.addEventListener('click', function () {
-            currentProductId = this.getAttribute('data-id');
-            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-            modal.show();
-        });
-    });
+  const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
-    document.querySelector('.confirm-delete').addEventListener('click', function () {
-        if (currentProductId) {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            fetch(`/products/${currentProductId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) return response.json();
-                throw new Error('Erro na resposta');
-            })
-            .then(data => {
-                if (data.success) {
-                    document.querySelector(`.delete-button[data-id="${currentProductId}"]`).closest('.product-item').remove();
-                    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-                } else {
-                    alert(data.message || 'Erro ao deletar o produto.');
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                alert('Ocorreu um erro ao deletar o produto.');
-            });
-        }
-    });
+  const delModalEl = document.getElementById('deleteModal');
+  const delModal   = bootstrap.Modal.getOrCreateInstance(delModalEl);
+
+  document.addEventListener('hidden.bs.modal', () => {
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('padding-right');
+  });
+
+ 
+  let currentId = null;
+  let currentRow = null;
+  let currentUrl = null;
+
+
+  document.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('.delete-button');
+    if (!btn) return;
+
+    currentId  = btn.getAttribute('data-id');
+    currentRow = btn.closest('.product-item');
+    currentUrl = btn.getAttribute('data-delete-url') || `/products/${currentId}`;
+
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('padding-right');
+
+    delModal.show();
+  });
+
+  document.querySelector('.confirm-delete')?.addEventListener('click', async () => {
+    if (!currentUrl) return;
+    try {
+      const r = await fetch(currentUrl, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
+      });
+      if (!r.ok) throw new Error('Falha ao deletar');
+      try { await r.json(); } catch(_) {}
+
+      if (currentRow) currentRow.remove();
+      delModal.hide();
+    } catch (e) {
+      console.error(e);
+      alert('Ocorreu um erro ao deletar o produto.');
+    } finally {
+      currentId = null; currentRow = null; currentUrl = null;
+    }
+  });
 </script>
 @endpush

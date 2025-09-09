@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('title', $product->name)
-@section('boxed', content: true)
+@section('boxed', true)
+
+
 
 
 @push('styles')
@@ -88,8 +90,6 @@
 </style>
 @endpush
 
-@section('boxed')
-@endsection
 
 @section('content')
 <div class="product-wrap">
@@ -202,55 +202,71 @@
 </div>
 
 {{-- Modal de Sucesso --}}
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+@push('modals')
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
+        <h5 class="modal-title">Sucesso!</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
-      <div class="modal-body">
-        Produto adicionado ao carrinho com sucesso!
-      </div>
+      <div class="modal-body">Produto adicionado ao carrinho com sucesso!</div>
       <div class="modal-footer">
         <a href="{{ route('cart.view') }}" class="btn btn-success">Ir para o carrinho</a>
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
 </div>
+@endpush
+
 @endsection
 
 @push('scripts')
 <script>
-document.getElementById('add-to-cart-form').addEventListener('submit', function (e) {
+  const form = document.getElementById('add-to-cart-form');
+  const modalEl = document.getElementById('successModal');
+  const successModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const quantity = document.getElementById('quantity').value;
 
-    fetch("{{ route('cart.add') }}", {
+    try {
+      const r = await fetch("{{ route('cart.add') }}", {
         method: "POST",
         headers: {
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            "Content-Type": "application/json"
+          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            product_id: {{ $product->id }},
-            quantity: quantity
-        })
-    })
-    .then(response => {
-        if (response.ok) return response.json();
-        throw new Error('Erro ao adicionar ao carrinho.');
-    })
-    .then(() => {
-        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-        successModal.show();
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        alert('Houve um erro ao adicionar o produto ao carrinho.');
-    });
-});
+        body: JSON.stringify({ product_id: {{ $product->id }}, quantity })
+      });
+
+      if (!r.ok) throw new Error('Erro ao adicionar ao carrinho');
+
+      // se houver JSON ok; se não houver (204), segue a vida
+      try { await r.json(); } catch (_) {}
+
+      // antes de mostrar, remove QUALQUER overlay antigo (failsafe extra)
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('padding-right');
+
+      successModal.show();
+    } catch (err) {
+      console.error(err);
+      alert('Houve um erro ao adicionar o produto ao carrinho.');
+    }
+  });
+
+  // failsafe extra quando fechar ESTE modal
+  modalEl.addEventListener('hidden.bs.modal', () => {
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('padding-right');
+  });
 </script>
 @endpush
+
+
