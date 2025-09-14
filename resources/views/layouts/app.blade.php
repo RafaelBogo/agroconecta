@@ -11,7 +11,7 @@
 
     <style>
         body {
-            background-image: url('{{ asset("images/background2.jpg") }}');
+            background-image: url('{{ asset("images/background3.jpg") }}');
             background-size: cover;
             background-position: center;
             font-family: 'Arial', sans-serif;
