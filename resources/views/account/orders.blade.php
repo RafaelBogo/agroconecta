@@ -108,13 +108,15 @@
                     <p class="kv mb-2">
                         <strong>Tempo restante para cancelar:</strong>
                         <span class="timer-pill cancel-timer"
-                              id="timer-{{ $order->id }}"
-                              data-cancel-time-left="{{ (int) $order->cancel_time_left }}"
-                              data-status="{{ $order->status }}">
-                            <i class="bi bi-stopwatch"></i>
-                            <span>{{ gmdate('i:s', max(0, (int)$order->cancel_time_left)) }}</span>
+                            id="timer-{{ $order->id }}"
+                            data-status="{{ $order->status }}"
+                            data-expires-at="{{ $order->cancel_expires_at ? $order->cancel_expires_at->toIso8601String() : '' }}"
+                            data-cancel-time-left="{{ (int) $order->cancel_time_left }}">
+                        <i class="bi bi-stopwatch"></i>
+                        <span>{{ gmdate('i:s', max(0, (int)$order->cancel_time_left)) }}</span>
                         </span>
                     </p>
+
 
                     @if ($chatId)
                         <a href="{{ route('chat.with', ['userId' => $chatId]) }}"
@@ -157,96 +159,71 @@
 @push('scripts')
 <script>
 (function(){
-    function fmt(t){
-        const m = Math.floor(t/60); const s = t%60;
-        return `${m}m ${String(s).padStart(2,'0')}s`;
-    }
+  const timersMap = new Map(); 
 
-    function startCountdown(){
-        document.querySelectorAll('.cancel-timer').forEach(timer => {
-            let timeLeft = parseInt(timer.getAttribute('data-cancel-time-left'), 10) || 0;
-            const status  = timer.getAttribute('data-status');
+  function fmt(t){
+    const m = Math.floor(t/60); const s = t%60;
+    return `${m}m ${String(s).padStart(2,'0')}s`;
+  }
 
-            if(status !== 'Processando'){
-                timer.textContent = 'Não aplicável';
-                timer.classList.remove('timer-pill');
-                return;
-            }
+ 
+  function startCountdown(){
+    document.querySelectorAll('.cancel-timer').forEach(timer => {
+      const id = timer.id || `timer-${Math.random()}`;
+      timer.id = id;
 
-            const spanVal = timer.querySelector('span') || timer;
+      const status    = timer.getAttribute('data-status');
+      const expiresIso = timer.getAttribute('data-expires-at'); 
+      const spanVal   = timer.querySelector('span') || timer;
 
-            if(timeLeft <= 0){
-                spanVal.textContent = 'Tempo para cancelamento expirado.';
-                return;
-            }
+ 
+      if (status !== 'Processando' || !expiresIso) {
+        timer.textContent = 'Não aplicável';
+        timer.classList.remove('timer-pill');
+        if (timersMap.has(id)) { clearInterval(timersMap.get(id)); timersMap.delete(id); }
+        return;
+      }
 
-            const iv = setInterval(() => {
-                timeLeft--;
-                if(timeLeft > 0){
-                    spanVal.textContent = fmt(timeLeft);
-                } else {
-                    clearInterval(iv);
-                    spanVal.textContent = 'Tempo para cancelamento expirado.';
-                    const card = timer.closest('.order-card');
-                    const btn  = card ? card.querySelector('.cancel-button') : null;
-                    if(btn){ btn.remove(); }
-                }
-            }, 1000);
-        });
-    }
+      if (timersMap.has(id)) { clearInterval(timersMap.get(id)); timersMap.delete(id); }
 
-    function setupCancelButtons(){
-        document.querySelectorAll('.cancel-button').forEach(button => {
-            button.addEventListener('click', function(e){
-                e.preventDefault();
-                const btn = this;
-                const orderId = btn.getAttribute('data-order-id');
-                const form = btn.closest('form');
-                const timerEl = document.getElementById(`timer-${orderId}`);
-                const statusEl = document.getElementById(`status-${orderId}`);
+      function getTimeLeft() {
+        const expiresAt = new Date(expiresIso).getTime(); // ms
+        const now       = Date.now();
+        return Math.max(0, Math.floor((expiresAt - now) / 1000));
+      }
 
-                // estado de carregamento
-                const originalHtml = btn.innerHTML;
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Cancelando...';
+      let timeLeft = getTimeLeft();
+      if (timeLeft <= 0) {
+        spanVal.textContent = 'Tempo para cancelamento expirado.';
+        timer.closest('.order-card')?.querySelector('.cancel-button')?.remove();
+        return;
+      }
 
-                fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: new FormData(form)
-                })
-                .then(r => r.ok ? r.json() : Promise.reject(r))
-                .then(data => {
-                    if(data.success){
-                        // Atualiza status visual
-                        if(statusEl){
-                            statusEl.textContent = 'Cancelado';
-                            statusEl.className = statusEl.className
-                                .replace(/status\-\w+/g, '')
-                                .trim() + ' status-cancelado';
-                        }
-                        if(timerEl){ timerEl.textContent = 'Cancelado'; }
-                        btn.remove();
-                        alert('Pedido cancelado com sucesso!');
-                    } else {
-                        throw new Error('Resposta de erro do servidor');
-                    }
-                })
-                .catch(() => {
-                    alert('Erro ao cancelar o pedido. Tente novamente.');
-                    btn.disabled = false;
-                    btn.innerHTML = originalHtml;
-                });
-            });
-        });
-    }
+  
+      spanVal.textContent = fmt(timeLeft);
 
-    document.addEventListener('DOMContentLoaded', function(){
-        startCountdown();
-        setupCancelButtons();
+      const iv = setInterval(() => {
+        timeLeft = getTimeLeft();
+        if (timeLeft > 0) {
+          spanVal.textContent = fmt(timeLeft);
+        } else {
+          clearInterval(iv);
+          timersMap.delete(id);
+          spanVal.textContent = 'Tempo para cancelamento expirado.';
+          timer.closest('.order-card')?.querySelector('.cancel-button')?.remove();
+        }
+      }, 1000);
+
+      timersMap.set(id, iv);
     });
+  }
+
+
+  document.addEventListener('DOMContentLoaded', function(){
+    startCountdown();
+    setupCancelButtons();
+  });
 })();
 </script>
+
 @endpush

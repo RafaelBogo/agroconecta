@@ -10,32 +10,71 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::where('user_id', Auth::id())
+       $orders = Order::where('user_id', Auth::id())
             ->with('product')
             ->get()
             ->map(function ($order) {
-                $elapsedTime = now()->diffInSeconds($order->created_at);
-                $order->cancel_time_left = max(0, (0.1 * 60) - $elapsedTime);
-                return $order;
-            });
+
+            if ($order->status === 'Processando') {
+                $window = 3600;
+                $elapsed = now()->diffInSeconds($order->created_at);
+
+ 
+                $order->cancel_time_left  = max(0, $window - $elapsed);
+
+  
+                $order->cancel_expires_at = $order->created_at->copy()->addSeconds($window);
+            } else {
+                $order->cancel_time_left  = 0;
+                $order->cancel_expires_at = null;
+            }
+
+         return $order;
+        });
+
 
         return view('account.orders', compact('orders'));
     }
 
     public function update(Request $request, Order $order)
-    {
-        if ($order->user_id !== Auth::id()) {
-            return redirect()->back()->withErrors('Você não tem permissão para alterar este pedido.');
-        }
+{
 
-        $request->validate([
-            'status' => 'required|in:Processando,Retirado,Cancelado',
-        ]);
-
-        $order->update(['status' => $request->status]);
-
-        return redirect()->route('orders.index')->with('success', 'Status do pedido atualizado com sucesso!');
+    if ($order->user_id !== Auth::id()) {
+        $msg = 'Você não tem permissão para alterar este pedido.';
+        return $request->expectsJson()
+            ? response()->json(['success' => false, 'message' => $msg], 403)
+            : back()->withErrors($msg);
     }
+
+ 
+    $request->validate([
+        'status' => 'required|in:Processando,Retirado,Cancelado',
+    ]);
+
+
+    if ($request->input('status') === 'Cancelado') {
+        $elapsed = now()->diffInSeconds($order->created_at);
+        $cancelTimeLeft = max(0, 3600 - $elapsed); 
+
+        if ($order->status !== 'Processando' || $cancelTimeLeft <= 0) {
+            $msg = 'Pedido não pode ser cancelado (fora do prazo ou status inválido).';
+            return $request->expectsJson()
+                ? response()->json(['success' => false, 'message' => $msg], 422)
+                : back()->withErrors($msg);
+        }
+    }
+
+
+    $order->update(['status' => $request->input('status')]);
+
+ 
+    if ($request->expectsJson()) {
+        return response()->json(['success' => true]);
+    }
+    return redirect()->route('orders.index')
+        ->with('success', 'Status do pedido atualizado com sucesso!');
+}
+
 
     public function mySales()
     {
