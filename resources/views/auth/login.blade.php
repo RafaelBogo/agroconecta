@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
     body {
-        background-image: url('{{ asset("images/background1.jpg") }}');
+        background-image: url('{{ asset("images/background4.png") }}');
         background-size: cover;
         background-position: center;
         font-family: 'Arial', sans-serif;

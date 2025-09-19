@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const finModalEl    = document.getElementById('finalizarModal');
   const finModal      = bootstrap.Modal.getOrCreateInstance(finModalEl);
 
-  // failsafe GLOBAL: sempre que QUALQUER modal fechar, limpe backdrops e body
+  // failsafe para quando um modal fechar,limpar as backdrops e body
   document.addEventListener('hidden.bs.modal', () => {
     document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
     document.body.classList.remove('modal-open');
@@ -198,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       if (!r.ok) throw new Error('Falha ao remover');
 
-      // tolera 204 ou JSON
       try { await r.json(); } catch (_) {}
 
       // remove linha na UI
@@ -251,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // quantidade + total (mesma lógica que você já tinha)
+  // quantidade + total
   document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
     button.addEventListener('click', function () {
       const row = this.closest('tr');

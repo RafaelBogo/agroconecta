@@ -245,10 +245,8 @@
 
       if (!r.ok) throw new Error('Erro ao adicionar ao carrinho');
 
-      // se houver JSON ok; se não houver (204), segue a vida
       try { await r.json(); } catch (_) {}
 
-      // antes de mostrar, remove QUALQUER overlay antigo (failsafe extra)
       document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
       document.body.classList.remove('modal-open');
       document.body.style.removeProperty('padding-right');
@@ -260,7 +258,6 @@
     }
   });
 
-  // failsafe extra quando fechar ESTE modal
   modalEl.addEventListener('hidden.bs.modal', () => {
     document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
     document.body.classList.remove('modal-open');
