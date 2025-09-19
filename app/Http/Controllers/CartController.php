@@ -163,7 +163,7 @@ class CartController extends Controller
                     'status' => 'Processando',
                 ]);
 
-                // Envia e-mail para o vendedor
+                // Envia email para o vendedor
                 $sellerDetails = [
                     'seller_name' => $product->user->name,
                     'seller_email' => $product->user->email,
@@ -186,7 +186,7 @@ class CartController extends Controller
                 return $carry + ($item['price'] * $item['quantity']);
             }, 0);
 
-            // Prepara os detalhes do pedido para o e-mail do comprador
+            // Prepara os detalhes do pedido para o email do comprador
             $orderDetails = [
                 'user_name' => Auth::user()->name,
                 'user_email' => Auth::user()->email,
@@ -202,7 +202,7 @@ class CartController extends Controller
                 'total' => $total,
             ];
 
-            // Envia o e-mail com os detalhes do pedido para o comprador
+            // Envia o email com os detalhes do pedido para o comprador
             Mail::to($orderDetails['user_email'])->send(new PedidoFinalizado($orderDetails));
 
             // Limpa o carrinho após finalizar o pedido

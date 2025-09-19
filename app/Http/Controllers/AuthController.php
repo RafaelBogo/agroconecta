@@ -16,7 +16,6 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    // Lógica de login (a ser implementada)
     public function login(Request $request)
 {
         $request->validate([
@@ -44,9 +43,6 @@ class AuthController extends Controller
     }
 
 
-
-
-    // Exibir o formulário de registro
     public function showRegisterForm()
     {
         return view('auth.register');
@@ -64,7 +60,7 @@ class AuthController extends Controller
         // Gerar código de verificação
         $verificationCode = Str::random(6);
 
-        // Armazenar os dados temporariamente na sessão
+        // Armazena os dados temporariamente na sessão
         Session::put('temp_user', [
             'name' => $request->name,
             'email' => $request->email,
@@ -72,7 +68,7 @@ class AuthController extends Controller
             'verification_code' => $verificationCode,
         ]);
 
-        // Enviar o código de verificação por e-mail
+        // Envia o código de verificação por email
         Mail::raw("Seu código de verificação é: $verificationCode", function ($message) use ($request) {
             $message->to($request->email)
                     ->subject('Código de Verificação - AgroConecta');
