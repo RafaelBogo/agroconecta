@@ -1,190 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroConecta - Registro</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-image: url('{{ asset("images/background4.png") }}');
-            background-size: cover;
-            background-position: center;
-            font-family: 'Arial', sans-serif;
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgroConecta - Registro</title>
 
-        .register-box {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
 
-        .register-box h1 {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
+  <style>
+    :root{ --brand:#2e7d32; --ink:#1f2937; }
 
-        .btn-dark {
-            background-color: #343a40;
-            color: white !important;
-        }
+    body{
+      background-image: url('{{ asset("images/background4.png") }}');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh; margin:0;
+      display:flex; align-items:center; justify-content:center;
+    }
 
-        .btn-dark:hover {
-            background-color: #23272b;
-        }
+    .bg-overlay{ position:fixed; inset:0;
+      background: radial-gradient(80% 60% at 50% 20%, rgba(0,0,0,.20), transparent 70%),
+                  linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.25));
+      pointer-events:none;
+    }
 
-        .extra-options a {
-            color: #222;
-            text-decoration: none;
-        }
+    .card-glass{
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.6);
+      border-radius:16px;
+      box-shadow: 0 20px 45px rgba(0,0,0,.25);
+      width:100%; max-width: 680px;
+    }
 
-        .extra-options a:hover {
-            text-decoration: underline;
-        }
+    .title{ font-weight:800; letter-spacing:.3px; color:var(--ink); }
+    .form-label{ font-weight:600; color:#374151; }
+    .input-group-text{ background:#f4f6f8; border-right:0; }
+    .input-group .form-control{ border-left:0; }
+    .form-control:focus{
+      border-color: var(--brand);
+      box-shadow: 0 0 0 .2rem rgba(46,125,50,.15);
+    }
 
-        .alert {
-            text-align: left;
-            font-size: 14px;
-        }
+    /* botão centralizado com largura confortável */
+    .cta-wrap{ display:flex; justify-content:center; }
+    .btn-cta{ min-width: 585px; } /* ajuste se quiser mais/menos largo */
 
-        .invalid-feedback {
-            display: block;
-        }
 
-        .password-container {
-            position: relative;
-        }
+    .login-link{ color:#000 !important; }
+    .login-link:hover{ text-decoration: underline; }
 
-        .password-container input {
-            padding-right: 40px;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(2%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            color: #6c757d;
-            display: flex;
-            align-items: center;
-        }
-
-        .toggle-password:hover {
-            color: #343a40;
-        }
-    </style>
+    .grid{ row-gap:1.25rem; }
+  </style>
 </head>
 <body>
-    <div class="container d-flex justify-content-center align-items-center h-100">
-        <div class="register-box">
-            <h1>AgroConecta</h1>
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+  <div class="bg-overlay"></div>
 
-            <form action="{{ route('register') }}" method="POST">
-                @csrf
-                <div class="mb-3 text-start">
-                    <label for="name" class="form-label">Nome Completo</label>
-                    <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Digite seu nome completo" value="{{ old('name') }}" required>
-                    @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="mb-3 text-start">
-                    <label for="email" class="form-label">Endereço de Email</label>
-                    <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Digite seu endereço de email" value="{{ old('email') }}" required>
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+  <div class="card-glass p-4 p-md-5 mx-3">
+    <h1 class="title h3 text-center mb-4">Criar sua conta</h1>
 
-                <div class="mb-3 text-start">
-                    <label for="phone" class="form-label">Telefone</label>
-                    <input type="text" id="phone" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="(00) 00000-0000" value="{{ old('phone') }}">
-                    @error('phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                </div>
+    @if ($errors->any())
+      <div class="alert alert-danger py-2">
+        <ul class="mb-0">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
 
+    <form action="{{ route('register') }}" method="POST">
+      @csrf
 
-                <div class="mb-3 text-start">
-                    <label for="address" class="form-label">Endereço Completo</label>
-                    <textarea id="address" name="address" class="form-control @error('address') is-invalid @enderror" rows="3" placeholder="Cidade, bairro/comunidade, rua, ponto de referência..." required >{{ old('address') }}</textarea>
-                    @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                </div>
-
-
-                <!-- Campo de senha -->
-                <div class="mb-3 text-start password-container">
-                    <label for="password" class="form-label">Senha</label>
-                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Digite sua senha" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('password', 'password-icon')">
-                        <i id="password-icon" class="bi bi-eye"></i>
-                    </button>
-                    @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Campo de confirmação de senha -->
-                <div class="mb-3 text-start password-container">
-                    <label for="password_confirmation" class="form-label">Confirme sua Senha</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Digite sua senha novamente" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation', 'password-icon-confirm')">
-                        <i id="password-icon-confirm" class="bi bi-eye"></i>
-                    </button>
-                    @error('password_confirmation')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <button type="submit" class="btn btn-dark btn-lg w-100">Criar Conta</button>
-            </form>
-            <div class="extra-options mt-3">
-                <a href="{{ route('login') }}">Já tem uma conta?</a>
-            </div>
+      <div class="row grid">
+        <div class="col-md-6">
+          <label for="name" class="form-label">Nome Completo</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input type="text" id="name" name="name"
+                   class="form-control @error('name') is-invalid @enderror"
+                   placeholder="Seu nome completo" value="{{ old('name') }}" required>
+          </div>
+          @error('name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
         </div>
-    </div>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="col-md-6">
+          <label for="email" class="form-label">Email</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" id="email" name="email"
+                   class="form-control @error('email') is-invalid @enderror"
+                   placeholder="voce@exemplo.com" value="{{ old('email') }}" required>
+          </div>
+          @error('email') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+        </div>
 
-    <script>
-        function togglePassword(inputId, iconId) {
-            const passwordField = document.getElementById(inputId);
-            const passwordIcon = document.getElementById(iconId);
+        <div class="col-md-6">
+          <label for="phone" class="form-label">Telefone</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+            <input type="text" id="phone" name="phone"
+                   class="form-control @error('phone') is-invalid @enderror"
+                   placeholder="(00) 00000-0000" value="{{ old('phone') }}">
+          </div>
+          @error('phone') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+        </div>
 
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                passwordIcon.classList.remove("bi-eye");
-                passwordIcon.classList.add("bi-eye-slash");
-            } else {
-                passwordField.type = "password";
-                passwordIcon.classList.remove("bi-eye-slash");
-                passwordIcon.classList.add("bi-eye");
-            }
-        }
-    </script>
+        <div class="col-md-6">
+          <label for="address" class="form-label">Endereço Completo</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+            <input id="address" name="address"
+                   class="form-control @error('address') is-invalid @enderror"
+                   placeholder="Cidade, bairro, rua, referência..." value="{{ old('address') }}" required>
+          </div>
+          @error('address') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+        </div>
+
+        <div class="col-md-6">
+          <label for="password" class="form-label">Senha</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" id="password" name="password"
+                   class="form-control @error('password') is-invalid @enderror"
+                   placeholder="Mínimo 8 caracteres" required>
+            <button class="btn btn-outline-secondary" type="button"
+                    onclick="togglePassword('password','password-icon')">
+              <i id="password-icon" class="bi bi-eye"></i>
+            </button>
+          </div>
+          @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+        </div>
+
+        <div class="col-md-6">
+          <label for="password_confirmation" class="form-label">Confirme a Senha</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+            <input type="password" id="password_confirmation" name="password_confirmation"
+                   class="form-control @error('password_confirmation') is-invalid @enderror"
+                   placeholder="Repita a senha" required>
+            <button class="btn btn-outline-secondary" type="button"
+                    onclick="togglePassword('password_confirmation','password-icon-confirm')">
+              <i id="password-icon-confirm" class="bi bi-eye"></i>
+            </button>
+          </div>
+          @error('password_confirmation') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+        </div>
+      </div>
+
+      <div class="cta-wrap mt-4">
+        <button type="submit" class="btn btn-success btn-lg btn-cta">Criar Conta</button>
+      </div>
+
+      <p class="mt-3 text-center">
+        <a class="text-decoration-none login-link" href="{{ route('login') }}">Já tem uma conta? Entrar</a>
+      </p>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function togglePassword(inputId, iconId){
+      const input = document.getElementById(inputId);
+      const icon  = document.getElementById(iconId);
+      const isPwd = input.type === "password";
+      input.type  = isPwd ? "text" : "password";
+      icon.classList.toggle("bi-eye", !isPwd);
+      icon.classList.toggle("bi-eye-slash", isPwd);
+    }
+  </script>
 </body>
 </html>
