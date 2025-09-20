@@ -121,6 +121,20 @@
                     @enderror
                 </div>
 
+                <div class="mb-3 text-start">
+                    <label for="phone" class="form-label">Telefone</label>
+                    <input type="text" id="phone" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="(00) 00000-0000" value="{{ old('phone') }}">
+                    @error('phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+
+                <div class="mb-3 text-start">
+                    <label for="address" class="form-label">Endereço Completo</label>
+                    <textarea id="address" name="address" class="form-control @error('address') is-invalid @enderror" rows="3" placeholder="Cidade, bairro/comunidade, rua, ponto de referência..." required >{{ old('address') }}</textarea>
+                    @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+
                 <!-- Campo de senha -->
                 <div class="mb-3 text-start password-container">
                     <label for="password" class="form-label">Senha</label>

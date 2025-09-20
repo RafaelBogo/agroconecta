@@ -54,6 +54,8 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
             'password' => 'required|min:6|confirmed',
         ]);
 
@@ -64,6 +66,8 @@ class AuthController extends Controller
         Session::put('temp_user', [
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
             'password' => bcrypt($request->password),
             'verification_code' => $verificationCode,
         ]);
@@ -101,6 +105,9 @@ class AuthController extends Controller
                 'name' => $tempUser['name'],
                 'email' => $tempUser['email'],
                 'password' => $tempUser['password'],
+                'phone'    => $tempUser['phone'],
+                'address'  => $tempUser['address'],
+
             ]);
 
             // Limpar os dados temporários da sessão

@@ -121,10 +121,17 @@
             <div class="login-right">
                 <h1>Login</h1>
                 @if(session('message'))
-                    <div class="alert alert-success text-start">
-                        {{ session('message') }}
-                    </div>
+                    <div class="alert alert-success text-start">{{ session('message') }}</div>
                 @endif
+
+                @if(session('login_error'))
+                    <div class="alert alert-danger text-start">{{ session('login_error') }}</div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger text-start">{{ $errors->first() }}</div>
+                @endif
+
 
                 <form action="{{ route('login') }}" method="POST">
                     @csrf

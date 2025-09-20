@@ -22,7 +22,9 @@
                 </div>
                 <div class="form-group">
                     <label for="phone">Telefone</label>
-                    <input type="text" id="phone" name="phone" class="form-control" placeholder="(XX) XXXXX-XXXX" value="{{ $user->phone }}" required>
+                    <input type="text" id="phone" name="phone" class="form-control"
+                        placeholder="(00) 00000-0000"
+                        value="{{ old('phone', $user->phone) }}" required>
                 </div>
             </div>
 
