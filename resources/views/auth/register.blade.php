@@ -43,10 +43,8 @@
       box-shadow: 0 0 0 .2rem rgba(46,125,50,.15);
     }
 
-    /* botão centralizado com largura confortável */
     .cta-wrap{ display:flex; justify-content:center; }
-    .btn-cta{ min-width: 585px; } /* ajuste se quiser mais/menos largo */
-
+    .btn-cta{ min-width: 585px; }
 
     .login-link{ color:#000 !important; }
     .login-link:hover{ text-decoration: underline; }
@@ -69,6 +67,16 @@
         </ul>
       </div>
     @endif
+
+    @php
+      $cities = [
+        'Chapecó','Xanxerê','Xaxim','Pinhalzinho','Palmitos','Maravilha','Modelo','Saudades','Águas de Chapecó',
+        'Nova Erechim','Nova Itaberaba','Coronel Freitas','Quilombo','Abelardo Luz','Coronel Martins','Galvão',
+        'São Lourenço do Oeste','Campo Erê','Saltinho','São Domingos','Ipuaçu','Entre Rios','Jupiá',
+        'Itapiranga','Iporã do Oeste','Mondaí','Riqueza','Descanso','Tunápolis','Belmonte','Paraíso',
+        'São Miguel do Oeste','Guaraciaba','Anchieta','Dionísio Cerqueira','Barra Bonita'
+      ];
+    @endphp
 
     <form action="{{ route('register') }}" method="POST">
       @csrf
@@ -116,6 +124,22 @@
                    placeholder="Cidade, bairro, rua, referência..." value="{{ old('address') }}" required>
           </div>
           @error('address') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+        </div>
+
+        <!-- NOVO: Cidade (Oeste Catarinense) -->
+        <div class="col-md-6">
+          <label for="city" class="form-label">Cidade (Oeste Catarinense)</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-buildings"></i></span>
+            <select id="city" name="city"
+                    class="form-select @error('city') is-invalid @enderror" required>
+              <option value="" disabled {{ old('city') ? '' : 'selected' }}>Selecione sua cidade</option>
+              @foreach ($cities as $c)
+                <option value="{{ $c }}" {{ old('city') === $c ? 'selected' : '' }}>{{ $c }}</option>
+              @endforeach
+            </select>
+          </div>
+          @error('city') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
         </div>
 
         <div class="col-md-6">
