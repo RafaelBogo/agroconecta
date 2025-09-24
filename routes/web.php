@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\PagoController;
 
 
 
@@ -87,6 +88,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
     Route::get('/cart/summary', [CartController::class, 'getCartSummary'])->name('cart.summary');
     Route::post('/cart/finalizar', [CartController::class, 'finalizarPedido'])->name('cart.finalizar');
+    Route::post('/cart/checkout', [CartController::class, 'checkoutMP'])->name('cart.checkout');
+
 });
 
 // ===============================
@@ -161,3 +164,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
     Route::delete('/chat/{userId}/end', [ChatController::class, 'endConversation'])->name('chat.end');
 });
+
+
+// ===============================
+// Mercado Pago
+// ===============================
+Route::post('/webhooks/mercadopago', [PagoController::class, 'webhook'])->name('mp.webhook');
+
+Route::get('/pedido/{order}/sucesso',  [PagoController::class, 'success'])->name('orders.success');
+Route::get('/pedido/{order}/falha',    [PagoController::class, 'failure'])->name('orders.failure');
+Route::get('/pedido/{order}/pendente', [PagoController::class, 'pending'])->name('orders.pending');

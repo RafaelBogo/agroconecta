@@ -3,7 +3,6 @@
 @section('title', 'Meu Carrinho')
 @section('boxed', true)
 
-
 @section('content')
 <h1 class="cart-title">Meu Carrinho</h1>
 
@@ -73,12 +72,9 @@
         <a class="btn btn-dark btn-finalize mt-2" href="{{ route('products.show') }}">Continuar Comprando</a>
     </div>
 </div>
-
-  
 @endsection
 
 @push('modals')
-  {{-- Modal remover item --}}
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -112,83 +108,67 @@
   </div>
 @endpush
 
-
 @push('styles')
-    <style>
-
-    .cart-container {
-        width: 1000px;
-        margin: 24px auto;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,.1);
-    }
-
-    .cart-title {
-        font-size: 2rem;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 20px;
-        color: #333;
-    }
-
-    .cart-content {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-
-    .cart-table {
-        flex: 2;
-        background: rgba(255,255,255,.9);
-        border-radius: 10px;
-        padding: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,.1);
-    }
-
-    .cart-summary {
-        flex: 1;
-        background: #f5f5f5;
-        border-radius: 10px;
-        padding: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,.1);
-    }
-
-    .cart-summary h4 { font-weight: 700; color: #333; margin-bottom: 15px; }
-    .cart-summary .btn-finalize { margin-top: 12px; width: 100%; }
-    .empty-cart { text-align: center; font-size: 1.1rem; color: #555; margin: 12px 0; }
-    </style>
+<style>
+  .cart-container {
+      width: 1000px;
+      margin: 24px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,.1);
+  }
+  .cart-title { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 20px; color: #333; }
+  .cart-content { display: flex; gap: 20px; flex-wrap: wrap; }
+  .cart-table { flex: 2; background: rgba(255,255,255,.9); border-radius: 10px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,.1); }
+  .cart-summary { flex: 1; background: #f5f5f5; border-radius: 10px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,.1); }
+  .cart-summary h4 { font-weight: 700; color: #333; margin-bottom: 15px; }
+  .cart-summary .btn-finalize { margin-top: 12px; width: 100%; }
+  .empty-cart { text-align: center; font-size: 1.1rem; color: #555; margin: 12px 0; }
+</style>
 @endpush
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+  console.log('[cart] script carregado');
+  const csrf = (document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}').trim();
 
-  // instâncias únicas dos modais
+  const hasBootstrap = !!(window.bootstrap && bootstrap.Modal);
   const deleteModalEl = document.getElementById('deleteModal');
-  const deleteModal   = bootstrap.Modal.getOrCreateInstance(deleteModalEl);
-  const finModalEl    = document.getElementById('finalizarModal');
-  const finModal      = bootstrap.Modal.getOrCreateInstance(finModalEl);
+  const deleteModal   = hasBootstrap && deleteModalEl ? bootstrap.Modal.getOrCreateInstance(deleteModalEl) : null;
 
-  // failsafe para quando um modal fechar,limpar as backdrops e body
   document.addEventListener('hidden.bs.modal', () => {
     document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
     document.body.classList.remove('modal-open');
     document.body.style.removeProperty('padding-right');
   });
 
-  // estado do item a remover
+
+ //Remover item (com fallback)
   let currentItemId = null;
-  document.querySelectorAll('.delete-button').forEach(btn => {
-    btn.addEventListener('click', function () {
-      currentItemId = this.getAttribute('data-item-id');
-    });
+
+  document.addEventListener('click', async (ev) => {
+    const btn = ev.target.closest('.delete-button');
+    if (!btn) return;
+
+    currentItemId = btn.getAttribute('data-item-id');
+
+    if (deleteModal) {
+      return;
+    }
+
+    if (confirm('Tem certeza de que deseja remover este item do carrinho?')) {
+      await removeCurrentItem();
+    }
   });
 
-  // confirmar remoção
   document.querySelector('.confirm-delete')?.addEventListener('click', async () => {
+    await removeCurrentItem();
+    deleteModal?.hide();
+  });
+
+  async function removeCurrentItem() {
     if (!currentItemId) return;
     try {
       const r = await fetch("{{ route('cart.delete') }}", {
@@ -200,89 +180,132 @@ document.addEventListener('DOMContentLoaded', function () {
 
       try { await r.json(); } catch (_) {}
 
-      // remove linha na UI
       const row = document.querySelector(`tr[data-item-id="${currentItemId}"]`);
       if (row) row.remove();
 
       updateCartTotal();
 
-      // mostra vazio se necessário
       if (!document.querySelector('.cart-table tbody tr')) {
         document.querySelector('.cart-table').innerHTML = '<p class="empty-cart">O carrinho está vazio.</p>';
       }
-
-      deleteModal.hide();
     } catch (e) {
       console.error(e);
       alert('Não foi possível remover o item. Tente novamente.');
     } finally {
       currentItemId = null;
     }
-  });
+  }
 
-  // finalizar pedido
+  // Finalizar pedido
   const finalizarBtn   = document.getElementById('finalizarPedido');
   const spinner        = document.getElementById('finalizarSpinner');
   const finalizarText  = document.getElementById('finalizarText');
 
   finalizarBtn?.addEventListener('click', async () => {
+    if (finalizarBtn.dataset.loading === '1') return; // antiduplo clique
+    finalizarBtn.dataset.loading = '1';
     spinner.style.display = 'inline-block';
     finalizarText.style.display = 'none';
     finalizarBtn.disabled = true;
 
     try {
-      const r = await fetch("{{ route('cart.finalizar') }}", { method: "POST", headers: { "X-CSRF-TOKEN": csrf, "Accept":"application/json" }});
-      if (!r.ok) throw new Error('Falha ao finalizar');
-      try { await r.json(); } catch (_) {}
+      const r = await fetch("{{ route('cart.checkout') }}", {
+        method: "POST",
+        headers: { "X-CSRF-TOKEN": csrf, "Accept": "application/json" }
+      });
 
-      // limpa tabela e mostra modal
-      document.querySelectorAll('.cart-table tbody tr').forEach(row => row.remove());
-      document.querySelector('.cart-table').innerHTML = '<p class="empty-cart">O carrinho está vazio.</p>';
-      updateCartTotal();
-      finModal.show();
+      const raw = await r.text();
+      let data = null;
+      try { data = JSON.parse(raw); } catch (_) {}
+
+      console.log('[checkout] status:', r.status);
+      console.log('[checkout] body  :', data ?? raw);
+
+      if (!r.ok) {
+        const msg = (data && (data.mp_error || data.error || data.message)) || `HTTP ${r.status}`;
+        throw new Error(`Falha no checkout: ${msg}`);
+      }
+
+      const prefId = data?.preference_id ?? data?.id;
+      if (!prefId) throw new Error('Resposta do servidor veio sem preference_id.');
+
+      await ensureMercadoPagoLoaded();
+
+      const pk = "{{ config('services.mercadopago.public_key') }}";
+      if (!pk) throw new Error('PUBLIC KEY do Mercado Pago não configurada. Defina MERCADOPAGO_PUBLIC_KEY no .env e limpe o cache.');
+
+      const mp = new MercadoPago(pk, { locale: 'pt-BR' });
+      mp.checkout({ preference: { id: prefId }, autoOpen: true });
+
     } catch (e) {
-      console.error(e);
-      alert('Houve um erro ao finalizar o pedido.');
+      console.error('[checkout] erro:', e);
+      alert(e?.message || 'Houve um erro ao finalizar o pedido.');
     } finally {
       spinner.style.display = 'none';
       finalizarText.style.display = 'inline-block';
       finalizarBtn.disabled = false;
+      finalizarBtn.dataset.loading = '0';
     }
   });
 
-  // quantidade + total
-  document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
-    button.addEventListener('click', function () {
-      const row = this.closest('tr');
-      const itemId = row.getAttribute('data-item-id');
-      const input = row.querySelector('.quantity-input');
-      let q = parseInt(input.value, 10);
-      if (this.classList.contains('btn-increase')) q++;
-      else if (q > 1) q--;
-
-      input.value = q;
-      updateSubtotal(row, q);
-
-      fetch(`{{ url('cart/update') }}/${itemId}`, {
-        method: "POST",
-        headers: { "X-CSRF-TOKEN": csrf, "Content-Type": "application/json", "Accept":"application/json" },
-        body: JSON.stringify({ item_id: itemId, quantity: q })
-      }).then(r => r.json()).then(d => { if (!d.success) alert('Erro ao atualizar o carrinho.'); })
-        .catch(() => alert('Erro ao atualizar o carrinho. Verifique sua conexão.'));
+  function ensureMercadoPagoLoaded() {
+    return new Promise((resolve, reject) => {
+      if (window.MercadoPago) return resolve();
+      const existing = document.querySelector('script[src*="sdk.mercadopago.com/js/v2"]');
+      if (existing) {
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener('error', () => reject(new Error('Falha ao carregar SDK do Mercado Pago.')), { once: true });
+        return;
+      }
+      const s = document.createElement('script');
+      s.src = 'https://sdk.mercadopago.com/js/v2';
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('Falha ao carregar SDK do Mercado Pago.'));
+      document.head.appendChild(s);
     });
+  }
+
+  document.addEventListener('click', function (ev) {
+    const inc = ev.target.closest('.btn-increase');
+    const dec = ev.target.closest('.btn-decrease');
+    if (!inc && !dec) return;
+
+    const row = (inc || dec).closest('tr');
+    if (!row) return;
+
+    const itemId = row.getAttribute('data-item-id');
+    const input = row.querySelector('.quantity-input');
+    let q = parseInt(input.value, 10) || 1;
+
+    if (inc) q++;
+    if (dec && q > 1) q--;
+
+    input.value = q;
+    updateSubtotal(row, q);
+
+    fetch(`{{ url('cart/update') }}/${itemId}`, {
+      method: "POST",
+      headers: { "X-CSRF-TOKEN": csrf, "Content-Type": "application/json", "Accept":"application/json" },
+      body: JSON.stringify({ item_id: itemId, quantity: q })
+    }).then(r => r.json())
+      .then(d => { if (!d.success) alert('Erro ao atualizar o carrinho.'); })
+      .catch(() => alert('Erro ao atualizar o carrinho. Verifique sua conexão.'));
   });
 
   function updateSubtotal(row, quantity) {
-    const price = parseFloat(row.querySelector('td:nth-child(2)').innerText.replace('R$ ','').replace(/\./g,'').replace(',','.'));
+    const priceTxt = row.querySelector('td:nth-child(2)')?.innerText || 'R$ 0,00';
+    const price = parseFloat(priceTxt.replace('R$','').replace(/\s/g,'').replace(/\./g,'').replace(',','.')) || 0;
     const sub = (price * quantity).toFixed(2);
-    row.querySelector('.subtotal').innerText = `R$ ${sub.replace('.', ',')}`;
+    const subEl = row.querySelector('.subtotal');
+    if (subEl) subEl.innerText = `R$ ${sub.replace('.', ',')}`;
     updateCartTotal();
   }
 
   function updateCartTotal() {
     let total = 0;
     document.querySelectorAll('.subtotal').forEach(el => {
-      const v = parseFloat(el.innerText.replace('R$ ','').replace(/\./g,'').replace(',','.'));
+      const v = parseFloat((el.innerText || '').replace('R$','').replace(/\s/g,'').replace(/\./g,'').replace(',','.'));
       if (!isNaN(v)) total += v;
     });
     const txt = `R$ ${total.toFixed(2).replace('.', ',')}`;

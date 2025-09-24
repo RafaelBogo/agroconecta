@@ -5,12 +5,20 @@ namespace App\Http\Controllers;
 use App\Mail\PedidoFinalizado;
 use App\Mail\PedidoFinalizadoVendedor;
 use App\Models\Product;
+use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\Request;
-use App\Models\Order;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+use MercadoPago\MercadoPagoConfig;
+use MercadoPago\Client\Preference\PreferenceClient;
+use Illuminate\Support\Facades\Schema;
+use MercadoPago\Exceptions\MPApiException;
+
+
 
 
 class CartController extends Controller
@@ -22,6 +30,7 @@ class CartController extends Controller
 
         return view('cart.view', compact('cartItems'));
     }
+
     public function addToCart(Request $request)
     {
         $request->validate([
@@ -31,48 +40,42 @@ class CartController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
-        // Verifica se a quantidade solicitada excede o estoque disponível
         $cart = session()->get('cart', []);
-
-        // Soma a quantidade no carrinho com a quantidade solicitada
         $currentCartQuantity = 0;
         foreach ($cart as $item) {
-            if ($item['id'] == $product->id) {
-                $currentCartQuantity = $item['quantity'];
+            if (($item['id'] ?? null) == $product->id) {
+                $currentCartQuantity = (int) $item['quantity'];
                 break;
             }
         }
-
-        if ($currentCartQuantity + $request->quantity > $product->stock) {
+        if ($currentCartQuantity + (int) $request->quantity > (int) $product->stock) {
             return response()->json([
                 'success' => false,
                 'error' => "Estoque insuficiente! Apenas {$product->stock} unidade(s) disponível(is)."
             ], 400);
         }
 
-        // Adiciona ou atualiza o produto no carrinho
         $found = false;
         foreach ($cart as &$item) {
-            if ($item['id'] == $product->id) {
-                $item['quantity'] += $request->quantity;
+            if (($item['id'] ?? null) == $product->id) {
+                $item['quantity'] += (int) $request->quantity;
                 $found = true;
                 break;
             }
         }
+        unset($item);
 
         if (!$found) {
             $cart[] = [
                 'id' => $product->id,
                 'name' => $product->name,
-                'price' => $product->price,
+                'price' => (float) $product->price,
                 'photo' => $product->photo,
-                'quantity' => $request->quantity,
+                'quantity' => (int) $request->quantity,
             ];
         }
 
-        // Atualiza a sessão do carrinho
         session()->put('cart', $cart);
-
         Log::info('Carrinho atualizado após adicionar produto:', session('cart'));
 
         return response()->json([
@@ -80,7 +83,6 @@ class CartController extends Controller
             'message' => 'Produto adicionado ao carrinho com sucesso!'
         ]);
     }
-
 
     public function deleteItem(Request $request)
     {
@@ -92,12 +94,10 @@ class CartController extends Controller
 
         if (isset($cart[$request->item_id])) {
             unset($cart[$request->item_id]);
-
+            $cart = array_values($cart);
             session()->put('cart', $cart);
 
-            $total = array_reduce($cart, function ($carry, $item) {
-                return $carry + ($item['price'] * $item['quantity']);
-            }, 0);
+            $total = array_reduce($cart, fn($carry, $i) => $carry + ($i['price'] * $i['quantity']), 0);
 
             return response()->json([
                 'success' => 'Item removido do carrinho com sucesso!',
@@ -111,114 +111,118 @@ class CartController extends Controller
     public function getCartSummary()
     {
         $cart = session()->get('cart', []);
-
-        $total = array_reduce($cart, function ($carry, $item) {
-            return $carry + ($item['price'] * $item['quantity']);
-        }, 0);
-
+        $total = array_reduce($cart, fn($carry, $i) => $carry + ($i['price'] * $i['quantity']), 0);
         return response()->json(['total' => $total]);
     }
 
-    public function finalizarPedido(Request $request)
+    // Fluxo API MP
+    public function checkoutMP(Request $request)
     {
-        $cart = session()->get('cart', []);
 
-        Log::info('Conteúdo do carrinho ao finalizar pedido:', $cart);
+        \Log::info('[checkoutMP] POST recebido', ['cart' => session('cart')]);
 
-        if (empty($cart)) {
-            return response()->json(['error' => 'O carrinho está vazio.'], 400);
+        $cart = session('cart', []);
+        if (!$cart || !count($cart)) {
+            return response()->json(['error' => 'Carrinho vazio'], 422);
         }
 
-        // Inicia uma transação para garantir consistência no banco de dados
-        DB::beginTransaction();
+        $items = [];
+        $total = 0.0;
+        $sumQty = 0;
 
-        try {
-            foreach ($cart as $item) {
-                if (!isset($item['id'])) {
-                    Log::error('ID do produto ausente no carrinho:', $item);
-                    return response()->json(['error' => 'Erro: Produto no carrinho sem ID.'], 400);
-                }
+        foreach ($cart as $idx => $item) {
+            $qtd = max(1, (int) ($item['quantity'] ?? 1));
+            $preco = round((float) ($item['price'] ?? 0), 2);
+            if ($preco <= 0)
+                continue;
 
-                // Busca o produto no banco de dados
-                $product = Product::findOrFail($item['id']);
-
-                // Verifica se há estoque suficiente
-                if ($product->stock < $item['quantity']) {
-                    return response()->json([
-                        'error' => "Estoque insuficiente para o produto {$product->name}. Estoque disponível: {$product->stock}."
-                    ], 400);
-                }
-
-                // Reduz o estoque do produto
-                $product->stock -= $item['quantity'];
-                $product->save();
-
-                // Cria o pedido na tabela orders
-                Order::create([
-                    'user_id' => Auth::id(),
-                    'product_id' => $item['id'],
-                    'seller_id'   => $product->user_id,
-                    'quantity' => $item['quantity'],
-                    'total_price' => $item['price'] * $item['quantity'],
-                    'status' => 'Processando',
-                ]);
-
-                // Envia email para o vendedor
-                $sellerDetails = [
-                    'seller_name' => $product->user->name,
-                    'seller_email' => $product->user->email,
-                    'buyer_name' => Auth::user()->name,
-                    'buyer_address' => Auth::user()->address ?? 'Não informado',
-                    'items' => [
-                        [
-                            'name' => $item['name'],
-                            'quantity' => $item['quantity'],
-                        ]
-                    ],
-                    'total' => $item['price'] * $item['quantity'],
-                ];
-
-                Mail::to($sellerDetails['seller_email'])->send(new PedidoFinalizadoVendedor($sellerDetails));
+            $row = [
+                'title' => $item['name'] ?? "Produto " . (($item['id'] ?? $idx)),
+                'quantity' => $qtd,
+                'unit_price' => $preco,
+                'currency_id' => 'BRL',
+            ];
+            if (!empty($item['photo'])) {
+                $row['picture_url'] = url('storage/' . $item['photo']);
             }
 
-            // Calcula o total do pedido
-            $total = array_reduce($cart, function ($carry, $item) {
-                return $carry + ($item['price'] * $item['quantity']);
-            }, 0);
+            $items[] = $row;
+            $total += $preco * $qtd;
+            $sumQty += $qtd;
+        }
 
-            // Prepara os detalhes do pedido para o email do comprador
-            $orderDetails = [
-                'user_name' => Auth::user()->name,
-                'user_email' => Auth::user()->email,
-                'items' => array_map(function ($item) {
-                    $product = Product::find($item['id']);
-                    return [
-                        'name' => $item['name'],
-                        'price' => $item['price'],
-                        'quantity' => $item['quantity'],
-                        'seller_address' => $product->address ?? 'Endereço não informado',
-                    ];
-                }, $cart),
-                'total' => $total,
-            ];
+        if (!count($items)) {
+            return response()->json(['error' => 'Itens inválidos no carrinho'], 422);
+        }
 
-            // Envia o email com os detalhes do pedido para o comprador
-            Mail::to($orderDetails['user_email'])->send(new PedidoFinalizado($orderDetails));
+        $orderPayload = [
+            'user_id' => Auth::id(),
+            'total_price' => round($total, 2),
+            'status' => 'Processando',
+        ];
 
-            // Limpa o carrinho após finalizar o pedido
-            session()->forget('cart');
+        if (Schema::hasColumn('orders', 'product_id')) {
+            $orderPayload['product_id'] = $cart[0]['id'] ?? null;
+        }
+        if (Schema::hasColumn('orders', 'quantity')) {
+            $orderPayload['quantity'] = $sumQty > 0 ? $sumQty : 1;
+        }
 
-            // Confirma a transação
-            DB::commit();
+        $order = Order::create($orderPayload);
+        $successUrl = route('orders.success', ['order' => $order->id]);
+        $failureUrl = route('orders.failure', ['order' => $order->id]);
+        $pendingUrl = route('orders.pending', ['order' => $order->id]);
+        MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
+        $client = new PreferenceClient();
 
-            return response()->json(['success' => 'Pedido finalizado com sucesso!']);
-        } catch (\Exception $e) {
-            // Desfaz a transação em caso de erro
-            DB::rollBack();
-            Log::error('Erro ao finalizar pedido: ' . $e->getMessage());
-            return response()->json(['error' => 'Erro ao processar o pedido.'], 500);
+        $payload = [
+            'items' => $items,
+            'external_reference' => (string) $order->id,
+            'payer' => [
+                'name' => Auth::user()->name ?? 'Cliente',
+                'email' => Auth::user()->email ?? 'comprador+teste@example.com',
+            ],
+            'back_urls' => [
+                'success' => $successUrl,
+                'failure' => $failureUrl,
+                'pending' => $pendingUrl,
+            ],
+        ];
+
+        if (Str::startsWith($successUrl, 'https://')) {
+            $payload['auto_return'] = 'approved';
+        }
+        if (Str::startsWith(url('/'), 'https://')) {
+            $payload['notification_url'] = route('mp.webhook');
+        }
+
+        try {
+            $pref = $client->create($payload);
+
+            return response()->json([
+                'preference_id' => $pref->id,
+                'order_id' => $order->id,
+            ]);
+        } catch (MPApiException $e) {
+            $resp = $e->getApiResponse();
+            $status = method_exists($resp, 'getStatusCode') ? $resp->getStatusCode() : null;
+            $content = method_exists($resp, 'getContent') ? $resp->getContent() : null;
+            $contentForLog = is_object($content) ? json_decode(json_encode($content), true) : $content;
+
+            \Log::error('[MP Preference Error]', [
+                'status' => $status,
+                'content' => $contentForLog,
+                'payload' => $payload,
+                'items' => $items,
+            ]);
+
+            return response()->json([
+                'mp_error' => $contentForLog ?: $e->getMessage()
+            ], $status ?: 500);
+        } catch (\Throwable $e) {
+            \Log::error('[MP Preference Throwable]', ['msg' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
 
 }
