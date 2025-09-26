@@ -121,7 +121,7 @@
             <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
             <input id="address" name="address"
                    class="form-control @error('address') is-invalid @enderror"
-                   placeholder="Cidade, bairro, rua, referência..." value="{{ old('address') }}" required>
+                   placeholder="Bairro, rua, referência..." value="{{ old('address') }}" required>
           </div>
           @error('address') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
         </div>

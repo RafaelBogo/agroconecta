@@ -14,6 +14,17 @@
     </div>
   @endif
 
+  @php
+      $cities = [
+        'Chapecó','Xanxerê','Xaxim','Pinhalzinho','Palmitos','Maravilha','Modelo','Saudades','Águas de Chapecó',
+        'Nova Erechim','Nova Itaberaba','Coronel Freitas','Quilombo','Abelardo Luz','Coronel Martins','Galvão',
+        'São Lourenço do Oeste','Campo Erê','Saltinho','São Domingos','Ipuaçu','Entre Rios','Jupiá',
+        'Itapiranga','Iporã do Oeste','Mondaí','Riqueza','Descanso','Tunápolis','Belmonte','Paraíso',
+        'São Miguel do Oeste','Guaraciaba','Anchieta','Dionísio Cerqueira','Barra Bonita'
+      ];
+    @endphp
+
+
   <form action="{{ route('sell.store') }}" method="POST" enctype="multipart/form-data" class="row g-3">
     @csrf
 
@@ -33,9 +44,17 @@
     </div>
 
     <div class="col-12 col-md-4">
-      <label for="city" class="form-label">Cidade</label>
-      <input type="text" id="city" name="city" class="form-control" value="{{ old('city') }}" required>
+      <label for="city" class="form-label">Cidade (Oeste Catarinense)</label>
+        <select id="city" name="city" class="form-select @error('city') is-invalid @enderror" required>
+          <option value="" disabled {{ old('city') ? '' : 'selected' }}>Selecione sua cidade</option>
+             @foreach ($cities as $c)
+            <option value="{{ $c }}" {{ old('city') === $c ? 'selected' : '' }}>{{ $c }}</option>
+            @endforeach
+        </select>
+            @error('city') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
     </div>
+
+
 
     <div class="col-12">
       <label for="address" class="form-label">Endereço</label>
