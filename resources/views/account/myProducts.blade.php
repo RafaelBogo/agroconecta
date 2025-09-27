@@ -7,24 +7,59 @@
     <h2>Meus Produtos</h2>
 
     @if ($products->isEmpty())
-        <p class="text-center text-muted">Você ainda não tem produtos registrados.</p>
+      <div class="empty-state text-center py-5">
+          <img src="{{ asset('images/empty-box.svg') }}" alt="" class="empty-illust mb-3">
+          <h5 class="mb-1">Você ainda não cadastrou produtos</h5>
+          <p class="text-muted mb-3">Que tal começar agora?</p>
+        <a href="{{ route('sell.store') }}" class="btn btn-success">
+          <i class="bi bi-plus-lg me-1"></i> Cadastrar produto
+        </a>
+      </div>
     @else
-        @foreach ($products as $product)
-            <div class="product-item">
-                <div class="product-info">
-                    <img src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
-                    <div>
-                        <h5>{{ $product->name }}</h5>
-                        <p>R$ {{ number_format($product->price, 2, ',', '.') }} por unidade</p>
-                    </div>
-                </div>
-                <div class="btn-container">
-                    <a href="{{ route('products.edit', $product->id) }}" class="btn-edit">Editar</a>
-                    <button type="button" class="btn-delete delete-button" data-id="{{ $product->id }}">Deletar</button>
-                </div>
-            </div>
-        @endforeach
-    @endif
+      <div class="header-row d-flex align-items-center justify-content-between mb-3">
+         <h2 class="m-0">Produtos em Venda: <span class="count">({{ $products->count() }})</span></h2>
+        <a href="{{ route('sell.store') }}" class="btn btn-success">
+          <i class="bi bi-plus-lg me-1"></i> Novo
+         </a>
+      </div>
+
+  <div class="products-grid">
+    @foreach ($products as $product)
+      <div class="product-card">
+        <div class="thumb">
+          <img loading="lazy" src="{{ asset('storage/' . $product->photo) }}" alt="{{ $product->name }}">
+      </div>
+
+    <div class="middle">
+      <h5 class="name m-0">{{ $product->name }}</h5>
+
+    <div class="meta">
+      @if(!is_null($product->stock))
+        <span class="badge rounded-pill bg-light text-dark">
+          <i class="bi bi-box-seam me-1"></i> {{ $product->stock }} em estoque
+        </span>
+      @endif
+    </div>
+  </div>
+
+  <div class="actions">
+    <div class="price">R$ {{ number_format($product->price, 2, ',', '.') }}
+      @if(!empty($product->unit)) <small class="text-muted">/ {{ $product->unit }}</small>@endif
+    </div>
+
+    <div class="btns">
+      <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-pencil-square me-1"></i> Editar
+      </a>
+      <button type="button" class="btn btn-sm btn-outline-danger delete-button" data-id="{{ $product->id }}">
+        <i class="bi bi-trash3 me-1"></i> Deletar
+      </button>
+    </div>
+  </div>
+</div>
+    @endforeach
+  </div>
+@endif
 
     <a href="{{ route('minha.conta') }}" class="btn-voltar">
         <i class="bi bi-arrow-left"></i> Voltar
@@ -53,76 +88,36 @@
 
 @push('styles')
 <style>
-    h2 {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #333;
-        text-align: center;
-        margin-bottom: 30px;
-    }
+  h2{ font-weight:800; text-align:center; }
 
-    .product-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: #fff;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 15px;
-    }
+  .products-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
 
-    .product-info {
-        display: flex;
-        align-items: center;
-    }
+  .product-card{
+    display:flex; align-items:center; gap:16px;
+    background: rgba(255,255,255,.92);
+    border:1px solid rgba(255,255,255,.6);
+    border-radius:14px; padding:14px 16px;
+    box-shadow:0 10px 24px rgba(0,0,0,.08);
+  }
 
-    .product-info img {
-        width: 60px;
-        height: 60px;
-        border-radius: 10px;
-        object-fit: cover;
-        margin-right: 15px;
-    }
+  .thumb{ flex:0 0 64px; }
+  .thumb img{ width:64px; height:64px; object-fit:cover; border-radius:10px; }
 
-    .btn-container {
-        display: flex;
-        gap: 10px;
-    }
+  .middle{ flex:1; min-width:0; }
+  .name{ font-weight:700; color:#1f2937; margin-bottom:6px; }
+  .meta{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .meta .badge{ background:#f5f6f8 !important; }
 
-    .btn-edit {
-        background-color: #007bff;
-        border: none;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 0.9rem;
-        text-decoration: none;
-    }
+  .actions{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px; min-width:220px; text-align:center;
+  }
+  .actions .price{
+    font-weight:800; color:#0f5132;
+  }
+  .actions .btns{ display:flex; gap:8px; }
 
-    .btn-edit:hover {
-        background-color: #0056b3;
-    }
-
-    .btn-delete {
-        background-color: #dc3545;
-        border: none;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 0.9rem;
-    }
-
-    .btn-delete:hover {
-        background-color: #a71d2a;
-    }
-
-    .btn-secondary {
-        padding: 10px 30px;
-        background-color: black;
-        border: none;
-        color: white;
-    }
+  .btn-voltar{ margin-top: 18px; }
 </style>
 @endpush
 
