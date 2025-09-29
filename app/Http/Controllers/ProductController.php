@@ -106,11 +106,15 @@ class ProductController extends Controller
 
         return view('products.showProducts', compact('products', 'cities'));
     }
-    public function showProductDetails($id)
-    {
-        $product = Product::findOrFail($id);
-        return view('products.details', compact('product'));
-    }
+   public function showProductDetails($id)
+{
+    $product = Product::with([
+        'user:id,name',          
+    ])->findOrFail($id);
+
+    return view('products.details', compact('product'));
+}
+
 
     public function myProducts()
     {

@@ -189,6 +189,16 @@
                     </div>
                 </div>
 
+                 <div class="info-card">
+                    <div class="icon"><i class="bi bi-person-badge"></i></div>
+                        <div>
+                        <div class="label">Vendedor</div>
+                        <p class="value mb-0">
+                            {{ $product->user->name ?? '—' }}
+                        </p>
+                        </div>
+                </div>
+
                 <div class="info-card">
                     <div class="icon"><i class="bi bi-box-seam"></i></div>
                     <div>
