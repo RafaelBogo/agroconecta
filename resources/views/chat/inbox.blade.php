@@ -59,9 +59,6 @@
             {{-- Avatar com iniciais --}}
             <div class="avatar rounded-circle d-flex align-items-center justify-content-center position-relative">
               <span class="fw-semibold">{{ $initials ?: 'U' }}</span>
-              @if($isOnline)
-                <span class="status-dot bg-success border border-white rounded-circle position-absolute"></span>
-              @endif
             </div>
 
             <div class="flex-grow-1">

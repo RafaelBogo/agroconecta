@@ -13,8 +13,6 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PagoController;
 
-
-
 // ===============================
 // Rotas de Autenticação
 // ===============================
@@ -58,7 +56,7 @@ Route::get('/dashboard/search', function (Illuminate\Http\Request $request) {
 })->name('dashboard.search');
 
 // ===============================
-// Rotas de Produtos
+// Rotas de Produtos (vitrine)
 // ===============================
 Route::get('/produtos', [ProductController::class, 'showProducts'])->name('products.show');
 Route::get('/produtos/buscar', [ProductController::class, 'search'])->name('products.search');
@@ -89,7 +87,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/cart/summary', [CartController::class, 'getCartSummary'])->name('cart.summary');
     Route::post('/cart/finalizar', [CartController::class, 'finalizarPedido'])->name('cart.finalizar');
     Route::post('/cart/checkout', [CartController::class, 'checkoutMP'])->name('cart.checkout');
-
 });
 
 // ===============================
@@ -119,7 +116,7 @@ Route::middleware('auth')->group(function () {
 // ===============================
 // Rotas de Verificação de E-mail
 // ===============================
-Route::get('/email/verify', fn() => view('auth.verify'))->name('verify');
+Route::get('/email/verify', fn () => view('auth.verify'))->name('verify');
 Route::post('/email/verify', [AuthController::class, 'verifyCode'])->name('verify.code');
 
 // ===============================
@@ -143,34 +140,22 @@ Route::get('/suporte', function () {
 Route::get('/account/myRatings', [ReviewController::class, 'index'])->name('account.myRatings')->middleware('auth');
 Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('products.reviews.store')->middleware('auth');
 
-
-
+// ===============================
+// Rotas de Chat (consolidado)
+// ===============================
 Route::middleware('auth')->group(function () {
-    Route::get('/chat/{userId}', [ChatController::class, 'showChat'])->name('chat.with');
-    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
-});
-
-
-Route::middleware('auth')->group(function () {
-    Route::get('/chat', [ChatController::class, 'index'])->name('chat.inbox'); // inbox
-    Route::get('/chat/{userId}', [ChatController::class, 'showChat'])->name('chat.with'); // conversa
-    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
-});
-
-
-Route::middleware('auth')->group(function () {
-    Route::get('/mensagens', [ChatController::class, 'index'])->name('messages');
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.inbox');
     Route::get('/chat/{userId}', [ChatController::class, 'showChat'])->name('chat.with');
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
     Route::delete('/chat/{userId}/end', [ChatController::class, 'endConversation'])->name('chat.end');
-});
 
+    Route::get('/mensagens', [ChatController::class, 'index'])->name('messages');
+});
 
 // ===============================
 // Mercado Pago
 // ===============================
 Route::post('/webhooks/mercadopago', [PagoController::class, 'webhook'])->name('mp.webhook');
-
 Route::get('/pedido/{order}/sucesso',  [PagoController::class, 'success'])->name('orders.success');
 Route::get('/pedido/{order}/falha',    [PagoController::class, 'failure'])->name('orders.failure');
 Route::get('/pedido/{order}/pendente', [PagoController::class, 'pending'])->name('orders.pending');
