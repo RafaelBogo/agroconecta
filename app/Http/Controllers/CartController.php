@@ -31,14 +31,20 @@ class CartController extends Controller
         return view('cart.view', compact('cartItems'));
     }
 
-    public function addToCart(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
+   public function addToCart(Request $request)
+{
+
+    if ($request->has('quantity')) {
+        $request->merge(['quantity' => str_replace(',', '.', $request->quantity)]);
+    }
+
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'quantity'   => 'required|numeric|min:0.01', 
+    ]);
 
         $product = Product::findOrFail($request->product_id);
+        $quantity = (float) $request->quantity;
 
         $cart = session()->get('cart', []);
         $currentCartQuantity = 0;
