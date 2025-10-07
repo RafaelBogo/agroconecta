@@ -3,7 +3,9 @@
 @section('title', $product->name)
 @section('boxed', true)
 
-
+@php
+  $decimais = in_array(strtolower($product->unit), ['kg','g','l','ml']);
+@endphp
 
 
 @push('styles')
@@ -130,9 +132,10 @@
         <div class="product-price mb-3">R$ {{ number_format($product->price, 2, ',', '.') }}</div>
 
         {{-- Ações --}}
+        
         <form id="add-to-cart-form" class="mb-3">
             <label for="quantity" class="form-label">Quantidade</label>
-            <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" required>
+            <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="{{ $decimais ? '0.01' : '1' }}" step="{{ $decimais ? '0.01' : '1' }}" inputmode="decimal" required>
 
             <div class="action-row mt-3">
                 <button type="submit" class="btn btn-success">
@@ -242,6 +245,18 @@
     e.preventDefault();
 
     const quantity = document.getElementById('quantity').value;
+
+    form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  let q = document.getElementById('quantity').value.trim();
+  q = q.replace(',', '.');                      // aceita 1,5
+  const quantity = parseFloat(q);
+
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    alert('Quantidade inválida.');
+    return;
+  }});
 
     try {
       const r = await fetch("{{ route('cart.add') }}", {
