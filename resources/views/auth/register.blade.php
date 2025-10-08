@@ -126,7 +126,7 @@
           @error('address') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
         </div>
 
-        <!-- NOVO: Cidade (Oeste Catarinense) -->
+        
         <div class="col-md-6">
           <label for="city" class="form-label">Cidade (Oeste Catarinense)</label>
           <div class="input-group">

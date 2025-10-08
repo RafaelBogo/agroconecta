@@ -107,4 +107,25 @@ class OrderController extends Controller
 
         return redirect()->route('seller.mySales')->with('success', 'Retirada confirmada com sucesso!');
     }
+    public function success(Request $request, Order $order)
+    {
+        $order->update(['status' => 'Aprovado']);
+
+        DB::table('cart_items')->where('user_id', $order->user_id)->delete();
+
+        return view('orders.success', compact('order'));
+    }
+
+    public function failure(Request $request, Order $order)
+    {
+        $order->update(['status' => 'Falhou']);
+        return view('orders.failure', compact('order'));
+    }
+
+    public function pending(Request $request, Order $order)
+    {
+        $order->update(['status' => 'Pendente']);
+        return view('orders.pending', compact('order'));
+    }
 }
+

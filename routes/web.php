@@ -95,6 +95,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/account/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::put('/account/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+    Route::get('/orders/{order}/success', [OrderController::class, 'success'])->name('orders.success');
+    Route::get('/orders/{order}/failure', [OrderController::class, 'failure'])->name('orders.failure');
+    Route::get('/orders/{order}/pending', [OrderController::class, 'pending'])->name('orders.pending');
 });
 
 // ===============================
