@@ -19,11 +19,12 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
             'address' => 'required|string|max:500',
+            'city' => 'required|string|max:100',
         ]);
 
         $user = Auth::user();
 
-        $user->update($request->only(['name', 'phone', 'address']));
+        $user->update($request->only(['name', 'phone', 'address','city']));
 
         return redirect()->route('user.data')->with('success', 'Seus dados foram atualizados com sucesso!');
     }

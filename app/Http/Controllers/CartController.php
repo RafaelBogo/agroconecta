@@ -71,9 +71,8 @@ class CartController extends Controller
     ]);
 
     $product  = Product::findOrFail($request->product_id);
-    $quantity = (int) max(1, floor((float) $request->quantity)); // garante inteiro >=1
+    $quantity = (int) max(1, floor((float) $request->quantity)); 
 
-    // quantidade já no carrinho deste usuário para esse produto
     $existing = DB::table('cart_items')
         ->where('user_id', Auth::id())
         ->where('product_id', $product->id)
@@ -123,11 +122,11 @@ class CartController extends Controller
     $this->ensureLogged();
 
     $request->validate([
-        'item_id' => 'required|integer', // aqui usamos product_id como item_id
+        'item_id' => 'required|integer', 
     ]);
 
    $deleted = DB::table('cart_items')
-    ->where('cart_items.user_id', Auth::id())   // << AQUI
+    ->where('cart_items.user_id', Auth::id())   
     ->where('cart_items.product_id', (int) $request->item_id)
     ->delete();
 
@@ -135,9 +134,9 @@ class CartController extends Controller
         return response()->json(['error' => 'Item não encontrado no carrinho.'], 404);
     }
 
-    // total atualizado
+
     $rows = DB::table('cart_items')
-    ->where('cart_items.user_id', Auth::id())   // << AQUI
+    ->where('cart_items.user_id', Auth::id()) 
     ->join('products','products.id','=','cart_items.product_id')
     ->select('products.price','cart_items.quantity')
     ->get();
@@ -166,8 +165,6 @@ class CartController extends Controller
     return response()->json(['total' => $total]);
 }
 
-
-    // Fluxo API MP
     public function checkoutMP(Request $request)
 {
     if (!Auth::check()) {
@@ -176,7 +173,6 @@ class CartController extends Controller
 
     \Log::info('[checkoutMP] POST recebido (DB)', ['user_id' => Auth::id()]);
 
-    // Carrinho direto do banco por user_id
     $rows = DB::table('cart_items')
         ->where('cart_items.user_id', Auth::id())
         ->join('products', 'products.id', '=', 'cart_items.product_id')
@@ -221,14 +217,12 @@ class CartController extends Controller
         return response()->json(['error' => 'Itens inválidos no carrinho'], 422);
     }
 
-    // Monta payload do pedido
     $orderPayload = [
         'user_id'     => Auth::id(),
         'total_price' => round($total, 2),
         'status'      => 'Processando',
     ];
 
-    // Preenche product_id (pegando o primeiro item do carrinho)
     if (Schema::hasColumn('orders', 'product_id')) {
         $first = $rows->first();
         if (!$first || empty($first->pid)) {
@@ -237,19 +231,16 @@ class CartController extends Controller
         $orderPayload['product_id'] = (int) $first->pid;
     }
 
-    // Preenche quantity total se existir essa coluna
     if (Schema::hasColumn('orders', 'quantity')) {
         $orderPayload['quantity'] = $sumQty > 0 ? $sumQty : 1;
     }
 
     $order = Order::create($orderPayload);
 
-    // URLs de retorno
     $successUrl = route('orders.success', ['order' => $order->id]);
     $failureUrl = route('orders.failure', ['order' => $order->id]);
     $pendingUrl = route('orders.pending', ['order' => $order->id]);
 
-    // === MERCADO PAGO: token com fallback e validação ===
     $accessToken = config('services.mercadopago.token') ?? env('MP_ACCESS_TOKEN');
     if (!is_string($accessToken) || trim($accessToken) === '') {
         \Log::error('MP access token ausente. Defina MP_ACCESS_TOKEN no .env e services.php.');
@@ -311,13 +302,10 @@ class CartController extends Controller
     }
 }
 
-
-
     private function ensureLogged(): void
 {
     if (!Auth::check()) {
         abort(403, 'Faça login para usar o carrinho.');
     }
 }
-
 }

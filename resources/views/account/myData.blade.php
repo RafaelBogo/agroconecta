@@ -4,7 +4,21 @@
 @section('boxed', true)
 
 @section('content')
+
+@php
+      $cities = [
+        'Chapecó','Xanxerê','Xaxim','Pinhalzinho','Palmitos','Maravilha','Modelo','Saudades','Águas de Chapecó',
+        'Nova Erechim','Nova Itaberaba','Coronel Freitas','Quilombo','Abelardo Luz','Coronel Martins','Galvão',
+        'São Lourenço do Oeste','Campo Erê','Saltinho','São Domingos','Ipuaçu','Entre Rios','Jupiá',
+        'Itapiranga','Iporã do Oeste','Mondaí','Riqueza','Descanso','Tunápolis','Belmonte','Paraíso',
+        'São Miguel do Oeste','Guaraciaba','Anchieta','Dionísio Cerqueira','Barra Bonita'
+      ];
+    @endphp
+
+
     <h2>Meus Dados</h2>
+
+    
 
     <form action="{{ route('user.update') }}" method="POST">
         @csrf
@@ -14,24 +28,44 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="name">Seu Nome Completo</label>
-                    <input type="text" id="name" name="name" class="form-control" placeholder="Seu Nome Completo" value="{{ $user->name }}" required>
+                    <input type="text" id="name" name="name" class="form-control"
+                           value="{{ old('name', $user->name) }}" required>
                 </div>
+
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="{{ $user->email }}" readonly>
+                    <input type="email" id="email" name="email" class="form-control"
+                           value="{{ $user->email }}" readonly>
                 </div>
+
                 <div class="form-group">
                     <label for="phone">Telefone</label>
                     <input type="text" id="phone" name="phone" class="form-control"
-                        placeholder="(00) 00000-0000"
-                        value="{{ old('phone', $user->phone) }}" required>
+                           placeholder="(00) 00000-0000"
+                           value="{{ old('phone', $user->phone) }}" required>
+                </div>
+
+                {{-- NOVO: Cidade --}}
+                <div class="form-group">
+                    <label for="city">Cidade</label>
+                    <select id="city" name="city" class="form-control" required>
+                        <option value="" disabled {{ old('city', $user->city) ? '' : 'selected' }}>
+                            Selecione sua cidade
+                        </option>
+                        @foreach ($cities as $city)
+                            <option value="{{ $city }}" {{ old('city', $user->city) === $city ? 'selected' : '' }}>
+                                {{ $city }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="address">Seu Endereço Completo</label>
-                    <textarea id="address" name="address" class="form-control" rows="8" placeholder="Cidade, comunidade/bairro, rua, ponto de referência, cor da casa..." required>{{ $user->address }}</textarea>
+                    <textarea id="address" name="address" class="form-control" rows="8"
+                              placeholder="Cidade, comunidade/bairro, rua, ponto de referência, cor da casa..." required>{{ old('address', $user->address) }}</textarea>
                 </div>
             </div>
         </div>
