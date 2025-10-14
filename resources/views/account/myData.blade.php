@@ -45,7 +45,6 @@
                            value="{{ old('phone', $user->phone) }}" required>
                 </div>
 
-                {{-- NOVO: Cidade --}}
                 <div class="form-group">
                     <label for="city">Cidade</label>
                     <select id="city" name="city" class="form-control" required>
@@ -136,16 +135,27 @@
         background-color: black;
         border: none;
     }
+
+    /* sobe o modal pra cima de qualquer overlay da página*/
+    .modal { z-index: 2000 !important; }
+    .modal-backdrop { z-index: 1990 !important; }
+    .modal-backdrop.show { pointer-events: none; }
+
+
+
 </style>
 @endpush
 
 @push('scripts')
 @if (session('success'))
 <script>
-    window.onload = function() {
-        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-        successModal.show();
-    };
+  window.onload = function () {
+    const el = document.getElementById('successModal');
+    document.body.appendChild(el); 
+    const successModal = new bootstrap.Modal(el);
+    successModal.show();
+  };
 </script>
 @endif
+
 @endpush

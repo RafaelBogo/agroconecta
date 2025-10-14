@@ -10,143 +10,111 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        body {
+        body{
             background-image: url('{{ asset("images/background3.jpg") }}');
             background-size: cover;
             background-position: center;
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
             margin: 0;
-            padding-top: 70px;
-        }
+            padding-top: 70px; /* ajuste se sua navbar mudar de altura */
+            }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1030;
-            background-color: rgba(120, 123, 123, 0.9);
-            box-shadow: 0 4px 10px rgba(0,0,0,.1);
-            opacity: 0.95;
-        }
+                /* NAVBAR (única definição) */
+            .navbar{
+                /* fixed vem do .fixed-top, mas manter aqui não machuca */
+                position: fixed;
+                top: 0; width: 100%; z-index: 1030;
 
-        .navbar .nav-link, .navbar .navbar-brand {
-            color: #fff;
-        }
-        .navbar .nav-link:hover {
-            color: #ddd; text-decoration: underline;
-        }
+                background-color: rgba(120,123,123,0.9);
+                box-shadow: 0 4px 10px rgba(0,0,0,.1);
+                opacity: .95; /* escolha um valor e mantenha só ele */
+            }
+                .navbar .navbar-brand,
+                .navbar .nav-link{
+                color: #fff;
+            }
+                .navbar .nav-link:hover,
+                .navbar .navbar-brand:hover{
+                color: #ddd;
+                text-decoration: underline;
+            }
 
-        .navbar-dark .navbar-toggler {
-            border-color: rgba(255,255,255,.25);
-        }
-        .navbar-dark .navbar-toggler-icon {
-            background-image: var(--bs-navbar-toggler-icon-bg);
-        }
+                /* Centraliza o menu do meio */
+            .navbar .container-fluid{ position: relative; }
+            .navbar .nav-center{
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: .75rem;
+                white-space: nowrap;
+            }
 
-        @media (max-width: 991.98px) {
-            .navbar-nav .nav-link { padding: .5rem 1rem; }
-        }
+                /* Toggler */
+            .navbar-dark .navbar-toggler{ border-color: rgba(255,255,255,.25); }
+            .navbar-dark .navbar-toggler-icon{ background-image: var(--bs-navbar-toggler-icon-bg); }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1030;
-            background-color: rgba(120, 123, 123, 0.9);
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            opacity: 0.9;
-        }
+                /* Mobile */
+            @media (max-width: 991.98px){
+            .navbar .nav-center{
+                position: static;
+                transform: none;
+                width: 100%;
+                justify-content: center;
+            }
+            .navbar-nav .nav-link{ padding: .5rem 1rem; }
+            }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-        }
+                /* CONTENT BOX e FOOTER — mantidos como estavam */
+            .content-box{
+                background: rgba(255,255,255,.85);
+                backdrop-filter: blur(5px);
+                border-radius: 20px;
+                padding: 40px;
+                box-shadow: 0 6px 15px rgba(0,0,0,.3);
+                max-width: 1200px; width: 100%;
+                margin: 50px auto;
+                max-height: 80vh; overflow-y: auto;
+                }
+                /* scrollbars */
+            .content-box::-webkit-scrollbar{ width: 35px; }
+            .content-box::-webkit-scrollbar-track{ background: rgba(245,245,245,.9); border-radius: 20px; }
+            .content-box::-webkit-scrollbar-thumb{ background-color: rgba(120,120,120,.6); border-radius: 20px; }
+            .content-box::-webkit-scrollbar-thumb:hover{ background-color: rgba(100,100,100,.9); }
 
-        .navbar a:hover {
-            text-decoration: underline;
-            color: #ccc;
-        }
+                /* Botão voltar */
+                .btn-voltar{
+                background:#fff; color:#111827; border:1px solid rgba(0,0,0,.12);
+                border-radius:10px; padding:8px 12px; font-weight:500;
+                display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+                transition: background .15s, color .15s, transform .15s, box-shadow .15s, border-color .15s;
+                }
+            .btn-voltar:hover{
+                background: rgba(25,135,84,.1); color:#198754; border-color: rgba(25,135,84,.3);
+                transform: translateY(-1px); box-shadow:0 6px 16px rgba(17,24,39,.08);
+                }
+            .btn-voltar:focus-visible{ outline:2px solid rgba(25,135,84,.35); outline-offset:2px; }
+            .btn-voltar .bi{ font-size:1rem; }
 
-        .content-box {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(5px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
-            max-width: 1200px;
-            width: 100%;
-            margin: 50px auto;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .content-box::-webkit-scrollbar {
-            width: 35px;
-        }
-
-        .content-box::-webkit-scrollbar-track {
-            background: rgba(245, 245, 245, 0.9);
-            border-radius: 20px;
-        }
-
-        .content-box::-webkit-scrollbar-thumb {
-            background-color: rgba(120, 120, 120, 0.6);
-            border-radius: 20px;
-        }
-
-        .content-box::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(100, 100, 100, 0.9);
-        }
-
-        .btn-voltar{
-            background: #fff;
-            color: #111827;
-            border: 1px solid rgba(0,0,0,.12);
-            border-radius: 10px;
-            padding: 8px 12px;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            transition: background .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-        }
-        .btn-voltar:hover{
-            background: rgba(25,135,84,.10);
-            color: #198754;
-            border-color: rgba(25,135,84,.30);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(17,24,39,.08);
-            text-decoration: none;
-        }
-        .btn-voltar:focus-visible{
-            outline: 2px solid rgba(25,135,84,.35);
-            outline-offset: 2px;
-        }
-        .btn-voltar .bi{ font-size: 1rem; }
-
-        .site-footer{
-            background: rgba(33,37,41,.92);
-            color: #f8f9fa;
-            border-top: 1px solid rgba(255,255,255,.08);
-        }
-        .site-footer a{ color:#e2e6ea; text-decoration:none; }
-        .site-footer a:hover{ color:#ffffff; text-decoration:underline; }
-        .site-footer__brand{ display:flex; align-items:center; gap:.75rem; }
-        .site-footer__logo{ width:36px; height:36px; border-radius:10px; object-fit:cover; }
-        .site-footer__muted{ color:#cfd4da; }
-        .site-footer__divider{ border-top:1px solid rgba(255,255,255,.08); margin-top:.75rem; }
-        .social a{
-            width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;
-            border:1px solid rgba(255,255,255,.12); border-radius:10px; background:transparent;
-            transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-        }
-        .social a:hover{
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,.15);
-            border-color: rgba(255,255,255,.3);
-        }
+                /* Footer */
+            .site-footer{ background: rgba(33,37,41,.92); color:#f8f9fa; border-top:1px solid rgba(255,255,255,.08); }
+            .site-footer a{ color:#e2e6ea; text-decoration:none; }
+            .site-footer a:hover{ color:#fff; text-decoration:underline; }
+            .site-footer__brand{ display:flex; align-items:center; gap:.75rem; }
+            .site-footer__logo{ width:36px; height:36px; border-radius:10px; object-fit:cover; }
+            .site-footer__muted{ color:#cfd4da; }
+            .site-footer__divider{ border-top:1px solid rgba(255,255,255,.08); margin-top:.75rem; }
+            .social a{
+                width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center;
+                border:1px solid rgba(255,255,255,.12); border-radius:10px; background:transparent;
+                transition: transform .15s, box-shadow .15s, border-color .15s;
+            }
+            .social a:hover{
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0,0,0,.15);
+                border-color: rgba(255,255,255,.3);
+            }
     </style>
     @stack('styles')
 </head>
@@ -162,13 +130,14 @@
             </button>
 
             <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav mx-lg-auto my-2 my-lg-0">
+            <ul class="navbar-nav nav-center my-2 my-lg-0">
                 <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Início</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('products.show') }}">Produtos</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('sell.cadastroProduto') }}">Vender</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('chat.inbox') }}">Mensagens</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a></li>
             </ul>
+            
 
             <ul class="navbar-nav ms-lg-auto">
                 <li class="nav-item"><a class="nav-link px-lg-3" href="{{ route('minha.conta') }}">Minha Conta</a></li>
@@ -211,6 +180,7 @@
                     <small class="site-footer__muted">Conectando agricultores locais e consumidores.</small>
                 </div>
                 </div>
+                
 
                 <p class="mt-3 mb-2 site-footer__muted">
                 Nossa missão é aproximar quem produz com quem consome, fortalecendo a economia local e a agricultura sustentável.
