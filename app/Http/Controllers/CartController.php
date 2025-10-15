@@ -23,31 +23,30 @@ use MercadoPago\Exceptions\MPApiException;
 
 class CartController extends Controller
 {
-    public function viewCart(Request $request)
+   public function viewCart(Request $request)
 {
     $this->ensureLogged();
 
     $rows = DB::table('cart_items')
-    ->where('cart_items.user_id', Auth::id())   // << AQUI
-    ->join('products', 'products.id', '=', 'cart_items.product_id')
-    ->select(
-        'cart_items.product_id',
-        'cart_items.quantity',
-        'products.name',
-        'products.photo',
-        'products.price'
-    )
-    ->get();
-
+        ->where('cart_items.user_id', Auth::id())
+        ->join('products', 'products.id', '=', 'cart_items.product_id')
+        ->select(
+            'cart_items.product_id',
+            'cart_items.quantity',
+            'products.name',
+            'products.photo',
+            'products.price'
+        )
+        ->get();
 
     $cartItems = $rows->map(function ($r) {
         return [
-            'id'       => $r->product_id,
+            'id'       => (int) $r->product_id,     
             'name'     => $r->name,
             'price'    => (float) $r->price,
             'photo'    => $r->photo,
-            'quantity' => (int) $r->quantity,
-            'subtotal' => (float) $r->price * (int) $r->quantity,
+            'quantity' => (float) $r->quantity,     
+            'subtotal' => (float) $r->price * (float) $r->quantity,
         ];
     })->toArray();
 
@@ -55,6 +54,7 @@ class CartController extends Controller
 
     return view('cart.view', compact('cartItems'));
 }
+
 
 
   public function addToCart(Request $request)
@@ -71,19 +71,21 @@ class CartController extends Controller
     ]);
 
     $product  = Product::findOrFail($request->product_id);
-    $quantity = (int) max(1, floor((float) $request->quantity)); 
+    $quantity = (float) $request->quantity;
 
+    // quantidade atual
     $existing = DB::table('cart_items')
         ->where('user_id', Auth::id())
         ->where('product_id', $product->id)
         ->first();
 
-    $currentQty = $existing ? (int) $existing->quantity : 0;
+    $currentQty = $existing ? (float) $existing->quantity : 0.0;
 
-    if ($currentQty + $quantity > (int) $product->stock) {
+    // estoque
+    if ($currentQty + $quantity > (float) $product->stock) {
         return response()->json([
             'success' => false,
-            'error'   => "Estoque insuficiente! Apenas {$product->stock} unidade(s) disponível(is)."
+            'error'   => "Estoque insuficiente! Apenas {$product->stock} disponível.",
         ], 400);
     }
 
@@ -91,14 +93,14 @@ class CartController extends Controller
         DB::table('cart_items')
             ->where('id', $existing->id)
             ->update([
-                'quantity'   => $currentQty + $quantity,
+                'quantity'   => round($currentQty + $quantity, 3),
                 'updated_at' => now(),
             ]);
     } else {
         DB::table('cart_items')->insert([
             'user_id'    => Auth::id(),
             'product_id' => $product->id,
-            'quantity'   => $quantity,
+            'quantity'   => round($quantity, 3),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -110,9 +112,57 @@ class CartController extends Controller
         'quantity'  => $quantity,
     ]);
 
+    return response()->json(['success' => true, 'message' => 'Produto adicionado ao carrinho com sucesso!']);
+}
+public function updateCart(Request $request, $id)
+{
+    $this->ensureLogged();
+
+    $request->merge(['quantity' => str_replace(',', '.', (string) $request->quantity)]);
+    $request->validate([
+        'quantity' => 'required|numeric|min:0.01',
+    ]);
+
+    $product = Product::findOrFail($id);
+    $qty     = (float) $request->quantity;
+
+    if ($qty > (float) $product->stock) {
+        return response()->json([
+            'success' => false,
+            'message' => "Estoque insuficiente! Restam {$product->stock}.",
+        ], 400);
+    }
+
+    $updated = DB::table('cart_items')
+        ->where('user_id', Auth::id())
+        ->where('product_id', $product->id)
+        ->update(['quantity' => round($qty, 3), 'updated_at' => now()]);
+
+    if (!$updated) {
+        // se ainda não existe cria
+        DB::table('cart_items')->insert([
+            'user_id'    => Auth::id(),
+            'product_id' => $product->id,
+            'quantity'   => round($qty, 3),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    // calcula o subtotal e o total
+    $subtotal = round(((float) $product->price) * $qty, 2);
+    $rows = DB::table('cart_items')
+        ->where('cart_items.user_id', Auth::id())
+        ->join('products', 'products.id', '=', 'cart_items.product_id')
+        ->select('products.price', 'cart_items.quantity')
+        ->get();
+
+    $total = $rows->reduce(fn($c,$r) => $c + ( (float)$r->price * (float)$r->quantity ), 0.0);
+
     return response()->json([
-        'success' => true,
-        'message' => 'Produto adicionado ao carrinho com sucesso!'
+        'success'  => true,
+        'subtotal' => $subtotal,
+        'total'    => round($total, 2),
     ]);
 }
 
@@ -121,27 +171,28 @@ class CartController extends Controller
 {
     $this->ensureLogged();
 
-    $request->validate([
-        'item_id' => 'required|integer', 
-    ]);
+    $itemId = $request->input('item_id', $request->query('item_id'));
+    if (!$itemId || !is_numeric($itemId)) {
+        return response()->json(['error' => 'Parâmetro item_id ausente.'], 422);
+    }
+    $itemId = (int) $itemId;
 
-   $deleted = DB::table('cart_items')
-    ->where('cart_items.user_id', Auth::id())   
-    ->where('cart_items.product_id', (int) $request->item_id)
-    ->delete();
+    $deleted = DB::table('cart_items')
+        ->where('cart_items.user_id', Auth::id())
+        ->where('cart_items.product_id', $itemId)
+        ->delete();
 
     if (!$deleted) {
         return response()->json(['error' => 'Item não encontrado no carrinho.'], 404);
     }
 
-
     $rows = DB::table('cart_items')
-    ->where('cart_items.user_id', Auth::id()) 
-    ->join('products','products.id','=','cart_items.product_id')
-    ->select('products.price','cart_items.quantity')
-    ->get();
+        ->where('cart_items.user_id', Auth::id())
+        ->join('products','products.id','=','cart_items.product_id')
+        ->select('products.price','cart_items.quantity')
+        ->get();
 
-    $total = $rows->reduce(fn($c,$r) => $c + ((float)$r->price * (int)$r->quantity), 0.0);
+    $total = $rows->reduce(fn($c,$r) => $c + ((float)$r->price * (float)$r->quantity), 0.0);
 
     return response()->json([
         'success' => 'Item removido do carrinho com sucesso!',
@@ -149,18 +200,19 @@ class CartController extends Controller
     ]);
 }
 
+
    public function getCartSummary()
 {
     $this->ensureLogged();
 
     $rows = DB::table('cart_items')
-    ->where('cart_items.user_id', Auth::id())   // << AQUI
+    ->where('cart_items.user_id', Auth::id())   
     ->join('products','products.id','=','cart_items.product_id')
     ->select('products.price','cart_items.quantity')
     ->get();
 
 
-    $total = $rows->reduce(fn($c,$r) => $c + ((float)$r->price * (int)$r->quantity), 0.0);
+    $total = $rows->reduce(fn($c,$r) => $c + ((float)$r->price * (float)$r->quantity), 0.0);
 
     return response()->json(['total' => $total]);
 }
@@ -191,17 +243,21 @@ class CartController extends Controller
 
     $items  = [];
     $total  = 0.0;
-    $sumQty = 0;
+    $sumQty = 0.0;
 
     foreach ($rows as $idx => $r) {
-        $qtd   = max(1, (int) $r->quantity);
-        $preco = round((float) $r->price, 2);
-        if ($preco <= 0) continue;
+        $qty   = (float) $r->quantity;
+        $price = round((float) $r->price, 2);
+        if ($price <= 0) continue;
 
+        $title = $r->name ?? "Produto {$r->pid}";
+        $title .= ' (' . rtrim(rtrim(number_format($qty, 3, ',', ''), '0'), ',') . ')';
+
+    
         $row = [
-            'title'       => $r->name ?? "Produto {$r->pid}",
-            'quantity'    => $qtd,
-            'unit_price'  => $preco,
+            'title'       => $title,
+            'quantity'    => 1,
+            'unit_price'  => round($price * $qty, 2),
             'currency_id' => 'BRL',
         ];
         if (!empty($r->photo)) {
@@ -209,14 +265,11 @@ class CartController extends Controller
         }
 
         $items[]  = $row;
-        $total   += $preco * $qtd;
-        $sumQty  += $qtd;
+        $total   += $row['unit_price'];
+        $sumQty  += $qty;
     }
 
-    if (!count($items)) {
-        return response()->json(['error' => 'Itens inválidos no carrinho'], 422);
-    }
-
+    
     $orderPayload = [
         'user_id'     => Auth::id(),
         'total_price' => round($total, 2),
@@ -244,9 +297,7 @@ class CartController extends Controller
     $accessToken = config('services.mercadopago.token') ?? env('MP_ACCESS_TOKEN');
     if (!is_string($accessToken) || trim($accessToken) === '') {
         \Log::error('MP access token ausente. Defina MP_ACCESS_TOKEN no .env e services.php.');
-        return response()->json([
-            'error' => 'Configuração do Mercado Pago ausente. Defina MP_ACCESS_TOKEN no .env.'
-        ], 500);
+        return response()->json(['error' => 'Configuração do Mercado Pago ausente. Defina MP_ACCESS_TOKEN no .env.'], 500);
     }
 
     MercadoPagoConfig::setAccessToken($accessToken);
@@ -279,7 +330,7 @@ class CartController extends Controller
         return response()->json([
             'preference_id' => $pref->id,
             'order_id'      => $order->id,
-        ]);
+        ], 200, [], JSON_UNESCAPED_UNICODE);
     } catch (MPApiException $e) {
         $resp    = $e->getApiResponse();
         $status  = method_exists($resp, 'getStatusCode') ? $resp->getStatusCode() : null;
@@ -293,14 +344,13 @@ class CartController extends Controller
             'items'   => $items,
         ]);
 
-        return response()->json([
-            'mp_error' => $contentForLog ?: $e->getMessage()
-        ], $status ?: 500);
+        return response()->json(['mp_error' => $contentForLog ?: $e->getMessage()], $status ?: 500);
     } catch (\Throwable $e) {
         \Log::error('[MP Preference Throwable]', ['msg' => $e->getMessage()]);
         return response()->json(['error' => $e->getMessage()], 500);
     }
 }
+
 
     private function ensureLogged(): void
 {
