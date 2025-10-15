@@ -71,7 +71,7 @@ class ProductController extends Controller
 
     public function showProducts(Request $request)
     {
-        $query = Product::query();
+        $query = Product::where('is_active', true);
 
         if ($request->filled('product')) {
             $query->where('name', 'like', '%' . $request->product . '%');
@@ -90,7 +90,8 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $query = Product::query();
+        $query = Product::where('is_active', true);
+
 
         // Filtros
         if ($request->filled('product')) {
@@ -123,17 +124,6 @@ class ProductController extends Controller
         return view('account.myProducts', compact('products'));
     }
 
-    public function destroy($id)
-    {
-        $product = Product::where('id', $id)->where('user_id', auth()->id())->first();
-
-        if ($product) {
-            $product->delete();
-            return response()->json(['success' => true]);
-        }
-
-        return response()->json(['success' => false, 'message' => 'Product not found.']);
-    }
 
     public function edit($id)
     {
@@ -178,6 +168,20 @@ class ProductController extends Controller
 
         return redirect()->back()->with('success', 'Produto atualizado com sucesso!');
     }
+//classe para produto ativo ou nao
+    public function toggleActive($id)
+    {
+        $product = Product::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
 
+        $product->is_active = !$product->is_active;
+        $product->save();
+
+        return redirect()->back()->with(
+            'success',
+            $product->is_active ? 'Produto ativado com sucesso!' : 'Produto inativado com sucesso!'
+        );
+    }
 
 }

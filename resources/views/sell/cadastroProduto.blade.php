@@ -82,12 +82,7 @@
         <option value="dz"     @selected(old('unit')==='dz')>Dúzia (dz)</option>
         <option value="kg"     @selected(old('unit')==='kg')>Quilo (kg)</option>
         <option value="g"      @selected(old('unit')==='g')>Grama (g)</option>
-        <option value="t"      @selected(old('unit')==='t')>Tonelada (t)</option>
         <option value="l"      @selected(old('unit')==='l')>Litro (L)</option>
-        <option value="ml"     @selected(old('unit')==='ml')>Mililitro (mL)</option>
-        <option value="saca60" @selected(old('unit')==='saca60')>Saca 60 kg</option>
-        <option value="caixa"  @selected(old('unit')==='caixa')>Caixa</option>
-        <option value="maco"   @selected(old('unit')==='maco')>Maço</option>
         <option value="bandeja"@selected(old('unit')==='bandeja')>Bandeja</option>
       </select>
 

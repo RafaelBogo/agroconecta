@@ -31,7 +31,13 @@
       </div>
 
     <div class="middle">
-      <h5 class="name m-0">{{ $product->name }}</h5>
+      <h5 class="name m-0">
+        {{ $product->name }}
+        @unless($product->is_active)
+          <span class="badge bg-secondary ms-2">Inativo</span>
+        @endunless
+      </h5>
+
 
     <div class="meta">
       @if(!is_null($product->stock))
@@ -51,9 +57,19 @@
       <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-outline-primary">
         <i class="bi bi-pencil-square me-1"></i> Editar
       </a>
-      <button type="button" class="btn btn-sm btn-outline-danger delete-button" data-id="{{ $product->id }}">
-        <i class="bi bi-trash3 me-1"></i> Deletar
-      </button>
+
+      <form action="{{ route('products.toggleActive', $product->id) }}" method="POST" class="d-inline">
+        @csrf
+          <button class="btn btn-sm btn-{{ $product->is_active ? 'warning' : 'success' }}">
+        @if($product->is_active)
+          <i class="bi bi-pause-circle me-1"></i> Inativar
+        @else
+          <i class="bi bi-play-circle me-1"></i> Ativar
+        @endif
+        </button>
+      </form>
+
+
     </div>
   </div>
 </div>
@@ -66,25 +82,6 @@
     </a>
 
 @endsection
-
-@push('modals')
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Deletar Produto</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body">Tem certeza que deseja deletar este produto?</div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-danger confirm-delete">Deletar</button>
-      </div>
-    </div>
-  </div>
-</div>
-@endpush
-
 
 @push('styles')
 <style>
@@ -119,61 +116,4 @@
 
   .btn-voltar{ margin-top: 18px; }
 </style>
-@endpush
-
-@push('scripts')
-<script>
-  const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
-
-
-  const delModalEl = document.getElementById('deleteModal');
-  const delModal   = bootstrap.Modal.getOrCreateInstance(delModalEl);
-
-  document.addEventListener('hidden.bs.modal', () => {
-    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-    document.body.classList.remove('modal-open');
-    document.body.style.removeProperty('padding-right');
-  });
-
- 
-  let currentId = null;
-  let currentRow = null;
-  let currentUrl = null;
-
-
-  document.addEventListener('click', (ev) => {
-    const btn = ev.target.closest('.delete-button');
-    if (!btn) return;
-
-    currentId  = btn.getAttribute('data-id');
-    currentRow = btn.closest('.product-item');
-    currentUrl = btn.getAttribute('data-delete-url') || `/products/${currentId}`;
-
-    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-    document.body.classList.remove('modal-open');
-    document.body.style.removeProperty('padding-right');
-
-    delModal.show();
-  });
-
-  document.querySelector('.confirm-delete')?.addEventListener('click', async () => {
-    if (!currentUrl) return;
-    try {
-      const r = await fetch(currentUrl, {
-        method: 'DELETE',
-        headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' }
-      });
-      if (!r.ok) throw new Error('Falha ao deletar');
-      try { await r.json(); } catch(_) {}
-
-      if (currentRow) currentRow.remove();
-      delModal.hide();
-    } catch (e) {
-      console.error(e);
-      alert('Ocorreu um erro ao deletar o produto.');
-    } finally {
-      currentId = null; currentRow = null; currentUrl = null;
-    }
-  });
-</script>
 @endpush

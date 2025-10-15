@@ -111,10 +111,16 @@ Route::put('/meus-dados', [UserController::class, 'update'])->name('user.update'
 // ===============================
 Route::middleware('auth')->group(function () {
     Route::get('/account/my-products', [ProductController::class, 'myProducts'])->name('account.myProducts');
-    Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
 });
+
+// ===============================
+// Rotas de Produtos do Usuário Para Inatividade ou Atividade
+// ===============================
+Route::post('/products/{id}/toggle-active', [ProductController::class, 'toggleActive'])
+    ->middleware('auth')
+    ->name('products.toggleActive');
 
 // ===============================
 // Rotas de Verificação de E-mail
