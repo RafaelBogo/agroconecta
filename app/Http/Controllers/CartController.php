@@ -41,11 +41,11 @@ class CartController extends Controller
 
     $cartItems = $rows->map(function ($r) {
         return [
-            'id'       => (int) $r->product_id,     
+            'id'       => (int) $r->product_id,
             'name'     => $r->name,
             'price'    => (float) $r->price,
             'photo'    => $r->photo,
-            'quantity' => (float) $r->quantity,     
+            'quantity' => (float) $r->quantity,
             'subtotal' => (float) $r->price * (float) $r->quantity,
         ];
     })->toArray();
@@ -206,7 +206,7 @@ public function updateCart(Request $request, $id)
     $this->ensureLogged();
 
     $rows = DB::table('cart_items')
-    ->where('cart_items.user_id', Auth::id())   
+    ->where('cart_items.user_id', Auth::id())
     ->join('products','products.id','=','cart_items.product_id')
     ->select('products.price','cart_items.quantity')
     ->get();
@@ -253,7 +253,7 @@ public function updateCart(Request $request, $id)
         $title = $r->name ?? "Produto {$r->pid}";
         $title .= ' (' . rtrim(rtrim(number_format($qty, 3, ',', ''), '0'), ',') . ')';
 
-    
+
         $row = [
             'title'       => $title,
             'quantity'    => 1,
@@ -269,7 +269,7 @@ public function updateCart(Request $request, $id)
         $sumQty  += $qty;
     }
 
-    
+
     $orderPayload = [
         'user_id'     => Auth::id(),
         'total_price' => round($total, 2),
@@ -295,10 +295,6 @@ public function updateCart(Request $request, $id)
     $pendingUrl = route('orders.pending', ['order' => $order->id]);
 
     $accessToken = config('services.mercadopago.token') ?? env('MP_ACCESS_TOKEN');
-    if (!is_string($accessToken) || trim($accessToken) === '') {
-        \Log::error('MP access token ausente. Defina MP_ACCESS_TOKEN no .env e services.php.');
-        return response()->json(['error' => 'Configuração do Mercado Pago ausente. Defina MP_ACCESS_TOKEN no .env.'], 500);
-    }
 
     MercadoPagoConfig::setAccessToken($accessToken);
     $client = new PreferenceClient();

@@ -14,6 +14,7 @@ class PagoController extends Controller
     public function webhook(Request $request)
     {
         MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
+        //MercadoPagoConfig::setAccessToken("APP_USR-1420545947056567-092319-f7be87d34fbee957e33b8c184f12f5f2-2710625666");
 
         $type   = $request->input('type') ?: $request->input('topic') ?: $request->header('X-Topic');
         $id     = data_get($request->input('data'), 'id') ?? $request->input('id');
