@@ -3,65 +3,7 @@
 @section('title', 'Meus Pedidos')
 @section('boxed', true)
 
-@push('styles')
-    <style>
-        .orders-header{
-            display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:18px;
-        }
-        .orders-header h2{ margin:0; font-weight:800; color:#111827; }
-        .orders-sub{ color:#6b7280; }
 
-        .order-card{
-            border:1px solid rgba(0,0,0,.07);
-            border-radius:16px;
-            padding:16px;
-            background:#fff;
-            box-shadow:0 6px 18px rgba(17,24,39,.06);
-        }
-        .order-grid{
-            display:grid;
-            grid-template-columns: 92px 1fr auto;
-            gap:14px;
-            align-items:start;
-        }
-        @media (max-width: 768px){
-            .order-grid{ grid-template-columns: 72px 1fr; }
-            .order-actions{ grid-column: 1 / -1; }
-        }
-        .order-thumb{
-            width:92px; height:92px; border-radius:12px; object-fit:cover; box-shadow:0 4px 10px rgba(0,0,0,.08);
-        }
-        .kv{ margin:0 0 4px; }
-        .kv strong{ color:#374151; }
-        .status-chip{
-            display:inline-flex; align-items:center; gap:8px;
-            padding:6px 10px; border-radius:999px; font-size:.85rem; font-weight:600;
-            border:1px solid transparent;
-        }
-        .status-processando{ background:#fff7ed; color:#9a3412; border-color:#fed7aa; }
-        .status-confirmado{ background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; }
-        .status-enviado{ background:#ecfeff; color:#0369a1; border-color:#bae6fd; }
-        .status-entregue{ background:#ecfdf5; color:#065f46; border-color:#bbf7d0; }
-        .status-cancelado{ background:#f3f4f6; color:#374151; border-color:#e5e7eb; }
-
-        .timer-pill{
-            display:inline-flex; align-items:center; gap:6px;
-            padding:6px 10px; border-radius:999px; font-size:.85rem; font-weight:600;
-            background:rgba(220,38,38,.06); color:#b91c1c; border:1px solid rgba(220,38,38,.25);
-        }
-        .btn-rounded{ border-radius:12px; }
-        .btn-voltar{
-            background:#fff; color:#111827; border:1px solid rgba(0,0,0,.12);
-            border-radius:10px; padding:8px 12px; font-weight:500; display:inline-flex; align-items:center; gap:8px;
-            text-decoration:none; transition:background .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-        }
-        .btn-voltar:hover{ background:rgba(25,135,84,.10); color:#198754; border-color:rgba(25,135,84,.30); transform:translateY(-1px); box-shadow:0 6px 16px rgba(17,24,39,.08); text-decoration:none; }
-        .empty-state{
-            text-align:center; padding:40px 16px; background:#ffffff; border:1px dashed #e5e7eb; border-radius:16px;
-            color:#6b7280;
-        }
-    </style>
-@endpush
 
 @section('content')
     <div class="orders-header">
@@ -155,6 +97,10 @@
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
 @endsection
+
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('css/account.orders.css') }}">
+@endpush
 
 @push('scripts')
 <script>

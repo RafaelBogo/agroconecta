@@ -1,6 +1,6 @@
 /* Tela de verificação de e-mail */
 body{
-  background-image: url('../images/background4.png'); /* caminho relativo ao /public/css */
+  background-image: url('../images/background4.png');
   background-size: cover;
   background-position: center;
   font-family: 'Arial', sans-serif;
@@ -30,7 +30,7 @@ body{
 
 /* use sua cor de marca aqui */
 .btn-primary{
-  background-color: #2e7d32;  /* <- estava "#"; corrigi */
+  background-color: #2e7d32;  
   border-color: #2e7d32;
   color: #fff !important;
 }

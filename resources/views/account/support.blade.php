@@ -48,9 +48,7 @@
 @endsection
 
 @push('styles')
-<style>
-  .email-text { font-size: 1.1rem; color: #333; word-break: break-word; }
-</style>
+  <link rel="stylesheet" href="{{ asset('css/account.support.css') }}">
 @endpush
 
 @push('scripts')

@@ -74,14 +74,8 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-<style>
-  .list-group .list-group-item + .list-group-item { border-top: 1px solid #eee; }
-  .avatar { width:44px; height:44px; background:#f1f3f5; color:#2b2f33; }
-  .chat-item:hover { background:#f8f9fa; }
-  .text-truncate { max-width:75%; }
-  @media (max-width: 576px){ .text-truncate { max-width:60%; } }
-</style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="{{ asset('css/chat.inbox.css') }}">
 @endpush
 
 @push('scripts')

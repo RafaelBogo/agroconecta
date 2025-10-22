@@ -1,0 +1,31 @@
+
+  h2{ font-weight:800; text-align:center; }
+
+  .products-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+
+  .product-card{
+    display:flex; align-items:center; gap:16px;
+    background: rgba(255,255,255,.92);
+    border:1px solid rgba(255,255,255,.6);
+    border-radius:14px; padding:14px 16px;
+    box-shadow:0 10px 24px rgba(0,0,0,.08);
+  }
+
+  .thumb{ flex:0 0 64px; }
+  .thumb img{ width:64px; height:64px; object-fit:cover; border-radius:10px; }
+
+  .middle{ flex:1; min-width:0; }
+  .name{ font-weight:700; color:#1f2937; margin-bottom:6px; }
+  .meta{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .meta .badge{ background:#f5f6f8 !important; }
+
+  .actions{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px; min-width:220px; text-align:center;
+  }
+  .actions .price{
+    font-weight:800; color:#0f5132;
+  }
+  .actions .btns{ display:flex; gap:8px; }
+
+  .btn-voltar{ margin-top: 18px; }

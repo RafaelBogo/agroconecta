@@ -151,53 +151,7 @@
 @endsection
 
 @push('styles')
-<style>
-    .left-section {
-        flex: 1;
-        padding-right: 20px;
-    }
-
-    .right-section {
-        flex: 2;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .form-control {
-        border-radius: 10px;
-        margin-bottom: 15px;
-        padding: 15px;
-    }
-
-    .form-control:focus {
-        border-color: #4CAF50;
-        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-    }
-
-    .product-image {
-        width: 100%;
-        max-width: 250px;
-        height: auto;
-        border-radius: 10px;
-        margin: 0 auto;
-        position: relative;
-    }
-
-    .btn-container {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
-
-    .btn-success, .btn-secondary {
-        padding: 10px 30px;
-    }
-
-    .btn-secondary {
-        background-color: black;
-        border: none;
-    }
-</style>
+  <link rel="stylesheet" href="{{ asset('css/account.editProduct.css') }}">
 @endpush
 
 @push('scripts')
