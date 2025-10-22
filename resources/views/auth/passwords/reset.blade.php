@@ -6,45 +6,8 @@
     <title>Redefinir Senha</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-image: url('{{ asset("images/background4.png") }}');
-            background-size: cover;
-            background-position: center;
-            font-family: 'Arial', sans-serif;
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    <link rel="stylesheet" href="{{ asset('css/auth.passwords.reset.css') }}">
 
-        .password-container {
-            position: relative;
-        }
-
-        .password-container input {
-            padding-right: 40px;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(10%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            color: #6c757d;
-            display: flex;
-            align-items: center;
-        }
-
-        .toggle-password:hover {
-            color: #343a40;
-        }
-    </style>
 </head>
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
@@ -78,22 +41,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/auth.password.reset.js') }}" defer></script>
 
-    <script>
-        function togglePassword(inputId, iconId) {
-            const passwordField = document.getElementById(inputId);
-            const passwordIcon = document.getElementById(iconId);
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                passwordIcon.classList.remove("bi-eye");
-                passwordIcon.classList.add("bi-eye-slash");
-            } else {
-                passwordField.type = "password";
-                passwordIcon.classList.remove("bi-eye-slash");
-                passwordIcon.classList.add("bi-eye");
-            }
-        }
-    </script>
 </body>
 </html>

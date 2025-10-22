@@ -1,0 +1,50 @@
+
+  .product-wrap{
+    display:grid; grid-template-columns: 1.1fr 1fr; gap:32px;
+  }
+  @media (max-width: 992px){ .product-wrap{ grid-template-columns: 1fr; } }
+
+  .product-image img{
+    width:100%; height:auto; border-radius:16px; box-shadow:0 6px 16px rgba(0,0,0,.12);
+  }
+
+  .product-title{ font-size:2rem; font-weight:700; color:#1f2937; }
+  .product-price{ font-size:1.75rem; font-weight:700; color:#198754; }
+
+  .action-row{ display:flex; gap:12px; flex-wrap:wrap; }
+  .action-row .btn{ border-radius:12px; padding:.65rem 1rem; }
+
+  .reviews h4{ font-weight:700; color:#111827; }
+  .review-item{
+    background:#fff; border:1px solid rgba(0,0,0,.065); border-radius:14px;
+    padding:14px 16px; box-shadow:0 4px 12px rgba(17,24,39,.06);
+  }
+  .reviews-scroll{ max-height:340px; overflow:auto; padding-right:6px; }
+  .reviews-scroll::-webkit-scrollbar{ width:10px; }
+  .reviews-scroll::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.15); border-radius:10px; }
+
+  .description h4, .additional-info h4{ font-weight:700; color:#111827; margin-bottom:14px; }
+  .description p{ color:#374151; }
+
+  .info-grid{ display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:14px; }
+  @media (max-width: 768px){ .info-grid{ grid-template-columns: 1fr; } }
+
+  .info-card{
+    display:flex; align-items:flex-start; gap:12px; background:#fff;
+    border:1px solid rgba(25,135,84,.25); border-radius:16px; padding:14px 16px;
+    box-shadow: 0 6px 16px rgba(25,135,84,.08);
+  }
+  .info-card .icon{
+    display:flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:12px; background: rgba(25,135,84,.10);
+    flex: 0 0 40px;
+  }
+  .info-card .icon .bi{ font-size:1.1rem; color:#198754; }
+  .info-card .label{
+    font-size:.85rem; font-weight:600; color:#065f46; text-transform:uppercase; letter-spacing:.02em;
+  }
+  .info-card .value{ font-size:1rem; color:#111827; margin:0; }
+
+  .btn:focus-visible, a:focus-visible{
+    outline:2px solid rgba(25,135,84,.45); outline-offset:2px;
+  }

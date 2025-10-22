@@ -108,46 +108,6 @@
   </div>
 @endsection
 
-@push('styles')
-<style>
-  .search-card{
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 20px;
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(5px);
-    border-radius: 16px;
-  }
-  .products-card{
-    max-width: 1200px;
-    margin: 0 auto 8px;
-    padding: 16px;
-    background: rgba(255,255,255,0.92);
-    border-radius: 16px;
-  }
-
-  .product-card{
-    transition: transform .15s ease, box-shadow .15s ease;
-    border: none;
-    box-shadow: 0 2px 10px rgba(0,0,0,.08);
-  }
-  .product-card:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 10px 18px rgba(0,0,0,.15);
-  }
-
-  .product-image{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .input-group .form-control,
-  .input-group .form-select { min-height: 42px; }
-  .btn { min-height: 42px; }
-</style>
-@endpush
-
 @push('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -166,3 +126,8 @@
   });
 </script>
 @endpush
+
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('css/products.showProducts.css') }}">
+@endpush
+

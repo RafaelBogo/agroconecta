@@ -7,50 +7,8 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+  <link rel="stylesheet" href="{{ asset('css/auth.register.css') }}">
 
-  <style>
-    :root{ --brand:#2e7d32; --ink:#1f2937; }
-
-    body{
-      background-image: url('{{ asset("images/background4.png") }}');
-      background-size: cover;
-      background-position: center;
-      min-height: 100vh; margin:0;
-      display:flex; align-items:center; justify-content:center;
-    }
-
-    .bg-overlay{ position:fixed; inset:0;
-      background: radial-gradient(80% 60% at 50% 20%, rgba(0,0,0,.20), transparent 70%),
-                  linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.25));
-      pointer-events:none;
-    }
-
-    .card-glass{
-      background: rgba(255,255,255,.95);
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-      border:1px solid rgba(255,255,255,.6);
-      border-radius:16px;
-      box-shadow: 0 20px 45px rgba(0,0,0,.25);
-      width:100%; max-width: 680px;
-    }
-
-    .title{ font-weight:800; letter-spacing:.3px; color:var(--ink); }
-    .form-label{ font-weight:600; color:#374151; }
-    .input-group-text{ background:#f4f6f8; border-right:0; }
-    .input-group .form-control{ border-left:0; }
-    .form-control:focus{
-      border-color: var(--brand);
-      box-shadow: 0 0 0 .2rem rgba(46,125,50,.15);
-    }
-
-    .cta-wrap{ display:flex; justify-content:center; }
-    .btn-cta{ min-width: 585px; }
-
-    .login-link{ color:#000 !important; }
-    .login-link:hover{ text-decoration: underline; }
-
-    .grid{ row-gap:1.25rem; }
-  </style>
 </head>
 <body>
   <div class="bg-overlay"></div>
@@ -184,15 +142,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    function togglePassword(inputId, iconId){
-      const input = document.getElementById(inputId);
-      const icon  = document.getElementById(iconId);
-      const isPwd = input.type === "password";
-      input.type  = isPwd ? "text" : "password";
-      icon.classList.toggle("bi-eye", !isPwd);
-      icon.classList.toggle("bi-eye-slash", isPwd);
-    }
-  </script>
+  <script src="{{ asset('js/auth.register.js') }}" defer></script>
+
 </body>
 </html>

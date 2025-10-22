@@ -6,111 +6,8 @@
     <title>AgroConecta - Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <style>
-    body {
-        background-image: url('{{ asset("images/background4.png") }}');
-        background-size: cover;
-        background-position: center;
-        font-family: 'Arial', sans-serif;
-        height: 100vh;
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+    <link rel="stylesheet" href="{{ asset('css/auth.login.css') }}">
 
-    .login-container {
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 0;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-        max-width: 900px;
-        width: 100%;
-        display: flex;
-        overflow: hidden;
-    }
-
-    .login-left {
-        background-color: #f8f9fa;
-        padding: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40%;
-    }
-
-    .login-left img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .login-right {
-        padding: 40px;
-        width: 60%;
-    }
-
-    .login-right h1 {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 20px;
-        color: #333;
-        text-align: center;
-    }
-
-    .btn-dark {
-        background-color: #343a40;
-    }
-
-    .btn-dark:hover {
-        background-color: #23272b;
-    }
-
-    .password-container {
-        position: relative;
-    }
-
-    .password-container input {
-        padding-right: 40px;
-    }
-
-    .toggle-password {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-24%);
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 18px;
-        color: #6c757d;
-        display: flex;
-        align-items: center;
-        height: 100%;
-    }
-
-    .toggle-password:hover {
-        color: #343a40;
-    }
-
-    .extra-options a {
-        color: black !important;
-        text-decoration: underline !important;
-    }
-
-    @media (max-width: 768px) {
-        .login-left {
-            display: none;
-        }
-
-        .login-right {
-            width: 100%;
-        }
-
-        .login-container {
-            max-width: 400px;
-        }
-    }
-</style>
 </head>
 <body>
     <div class="container d-flex justify-content-center align-items-center h-100">
@@ -160,21 +57,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function togglePassword() {
-            const passwordField = document.getElementById("password");
-            const passwordIcon = document.getElementById("password-icon");
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                passwordIcon.classList.remove("bi-eye");
-                passwordIcon.classList.add("bi-eye-slash");
-            } else {
-                passwordField.type = "password";
-                passwordIcon.classList.remove("bi-eye-slash");
-                passwordIcon.classList.add("bi-eye");
-            }
-        }
-    </script>
+    <script src="{{ asset('js/auth.login.js') }}" defer></script>
 </body>
 </html>

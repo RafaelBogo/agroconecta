@@ -3,99 +3,6 @@
 @section('title', 'Minha Conta')
 @section('boxed', true)
 
-@push('styles')
-<style>
-  .account-container{
-    display:flex;
-    flex-direction:column;
-    gap:22px;
-  }
-
-  .options-grid{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    width: 100%;
-   }
-
-  .option-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(8px);
-    border-radius: 14px;
-    padding: 18px 14px;
-    text-decoration: none;
-    color: #111827;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-  }
-
-  .option-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-    border-color: rgba(25, 135, 84, 0.4);
-  }
-
-  .option-icon {
-    width: 56px;
-    height: 56px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: linear-gradient(180deg, #e8f5ee, #d5efe3);
-    border: 1px solid rgba(25, 135, 84, 0.25);
-  }
-
-  .option-icon i {
-    font-size: 1.6rem;
-    color: #198754;
-  }
-
-  .option-card h5 {
-    font-weight: 700;
-    font-size: 1.05rem;
-    margin: 4px 0 0;
-    color: #0f172a;
-  }
-
-  .option-card p {
-    margin: 0;
-    font-size: 0.92rem;
-    color: #374151;
-  }
-
-  .btn-voltar{
-    align-self:flex-start;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:8px 12px;
-    border-radius:10px;
-    text-decoration:none;
-    background:#fff;
-    color:#111827;
-    border:1px solid rgba(0,0,0,.12);
-    transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
-  }
-
-  .btn-voltar:hover{
-    background:#f7f9fa;
-    transform:translateY(-1px);
-    box-shadow:0 6px 16px rgba(17,24,39,.08);
-  }
-
-  @media (max-width: 420px){
-    .option-card{ padding:16px 12px; }
-    .option-icon{ width:52px; height:52px; }
-  }
-</style>
-@endpush
-
 @section('content')
 <div class="account-container">
 
@@ -142,3 +49,7 @@
   </a>
 </div>
 @endsection
+
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('css/minhaConta.css') }}">
+@endpush

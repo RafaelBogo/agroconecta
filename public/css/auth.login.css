@@ -1,0 +1,101 @@
+    body{
+    background: url('../images/background4.png') center / cover no-repeat fixed;
+     font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    .login-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 0;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        max-width: 900px;
+        width: 100%;
+        display: flex;
+        overflow: hidden;
+    }
+
+    .login-left {
+        background-color: #f8f9fa;
+        padding: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40%;
+    }
+
+    .login-left img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .login-right {
+        padding: 40px;
+        width: 60%;
+    }
+
+    .login-right h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+
+    .btn-dark {
+        background-color: #343a40;
+    }
+
+    .btn-dark:hover {
+        background-color: #23272b;
+    }
+
+    .password-container {
+        position: relative;
+    }
+
+    .password-container input {
+        padding-right: 40px;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-24%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+
+    .toggle-password:hover {
+        color: #343a40;
+    }
+
+    .extra-options a {
+        color: black !important;
+        text-decoration: underline !important;
+    }
+
+    @media (max-width: 768px) {
+        .login-left {
+            display: none;
+        }
+
+        .login-right {
+            width: 100%;
+        }
+
+        .login-container {
+            max-width: 400px;
+        }
+    }

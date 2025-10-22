@@ -63,25 +63,6 @@
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<style>
-  .dashboard-hero{
-    min-height: calc(100vh - 120px);
-    padding: 24px 12px;
-  }
-  .search-card{
-    width: 100%;
-    max-width: 900px;
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(5px);
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-  }
-  @media (max-width: 576px){
-    .search-card{ padding: 20px; }
-  }
-</style>
-@endpush
 
 @push('scripts')
 <script>
@@ -100,4 +81,8 @@
     });
   });
 </script>
+@endpush
+
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 @endpush

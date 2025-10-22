@@ -17,18 +17,16 @@
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
             margin: 0;
-            padding-top: 70px; /* ajuste se sua navbar mudar de altura */
+            padding-top: 70px;
             }
 
-                /* NAVBAR (única definição) */
             .navbar{
-                /* fixed vem do .fixed-top, mas manter aqui não machuca */
                 position: fixed;
                 top: 0; width: 100%; z-index: 1030;
 
                 background-color: rgba(120,123,123,0.9);
                 box-shadow: 0 4px 10px rgba(0,0,0,.1);
-                opacity: .95; /* escolha um valor e mantenha só ele */
+                opacity: .95;
             }
                 .navbar .navbar-brand,
                 .navbar .nav-link{
@@ -40,7 +38,6 @@
                 text-decoration: underline;
             }
 
-                /* Centraliza o menu do meio */
             .navbar .container-fluid{ position: relative; }
             .navbar .nav-center{
                 position: absolute;
@@ -51,11 +48,9 @@
                 white-space: nowrap;
             }
 
-                /* Toggler */
             .navbar-dark .navbar-toggler{ border-color: rgba(255,255,255,.25); }
             .navbar-dark .navbar-toggler-icon{ background-image: var(--bs-navbar-toggler-icon-bg); }
 
-                /* Mobile */
             @media (max-width: 991.98px){
             .navbar .nav-center{
                 position: static;
@@ -66,7 +61,6 @@
             .navbar-nav .nav-link{ padding: .5rem 1rem; }
             }
 
-                /* CONTENT BOX e FOOTER — mantidos como estavam */
             .content-box{
                 background: rgba(255,255,255,.85);
                 backdrop-filter: blur(5px);
@@ -137,7 +131,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('chat.inbox') }}">Mensagens</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a></li>
             </ul>
-            
+
 
             <ul class="navbar-nav ms-lg-auto">
                 <li class="nav-item"><a class="nav-link px-lg-3" href="{{ route('minha.conta') }}">Minha Conta</a></li>
@@ -180,7 +174,7 @@
                     <small class="site-footer__muted">Conectando agricultores locais e consumidores.</small>
                 </div>
                 </div>
-                
+
 
                 <p class="mt-3 mb-2 site-footer__muted">
                 Nossa missão é aproximar quem produz com quem consome, fortalecendo a economia local e a agricultura sustentável.
