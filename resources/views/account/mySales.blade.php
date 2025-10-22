@@ -140,96 +140,28 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script>
+  {{-- Dados renderizados pelo Blade em JSON --}}
+  <script id="sales-data" type="application/json">
+    {
+      "labelsDias": @json($labelsDias),
+      "serieVendas": @json($serieVendas),
+      "seriePedidos": @json($seriePedidos),
+      "serieAov": @json($serieAov),
 
-  const labelsDias   = @json($labelsDias);
-  const serieVendas  = @json($serieVendas);
-  const seriePedidos = @json($seriePedidos);
-  const serieAov     = @json($serieAov);
+      "labelsProdutosQty": @json($labelsProdutosQty),
+      "serieUnidadesProdutos": @json($serieUnidadesProdutos),
 
-  const labelsProdutosQty      = @json($labelsProdutosQty);
-  const serieUnidadesProdutos  = @json($serieUnidadesProdutos);
+      "labelsStatus": @json($labelsStatus),
+      "serieStatus": @json($serieStatus),
 
-  const labelsStatus = @json($labelsStatus);
-  const serieStatus  = @json($serieStatus);
-
-  const labelsHoras  = @json($labelsHoras);
-  const seriePedidosHora = @json($seriePedidosHora);
-
-  // Paleta
-  const green='rgba(25,135,84,0.9)', greenL='rgba(25,135,84,0.25)';
-  const blue='rgba(13,110,253,0.9)',  blueL='rgba(13,110,253,0.2)';
-  const colors=['#198754','#0d6efd','#ffc107','#dc3545','#6f42c1','#20c997','#fd7e14','#6c757d'];
-
-  // Vendas x pedidos por dia
-  new Chart(document.getElementById('chartVendasPedidos'), {
-    type:'bar',
-    data:{ labels:labelsDias, datasets:[
-      { type:'line', label:'Vendas (R$)', data:serieVendas, yAxisID:'y',
-        borderColor:green, backgroundColor:greenL, borderWidth:2, tension:0.3, pointRadius:0 },
-      { type:'bar', label:'Pedidos', data:seriePedidos, yAxisID:'y1',
-        backgroundColor:blueL, borderColor:blue, borderWidth:1, borderRadius:6, maxBarThickness:24 }
-    ]},
-    options:{
-      responsive:true, maintainAspectRatio:false, interaction:{mode:'index', intersect:false},
-      scales:{
-        y:{ position:'left', beginAtZero:true,
-            ticks:{ callback:v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) },
-            grid:{ drawOnChartArea:false } },
-        y1:{ position:'right', beginAtZero:true, grid:{ drawOnChartArea:false } },
-        x:{ grid:{ display:false } }
-      },
-      plugins:{
-        legend:{ labels:{ usePointStyle:true }},
-        tooltip:{ callbacks:{
-          label:(ctx)=> ctx.dataset.label.includes('Vendas')
-            ? `${ctx.dataset.label}: ${ctx.raw.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}`
-            : `${ctx.dataset.label}: ${ctx.raw}`
-        }}
-      }
+      "labelsHoras": @json($labelsHoras),
+      "seriePedidosHora": @json($seriePedidosHora)
     }
-  });
+  </script>
 
-  // Ticket médio por dia
-  new Chart(document.getElementById('chartAovDia'), {
-    type:'line',
-    data:{ labels:labelsDias, datasets:[{
-      label:'Ticket médio (R$)', data:serieAov,
-      borderColor:blue, backgroundColor:blueL, borderWidth:2, tension:0.3, pointRadius:2
-    }]},
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      scales:{
-        y:{ beginAtZero:true, ticks:{ callback:v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) }},
-        x:{ grid:{ display:false } }
-      }
-    }
-  });
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
 
-  // Pedidos por horário
-  new Chart(document.getElementById('chartPedidosHora'), {
-    type:'bar',
-    data:{ labels:labelsHoras, datasets:[{
-      label:'Pedidos', data:seriePedidosHora, backgroundColor:greenL, borderColor:green, borderWidth:1.5, borderRadius:6
-    }]},
-    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true }, x:{ grid:{ display:false } } }, plugins:{ legend:{ display:false } } }
-  });
-
-  // Top 5 produtos
-  new Chart(document.getElementById('chartTopProdutosQty'), {
-    type:'bar',
-    data:{ labels:labelsProdutosQty, datasets:[{
-      label:'Unidades', data:serieUnidadesProdutos, backgroundColor:blueL, borderColor:blue, borderWidth:1.5, borderRadius:8
-    }]},
-    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{ beginAtZero:true, grid:{ drawBorder:false } }, y:{ grid:{ display:false } } }, plugins:{ legend:{ display:false } } }
-  });
-
-  // Rosca de status
-  new Chart(document.getElementById('chartStatus'), {
-    type:'doughnut',
-    data:{ labels:labelsStatus, datasets:[{ data:serieStatus, backgroundColor:labelsStatus.map((_,i)=>colors[i%colors.length]), borderColor:'#fff', borderWidth:1 }]},
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' } }, cutout:'60%' }
-  });
-</script>
+  <script src="{{ asset('js/account.mySales.js') }}" defer></script>
 @endpush
+

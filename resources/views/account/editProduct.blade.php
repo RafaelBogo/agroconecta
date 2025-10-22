@@ -132,22 +132,28 @@
     </div>
 
     <!-- Modal de Sucesso -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    O produto foi atualizado com sucesso!
-                </div>
-                <div class="modal-footer">
-                    <a href="{{ route('account.myProducts') }}" class="btn btn-success">OK</a>
-                </div>
-            </div>
-        </div>
+    <div class="modal fade" id="successModal"
+     data-success="{{ session('success') ? '1' : '0' }}"
+     tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body">
+        O produto foi atualizado com sucesso!
+      </div>
+
+      <div class="modal-footer">
+        <a href="{{ route('account.myProducts') }}" class="btn btn-success">OK</a>
+      </div>
     </div>
+  </div>
+</div>
+
 @endsection
 
 @push('styles')
@@ -155,49 +161,5 @@
 @endpush
 
 @push('scripts')
-<script>
-    @if (session('success'))
-        window.onload = function() {
-            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-            successModal.show();
-        };
-    @endif
-</script>
-
-@push('scripts')
-<script>
-  document.addEventListener('DOMContentLoaded', function(){
-    const sel  = document.getElementById('unit');
-    const cust = document.getElementById('unit_custom');
-
-    function toggleCustom(){
-      if (sel.value === 'custom') cust.classList.remove('d-none');
-      else { cust.classList.add('d-none'); if (!cust.dataset.keep) cust.value = ''; }
-    }
-    sel.addEventListener('change', toggleCustom);
-    toggleCustom();
-  });
-</script>
-
-@push('scripts')
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const el = document.getElementById('successModal');
-    if (!el) return;
-
-    //O modal não fica dentro de containers com overflow/transform
-    document.body.appendChild(el);
-
-    // faz a limpeza total quando fechar (remove o backdrop e libera o scroll)
-    el.addEventListener('hidden.bs.modal', () => {
-      document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
-      document.body.classList.remove('modal-open');
-      document.body.style.removeProperty('padding-right');
-    });
-  });
-</script>
-@endpush
-
-@endpush
-
+  <script src="{{ asset('js/account.editProduct.js') }}" defer></script>
 @endpush

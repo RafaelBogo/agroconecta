@@ -76,22 +76,25 @@
     </form>
 
     <!-- Modal de Sucesso -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    Seus dados foram atualizados com sucesso!
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
+    <div class="modal fade" id="successModal"
+     data-success="{{ session('success') ? '1' : '0' }}"
+     tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Seus dados foram atualizados com sucesso!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+      </div>
     </div>
+  </div>
+</div>
+
 @endsection
 
 @push('styles')
@@ -99,15 +102,6 @@
 @endpush
 
 @push('scripts')
-@if (session('success'))
-<script>
-  window.onload = function () {
-    const el = document.getElementById('successModal');
-    document.body.appendChild(el); 
-    const successModal = new bootstrap.Modal(el);
-    successModal.show();
-  };
-</script>
-@endif
-
+  <script src="{{ asset('js/account.myData.js') }}" defer></script>
 @endpush
+
