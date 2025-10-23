@@ -1,17 +1,13 @@
 (function () {
   const form    = document.getElementById('add-to-cart-form');
   const modalEl = document.getElementById('successModal');
-
   if (!form) return;
 
-  // Dados vindos da view
   const cartAddUrl = form.dataset.cartAddUrl || '';
   const loginUrl   = form.dataset.loginUrl   || '';
   const productId  = Number(form.dataset.productId || 0);
 
-  const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-  const csrf     = csrfMeta ? csrfMeta.content : '';
-
+  const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
   const successModal = modalEl ? bootstrap.Modal.getOrCreateInstance(modalEl) : null;
 
   form.addEventListener('submit', async (e) => {
@@ -20,7 +16,6 @@
     const qtyEl = document.getElementById('quantity');
     let q = (qtyEl?.value || '').trim().replace(',', '.');
     const quantity = parseFloat(q);
-
     if (!Number.isFinite(quantity) || quantity <= 0) {
       alert('Quantidade inválida.');
       return;
@@ -41,10 +36,8 @@
         window.location.href = loginUrl;
         return;
       }
-
       if (!r.ok) throw new Error('Erro ao adicionar ao carrinho');
 
-      // ignora corpo vazio sem quebrar
       try { await r.json(); } catch (_) {}
 
       // limpeza preventiva de backdrop

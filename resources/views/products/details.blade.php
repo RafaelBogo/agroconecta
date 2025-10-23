@@ -58,7 +58,7 @@
       </div>
     @else
       {{-- Ações --}}
-      <form id="add-to-cart-form" class="mb-3">
+      <form id="add-to-cart-form" class="mb-3" data-cart-add-url="{{ route('cart.add') }}" data-login-url="{{ route('login') }}" data-product-id="{{ $product->id }}">
         <label for="quantity" class="form-label">Quantidade</label>
         <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="{{ $decimais ? '0.01' : '1' }}" step="{{ $decimais ? '0.01' : '1' }}" inputmode="decimal" required>
 
@@ -160,62 +160,7 @@
 @endsection
 
 @push('scripts')
-<script>
-(function() {
-  const form = document.getElementById('add-to-cart-form');
-  const modalEl = document.getElementById('successModal');
-
-  if (!form) return;
-
-  const successModal = bootstrap.Modal.getOrCreateInstance(modalEl);
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    let q = (document.getElementById('quantity').value || '').trim().replace(',', '.');
-    const quantity = parseFloat(q);
-    if (!Number.isFinite(quantity) || quantity <= 0) {
-      alert('Quantidade inválida.');
-      return;
-    }
-
-    try {
-      const r = await fetch("{{ route('cart.add') }}", {
-        method: "POST",
-        headers: {
-          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ product_id: {{ $product->id }}, quantity })
-      });
-
-      if (r.status === 401) {
-        window.location.href = "{{ route('login') }}";
-        return;
-      }
-
-      if (!r.ok) throw new Error('Erro ao adicionar ao carrinho');
-
-      try { await r.json(); } catch (_) {}
-
-      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-      document.body.classList.remove('modal-open');
-      document.body.style.removeProperty('padding-right');
-
-      successModal.show();
-    } catch (err) {
-      console.error(err);
-      alert('Houve um erro ao adicionar o produto ao carrinho.');
-    }
-  });
-
-  modalEl.addEventListener('hidden.bs.modal', () => {
-    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-    document.body.classList.remove('modal-open');
-    document.body.style.removeProperty('padding-right');
-  });
-})();
-</script>
+  <script src="{{ asset('js/products.details.js') }}" defer></script>
 @endpush
 
 @push('styles')
