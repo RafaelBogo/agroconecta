@@ -2,8 +2,9 @@
   const form    = document.getElementById('add-to-cart-form');
   const modalEl = document.getElementById('successModal');
 
-  if (!form) return; // página sem o form (ex.: vendedor é o dono)
+  if (!form) return;
 
+  // Dados vindos da view
   const cartAddUrl = form.dataset.cartAddUrl || '';
   const loginUrl   = form.dataset.loginUrl   || '';
   const productId  = Number(form.dataset.productId || 0);
@@ -16,8 +17,8 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const qtyInput = document.getElementById('quantity');
-    let q = (qtyInput?.value || '').trim().replace(',', '.');
+    const qtyEl = document.getElementById('quantity');
+    let q = (qtyEl?.value || '').trim().replace(',', '.');
     const quantity = parseFloat(q);
 
     if (!Number.isFinite(quantity) || quantity <= 0) {
@@ -40,12 +41,13 @@
         window.location.href = loginUrl;
         return;
       }
+
       if (!r.ok) throw new Error('Erro ao adicionar ao carrinho');
 
       // ignora corpo vazio sem quebrar
       try { await r.json(); } catch (_) {}
 
-      // (opcional) limpeza de backdrop caso tenha algum resquício
+      // limpeza preventiva de backdrop
       document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
       document.body.classList.remove('modal-open');
       document.body.style.removeProperty('padding-right');

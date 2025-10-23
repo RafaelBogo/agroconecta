@@ -60,17 +60,7 @@
       {{-- Ações --}}
       <form id="add-to-cart-form" class="mb-3">
         <label for="quantity" class="form-label">Quantidade</label>
-        <input
-          type="number"
-          id="quantity"
-          name="quantity"
-          class="form-control"
-          value="1"
-          min="{{ $decimais ? '0.01' : '1' }}"
-          step="{{ $decimais ? '0.01' : '1' }}"
-          inputmode="decimal"
-          required
-        >
+        <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="{{ $decimais ? '0.01' : '1' }}" step="{{ $decimais ? '0.01' : '1' }}" inputmode="decimal" required>
 
         <div class="action-row mt-3">
           <button type="submit" class="btn btn-success">

@@ -65,22 +65,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 @push('scripts')
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const input = document.querySelector('input[name="product"]');
-    const clearBtn = document.getElementById('clearProduct');
-
-    const toggleClear = () => clearBtn.classList.toggle('d-none', !input.value.trim());
-    input?.addEventListener('input', toggleClear);
-    toggleClear();
-
-    clearBtn?.addEventListener('click', () => {
-      input.value = '';
-      input.focus();
-      toggleClear();
-    });
-  });
-</script>
+  <script src="{{ asset('js/dashboard.js') }}" defer></script>
 @endpush
 
 @push('styles')

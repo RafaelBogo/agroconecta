@@ -1,4 +1,3 @@
-// Texto dinâmico para a nota escolhida
 document.querySelectorAll('.rating-form').forEach(function(form){
     const stars = form.querySelectorAll('.rating-stars input');
     const output = form.querySelector('#chosen-' + form.id.replace('form-', '') );
