@@ -16,17 +16,12 @@
 
 @php
   $units = [
-    'un'      => 'Unidade (un)',
-    'dz'      => 'Dúzia (dz)',
-    'kg'      => 'Quilo (kg)',
-    'g'       => 'Grama (g)',
-    't'       => 'Tonelada (t)',
-    'l'       => 'Litro (L)',
-    'ml'      => 'Mililitro (mL)',
-    'saca60'  => 'Saca 60 kg',
-    'caixa'   => 'Caixa',
-    'maco'    => 'Maço',
-    'bandeja' => 'Bandeja',
+    'un'=> 'Unidade (un)',
+    'dz'=> 'Dúzia (dz)',
+    'kg'=> 'Quilo (kg)',
+    'g'=> 'Grama (g)',
+    'l'=> 'Litro (L)',
+    'bandeja'=> 'Bandeja',
   ];
   $currentUnit = old('unit', $product->unit);
   $isCustom    = !array_key_exists($currentUnit, $units);
@@ -46,7 +41,7 @@
 
 
 
-           
+
     <div class="mb-3">
         <label for="photo" class="form-label">Nova foto</label>
         <input id="photo" type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp,image/avif">

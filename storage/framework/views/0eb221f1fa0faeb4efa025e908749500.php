@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    body {
+        background-image: url('<?php echo e(asset("images/background1.jpg")); ?>');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Arial', sans-serif;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card p-4" style="width: 100%; max-width: 400px;">
+            <h4 class="card-title text-center mb-4">Redefinir Senha</h4>
+            <?php if(session('status')): ?>
+                <div class="alert alert-success"><?php echo e(session('status')); ?></div>
+            <?php endif; ?>
+            <form action="<?php echo e(route('password.email')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu e-mail" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Enviar Link</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+<?php /**PATH C:\xampp\htdocs\AgroConecta\resources\views\auth\passwords\email.blade.php ENDPATH**/ ?>

@@ -6,36 +6,39 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
+
+
 class OrderController extends Controller
 {
     public function index()
     {
-       $orders = Order::where('user_id', Auth::id())
-            ->with('product')
+        $orders = Order::where('user_id', Auth::id())
+            ->with(['items.product'])              // << mudou
+            ->latest()
             ->get()
             ->map(function ($order) {
-
-            if ($order->status === 'Processando') {
-                $window = 3600;
+                // janela de cancelamento (ex.: 1h)
+                $window  = 3600;
                 $elapsed = now()->diffInSeconds($order->created_at);
 
- 
-                $order->cancel_time_left  = max(0, $window - $elapsed);
+                $order->cancel_time_left  = $order->status === 'Processando'
+                    ? max(0, $window - $elapsed) : 0;
 
-  
-                $order->cancel_expires_at = $order->created_at->copy()->addSeconds($window);
-            } else {
-                $order->cancel_time_left  = 0;
-                $order->cancel_expires_at = null;
-            }
+                $order->cancel_expires_at = $order->status === 'Processando'
+                    ? $order->created_at->copy()->addSeconds($window) : null;
 
-         return $order;
-        });
+                // total do pedido somando itens (se não tiver coluna total)
+                $order->computed_total = $order->items->sum(function ($i) {
+                    $price = $i->price ?? optional($i->product)->price ?? 0;
+                    return $price * (int)$i->quantity;
+                });
 
+                return $order;
+            });
 
         return view('account.orders', compact('orders'));
     }
-
     public function update(Request $request, Order $order)
 {
 
@@ -46,7 +49,7 @@ class OrderController extends Controller
             : back()->withErrors($msg);
     }
 
- 
+
     $request->validate([
         'status' => 'required|in:Processando,Retirado,Cancelado',
     ]);
@@ -54,7 +57,7 @@ class OrderController extends Controller
 
     if ($request->input('status') === 'Cancelado') {
         $elapsed = now()->diffInSeconds($order->created_at);
-        $cancelTimeLeft = max(0, 3600 - $elapsed); 
+        $cancelTimeLeft = max(0, 3600 - $elapsed);
 
         if ($order->status !== 'Processando' || $cancelTimeLeft <= 0) {
             $msg = 'Pedido não pode ser cancelado (fora do prazo ou status inválido).';
@@ -67,7 +70,7 @@ class OrderController extends Controller
 
     $order->update(['status' => $request->input('status')]);
 
- 
+
     if ($request->expectsJson()) {
         return response()->json(['success' => true]);
     }
@@ -78,11 +81,12 @@ class OrderController extends Controller
 
     public function mySales()
     {
-        $vendas = Order::whereHas('product', function ($query) {
-            $query->where('user_id', Auth::id());
-        })
-        ->with('product', 'user')
-        ->get();
+        $vendas = Order::whereHas('items.product', function ($q) {
+                $q->where('user_id', Auth::id());
+            })
+            ->with(['items.product', 'user'])
+            ->latest()
+            ->get();
 
         return view('account.mySales', compact('vendas'));
     }
@@ -111,7 +115,7 @@ class OrderController extends Controller
     {
         $order->update(['status' => 'Aprovado']);
 
-        DB::table('cart_items')->where('user_id', $order->user_id)->delete();
+       DB::table('cart_items')->where('user_id', $order->user_id)->delete();
 
         return view('orders.success', compact('order'));
     }

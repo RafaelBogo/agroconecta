@@ -15,9 +15,6 @@ class CartItem extends Model
         'quantity',
     ];
 
-    /**
-     * Relacionamento com o modelo Product.
-     */
     public function product()
     {
         return $this->belongsTo(Product::class);

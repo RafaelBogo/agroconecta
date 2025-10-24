@@ -16,17 +16,17 @@
             $vendasDia  = (float) $items->sum('total_price');
             $pedidosDia = (int)   $items->count();
             return [
-                'label'   => \Carbon\Carbon::parse($ymd)->format('d/m'),
-                'vendas'  => $vendasDia,
-                'pedidos' => $pedidosDia,
-                'aov'     => $pedidosDia ? $vendasDia / $pedidosDia : 0,
+                'label'=> \Carbon\Carbon::parse($ymd)->format('d/m'),
+                'vendas'=> $vendasDia,
+                'pedidos'=> $pedidosDia,
+                'aov'=> $pedidosDia ? $vendasDia / $pedidosDia : 0,
             ];
         });
 
-      $labelsDias   = $porDia->pluck('label')->values();
-      $serieVendas  = $porDia->pluck('vendas')->values();
+      $labelsDias= $porDia->pluck('label')->values();
+      $serieVendas = $porDia->pluck('vendas')->values();
       $seriePedidos = $porDia->pluck('pedidos')->values();
-      $serieAov     = $porDia->pluck('aov')->values();
+      $serieAov = $porDia->pluck('aov')->values();
 
       // Top 5 produtos por unidades
       $topProdutosQty = $base->groupBy('product_id')->map(function($items){
@@ -39,13 +39,13 @@
           ->sortByDesc('unidades')
           ->take(5);
 
-      $labelsProdutosQty      = $topProdutosQty->pluck('nome')->values();
-      $serieUnidadesProdutos  = $topProdutosQty->pluck('unidades')->values();
+      $labelsProdutosQty = $topProdutosQty->pluck('nome')->values();
+      $serieUnidadesProdutos = $topProdutosQty->pluck('unidades')->values();
 
       // Distribuição por status
-      $porStatus    = $vendas->groupBy('status')->map->count()->sortDesc();
+      $porStatus = $vendas->groupBy('status')->map->count()->sortDesc();
       $labelsStatus = $porStatus->keys()->values();
-      $serieStatus  = $porStatus->values();
+      $serieStatus = $porStatus->values();
 
       // Pedidos por hora
       $porHoraRaw = $base->groupBy(fn($v) => optional($v->created_at)->format('H'))->map->count();
@@ -56,11 +56,11 @@
       });
 
       // Cards
-      $totalVendas  = (float) $base->sum('total_price');
+      $totalVendas = (float) $base->sum('total_price');
       $totalPedidos = (int)   $base->count();
-      $ticketMedio  = $totalPedidos ? $totalVendas / $totalPedidos : 0;
-      $pagos        = (int)   $vendas->where('status','Pago')->count();
-      $pctPagos     = $vendas->count() ? ($pagos / $vendas->count()) * 100 : 0;
+      $ticketMedio = $totalPedidos ? $totalVendas / $totalPedidos : 0;
+      $pagos = (int)   $vendas->where('status','Pago')->count();
+      $pctPagos = $vendas->count() ? ($pagos / $vendas->count()) * 100 : 0;
 
       $fmtBRL = fn($v) => 'R$ ' . number_format((float)$v, 2, ',', '.');
   @endphp
@@ -159,7 +159,7 @@
     }
   </script>
 
-  
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
 
   <script src="{{ asset('js/account.mySales.js') }}" defer></script>

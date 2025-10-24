@@ -18,13 +18,11 @@ class Order extends Model
         'status',
     ];
 
-    // Relacionamento com o usuário
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relacionamento com o produto
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -35,4 +33,8 @@ class Order extends Model
         return $this->belongsTo(User::class, 'seller_id');
     }
 
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }

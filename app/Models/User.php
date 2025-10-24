@@ -57,7 +57,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Retorna os endereços únicos utilizados pelo usuário em seus produtos.
+     * Retorna os endereços unicos utilizados pelo usuário em seus produtos.
      */
     public function getAddressesAttribute()
     {

@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
-    /**
-     * Lista de conversas (inbox)
-     */
     public function index()
     {
         $myId = Auth::id();
@@ -23,7 +20,7 @@ class ChatController extends Controller
             ->groupBy('other_id')
             ->get();
 
-        // evita listar você mesmo
+        // evita listar proprio usuario
         $otherIds = $threads->pluck('other_id')->reject(fn ($id) => (int)$id === (int)$myId);
 
         $users = User::whereIn('id', $otherIds)->orderBy('name')->get();
@@ -53,13 +50,13 @@ class ChatController extends Controller
     {
         $data = $request->validate([
             'receiver_id' => 'required|exists:users,id|different:' . Auth::id(),
-            'message'     => 'required|string|min:1|max:2000',
+            'message' => 'required|string|min:1|max:2000',
         ]);
 
         Message::create([
-            'sender_id'   => Auth::id(),
+            'sender_id' => Auth::id(),
             'receiver_id' => $data['receiver_id'],
-            'message'     => trim($data['message']),
+            'message'=> trim($data['message']),
         ]);
 
         return back();

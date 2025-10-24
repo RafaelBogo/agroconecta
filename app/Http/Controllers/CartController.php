@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PedidoFinalizado;
-use App\Mail\PedidoFinalizadoVendedor;
 use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -41,10 +39,10 @@ class CartController extends Controller
 
     $cartItems = $rows->map(function ($r) {
         return [
-            'id'       => (int) $r->product_id,
-            'name'     => $r->name,
-            'price'    => (float) $r->price,
-            'photo'    => $r->photo,
+            'id' => (int) $r->product_id,
+            'name'=> $r->name,
+            'price'=> (float) $r->price,
+            'photo'=> $r->photo,
             'quantity' => (float) $r->quantity,
             'subtotal' => (float) $r->price * (float) $r->quantity,
         ];
@@ -67,7 +65,7 @@ class CartController extends Controller
 
     $request->validate([
         'product_id' => 'required|exists:products,id',
-        'quantity'   => 'required|numeric|min:0.01',
+        'quantity'=> 'required|numeric|min:0.01',
     ]);
 
     $product  = Product::findOrFail($request->product_id);
@@ -85,7 +83,7 @@ class CartController extends Controller
     if ($currentQty + $quantity > (float) $product->stock) {
         return response()->json([
             'success' => false,
-            'error'   => "Estoque insuficiente! Apenas {$product->stock} disponível.",
+            'error'=> "Estoque insuficiente! Apenas {$product->stock} disponível.",
         ], 400);
     }
 
@@ -98,18 +96,18 @@ class CartController extends Controller
             ]);
     } else {
         DB::table('cart_items')->insert([
-            'user_id'    => Auth::id(),
+            'user_id'=> Auth::id(),
             'product_id' => $product->id,
-            'quantity'   => round($quantity, 3),
+            'quantity'=> round($quantity, 3),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
     }
 
     Log::info('Carrinho atualizado (DB) após adicionar produto.', [
-        'user_id'   => Auth::id(),
+        'user_id' => Auth::id(),
         'productId' => $product->id,
-        'quantity'  => $quantity,
+        'quantity' => $quantity,
     ]);
 
     return response()->json(['success' => true, 'message' => 'Produto adicionado ao carrinho com sucesso!']);
@@ -141,9 +139,9 @@ public function updateCart(Request $request, $id)
     if (!$updated) {
         // se ainda não existe cria
         DB::table('cart_items')->insert([
-            'user_id'    => Auth::id(),
-            'product_id' => $product->id,
-            'quantity'   => round($qty, 3),
+            'user_id'=> Auth::id(),
+            'product_id'=> $product->id,
+            'quantity'=> round($qty, 3),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -196,7 +194,7 @@ public function updateCart(Request $request, $id)
 
     return response()->json([
         'success' => 'Item removido do carrinho com sucesso!',
-        'total'   => $total,
+        'total' => $total,
     ]);
 }
 
@@ -241,12 +239,12 @@ public function updateCart(Request $request, $id)
         return response()->json(['error' => 'Carrinho vazio'], 422);
     }
 
-    $items  = [];
-    $total  = 0.0;
+    $items = [];
+    $total = 0.0;
     $sumQty = 0.0;
 
     foreach ($rows as $idx => $r) {
-        $qty   = (float) $r->quantity;
+        $qty = (float) $r->quantity;
         $price = round((float) $r->price, 2);
         if ($price <= 0) continue;
 
@@ -255,25 +253,25 @@ public function updateCart(Request $request, $id)
 
 
         $row = [
-            'title'       => $title,
-            'quantity'    => 1,
-            'unit_price'  => round($price * $qty, 2),
+            'title' => $title,
+            'quantity' => 1,
+            'unit_price' => round($price * $qty, 2),
             'currency_id' => 'BRL',
         ];
         if (!empty($r->photo)) {
             $row['picture_url'] = url('storage/' . $r->photo);
         }
 
-        $items[]  = $row;
-        $total   += $row['unit_price'];
-        $sumQty  += $qty;
+        $items[] = $row;
+        $total += $row['unit_price'];
+        $sumQty += $qty;
     }
 
 
     $orderPayload = [
-        'user_id'     => Auth::id(),
-        'total_price' => round($total, 2),
-        'status'      => 'Processando',
+        'user_id' => Auth::id(),
+        'total_price'=> round($total, 2),
+        'status' => 'Processando',
     ];
 
     if (Schema::hasColumn('orders', 'product_id')) {
@@ -300,10 +298,10 @@ public function updateCart(Request $request, $id)
     $client = new PreferenceClient();
 
     $payload = [
-        'items'              => $items,
-        'external_reference' => (string) $order->id,
+        'items' => $items,
+        'external_reference'=> (string) $order->id,
         'payer' => [
-            'name'  => Auth::user()->name  ?? 'Cliente',
+            'name' => Auth::user()->name  ?? 'Cliente',
             'email' => Auth::user()->email ?? 'comprador+teste@example.com',
         ],
         'back_urls' => [
@@ -334,10 +332,10 @@ public function updateCart(Request $request, $id)
         $contentForLog = is_object($content) ? json_decode(json_encode($content), true) : $content;
 
         \Log::error('[MP Preference Error]', [
-            'status'  => $status,
-            'content' => $contentForLog,
-            'payload' => $payload,
-            'items'   => $items,
+            'status' => $status,
+            'content'=> $contentForLog,
+            'payload'=> $payload,
+            'items'=> $items,
         ]);
 
         return response()->json(['mp_error' => $contentForLog ?: $e->getMessage()], $status ?: 500);

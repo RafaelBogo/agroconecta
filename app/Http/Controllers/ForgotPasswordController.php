@@ -7,13 +7,11 @@ use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends Controller
 {
-    // Exibe o formulário para solicitar redefinição de senha
     public function showLinkRequestForm()
     {
         return view('auth.passwords.email');
     }
 
-    // Processa o envio do link de redefinição de senha
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate([

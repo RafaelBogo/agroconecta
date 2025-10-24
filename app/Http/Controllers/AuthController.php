@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    // Exibir o formulário de login
     public function showLoginForm()
     {
         return view('auth.login');
@@ -24,15 +23,12 @@ class AuthController extends Controller
         ]);
 
         if (auth()->attempt($request->only('email', 'password'))) {
-            // Autenticação bem-sucedida
             return redirect()->route('dashboard')->with('message', 'Login realizado com sucesso!');
         }
 
-        // Autenticação falhou
         return back()->withErrors(['email' => 'Credenciais inválidas.']);
     }
 
-    //Logout
     public function logout(Request $request)
     {
         auth()->logout();
@@ -48,7 +44,6 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    // Processar o registro e enviar o código de verificação
     public function register(Request $request)
     {
         $request->validate([
@@ -59,10 +54,9 @@ class AuthController extends Controller
             'password' => 'required|min:6|confirmed',
         ]);
 
-        // Gerar código de verificação
         $verificationCode = Str::random(6);
 
-        // Armazena os dados temporariamente na sessão
+        // Armazena dados temporariamente na sessão
         Session::put('temp_user', [
             'name' => $request->name,
             'email' => $request->email,
@@ -72,48 +66,39 @@ class AuthController extends Controller
             'verification_code' => $verificationCode,
         ]);
 
-        // Envia o código de verificação por email
         Mail::raw("Seu código de verificação é: $verificationCode", function ($message) use ($request) {
             $message->to($request->email)
                     ->subject('Código de Verificação - AgroConecta');
         });
 
-        // Redirecionar para a view de verificação
         return redirect()->route('verify')->with('message', 'Código de verificação enviado para o e-mail.');
     }
 
-    // Exibir o formulário de verificação
     public function showVerificationForm()
     {
         return view('auth.verify');
     }
 
-    // Verificar o código de verificação
     public function verifyCode(Request $request)
     {
         $request->validate([
             'verification_code' => 'required|string',
         ]);
 
-        // Obter os dados temporários do usuário
         $tempUser = Session::get('temp_user');
 
-        // Verificar o código
         if ($tempUser && $tempUser['verification_code'] === $request->verification_code) {
-            // Criar o usuário no banco de dados
             User::create([
                 'name' => $tempUser['name'],
                 'email' => $tempUser['email'],
                 'password' => $tempUser['password'],
-                'phone'    => $tempUser['phone'],
-                'address'  => $tempUser['address'],
+                'phone' => $tempUser['phone'],
+                'address' => $tempUser['address'],
 
             ]);
 
-            // Limpar os dados temporários da sessão
             Session::forget('temp_user');
 
-            // Redirecionar com mensagem de sucesso
             return redirect()->route('login')->with('message', 'Conta criada com sucesso!');
         }
 

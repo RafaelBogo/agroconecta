@@ -25,9 +25,6 @@ class Product extends Model
         'stock',
     ];
 
-    /**
-     * Define a relação entre Produto e Usuário (vendedor).
-     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
