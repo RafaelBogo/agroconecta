@@ -13,15 +13,11 @@ class ChatController extends Controller
     {
         $myId = Auth::id();
 
-        $threads = Message::selectRaw('IF(sender_id = ?, receiver_id, sender_id) as other_id', [$myId])
-            ->where(function ($q) use ($myId) {
-                $q->where('sender_id', $myId)->orWhere('receiver_id', $myId);
-            })
+        $otherIds = Message::selectRaw('CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END as other_id', [$myId])
+            ->where(fn($q) => $q->where('sender_id', $myId)->orWhere('receiver_id', $myId))
             ->groupBy('other_id')
-            ->get();
-
-        // evita listar proprio usuario
-        $otherIds = $threads->pluck('other_id')->reject(fn ($id) => (int)$id === (int)$myId);
+            ->pluck('other_id')
+            ->filter(fn($id) => (int)$id !== (int)$myId);
 
         $users = User::whereIn('id', $otherIds)->orderBy('name')->get();
 
@@ -30,7 +26,7 @@ class ChatController extends Controller
 
     public function showChat($userId)
     {
-        abort_if($userId == Auth::id(), 404);
+        abort_if((int)$userId === (int)Auth::id(), 404);
 
         $user = User::findOrFail($userId);
 
@@ -50,13 +46,13 @@ class ChatController extends Controller
     {
         $data = $request->validate([
             'receiver_id' => 'required|exists:users,id|different:' . Auth::id(),
-            'message' => 'required|string|min:1|max:2000',
+            'message'     => 'required|string|min:1|max:2000',
         ]);
 
         Message::create([
-            'sender_id' => Auth::id(),
+            'sender_id'   => Auth::id(),
             'receiver_id' => $data['receiver_id'],
-            'message'=> trim($data['message']),
+            'message'     => trim($data['message']),
         ]);
 
         return back();
@@ -74,6 +70,4 @@ class ChatController extends Controller
 
         return redirect()->route('messages')->with('success', 'Conversa encerrada com sucesso.');
     }
-
-
 }

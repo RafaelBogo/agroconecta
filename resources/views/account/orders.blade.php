@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Meus Pedidos')
+@section('title','Meus Pedidos')
 @section('boxed', true)
 
 @section('content')
@@ -13,73 +13,137 @@
 
   @forelse ($orders as $order)
     @php
-      $statusMap = [
-        'Pendente'=> 'status-pendente',
-        'Concluido'=> 'status-concluido',
-        'Cancelado'=> 'status-cancelado',
-      ];
-      $statusClass = $statusMap[$order->status] ?? 'status-processando';
+      $cls = [
+        'Pendente'  => 'status-pendente',
+        'Concluido' => 'status-concluido',
+        'Cancelado' => 'status-cancelado',
+      ][$order->status] ?? 'status-pendente';
 
-      // Itens do pedido
-      $items = $order->items ?? collect();
-
-      if (isset($order->total_price) && $order->total_price > 0) {
-        $orderTotal = $order->total_price;
-      }
-
+      $items   = $order->items;
+      $total   = $items->sum(fn($i) => (float)$i->price * (int)$i->quantity);
+      $modalId = 'orderModal-'.$order->id;
     @endphp
 
     <div class="order-card mb-3">
       <div class="order-grid">
         <div class="order-details">
           <p class="kv"><strong>Pedido:</strong> #{{ $order->id }}</p>
-
-          {{-- Lista de itens do pedido --}}
-          <div class="mb-2">
-            @forelse ($items as $it)
-              @php
-                $p = $it->product;
-                $nm = $p->name ?? 'Produto indisponível';
-                $prc = ($it->price ?? ($p->price ?? 0)) * (int) $it->quantity;
-              @endphp
-              <div class="d-flex justify-content-between small">
-                <span>{{ $nm }} (x{{ $it->quantity }})</span>
-                <span>R$ {{ number_format($prc, 2, ',', '.') }}</span>
-              </div>
-            @empty
-              <div class="text-muted small">Sem itens cadastrados neste pedido.</div>
-            @endforelse
+          <div class="mb-2 small text-muted">
+            {{ $items->count() }} item(ns) · Criado em {{ $order->created_at?->format('d/m/Y H:i') }}
           </div>
-
-          <p class="kv"><strong>Total do Pedido:</strong> R$ {{ number_format($orderTotal, 2, ',', '.') }}</p>
-
+          <p class="kv"><strong>Total do Pedido:</strong> R$ {{ number_format($total, 2, ',', '.') }}</p>
           <p class="kv">
             <strong>Status:</strong>
-            <span class="status-chip {{ $statusClass }}" id="status-{{ $order->id }}">
-              <i class="bi bi-circle-fill" style="font-size:.6rem;"></i> {{ $order->status }}
+            <span class="status-chip {{ $cls }}">
+              <i class="bi bi-circle-fill" style="font-size:.6rem"></i> {{ $order->status }}
             </span>
           </p>
         </div>
 
         <div class="order-actions text-end">
-          @if ($order->status === 'Processando' && $order->cancel_time_left > 0)
-            <form action="{{ route('orders.update', $order->id) }}" method="POST" class="d-inline-block">
-              @csrf
-              @method('PUT')
+          <button type="button" class="btn btn-outline-primary btn-sm me-2"
+                  data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
+            <i class="bi bi-receipt"></i> Ver detalhes
+          </button>
+
+          @if ($order->status === 'Pendente')
+            {{-- Marcar como retirado (concluir) --}}
+            <form action="{{ route('orders.update', $order->id) }}" method="POST" class="d-inline">
+              @csrf @method('PUT')
+              <input type="hidden" name="status" value="Concluido">
+              <button class="btn btn-success btn-sm me-1">
+                <i class="bi bi-check2-circle me-1"></i> Pedido retirado
+              </button>
+            </form>
+
+            {{-- Cancelar --}}
+            <form action="{{ route('orders.update', $order->id) }}" method="POST" class="d-inline">
+              @csrf @method('PUT')
               <input type="hidden" name="status" value="Cancelado">
-              <button type="submit"
-                      class="btn btn-danger btn-sm btn-rounded cancel-button"
-                      data-order-id="{{ $order->id }}">
-                <i class="bi bi-x-circle me-1"></i> Cancelar Pedido
+              <button class="btn btn-danger btn-sm">
+                <i class="bi bi-x-circle me-1"></i> Cancelar
               </button>
             </form>
           @endif
         </div>
       </div>
     </div>
+
+    @push('modals')
+      <div class="modal fade" id="{{ $modalId }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Pedido #{{ $order->id }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="d-flex flex-wrap gap-3 small mb-3">
+                <div><strong>Status:</strong> <span class="status-chip {{ $cls }}">{{ $order->status }}</span></div>
+                <div><strong>Criado em:</strong> {{ $order->created_at?->format('d/m/Y H:i') }}</div>
+                <div><strong>Total:</strong> R$ {{ number_format($total, 2, ',', '.') }}</div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead>
+                    <tr>
+                      <th>Produto</th>
+                      <th>Vendedor</th>
+                      <th class="text-center">Qtd</th>
+                      <th class="text-end">Preço</th>
+                      <th class="text-end">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($items as $it)
+                      @php
+                        $p    = $it->product;
+                        $unit = (float)$it->price;
+                        $qty  = (int)$it->quantity;
+                      @endphp
+                      <tr>
+                        <td>{{ $p->name }}</td>
+                        <td>{{ $p->user->name ?? 'Usuário' }}</td>
+                        <td class="text-center">{{ $qty }}</td>
+                        <td class="text-end">R$ {{ number_format($unit, 2, ',', '.') }}</td>
+                        <td class="text-end">R$ {{ number_format($unit * $qty, 2, ',', '.') }}</td>
+                      </tr>
+                    @empty
+                      <tr><td colspan="5" class="text-center text-muted">Sem itens.</td></tr>
+                    @endforelse
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="4" class="text-end">Total</th>
+                      <th class="text-end">R$ {{ number_format($total, 2, ',', '.') }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              @if ($order->status === 'Pendente')
+                <form action="{{ route('orders.update', $order->id) }}" method="POST" class="me-auto">
+                  @csrf @method('PUT')
+                  <input type="hidden" name="status" value="Concluido">
+                  <button class="btn btn-success btn-sm">
+                    <i class="bi bi-check2-circle me-1"></i> Pedido retirado
+                  </button>
+                </form>
+              @endif
+
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endpush
   @empty
     <div class="empty-state mb-3">
-      <i class="bi bi-bag-x" style="font-size:2rem;"></i>
+      <i class="bi bi-bag-x" style="font-size:2rem"></i>
       <p class="mt-2 mb-0">Você ainda não realizou nenhum pedido.</p>
     </div>
   @endforelse
@@ -91,8 +155,17 @@
 
 @push('styles')
   <link rel="stylesheet" href="{{ asset('css/account.orders.css') }}">
-@endpush
+  <style>
+    .status-chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.25rem .6rem;border-radius:9999px;
+      font-weight:600;line-height:1;border:1px solid currentColor;
+    }
+    .status-pendente  { color:#946200; background:#fff7e6; border-color:#f5c06a; }
+    .status-concluido { color:#0a6b2d; background:#e9f9ef; border-color:#7fd19a; }
+    .status-cancelado { color:#842029; background:#f8d7da; border-color:#f1aeb5; }
 
-@push('scripts')
-  <script src="{{ asset('js/account.orders.js') }}" defer></script>
+    .modal          { z-index:2000 !important; }
+    .modal-backdrop { z-index:1990 !important; }
+  </style>
 @endpush
