@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Order;
 use MercadoPago\MercadoPagoConfig;
 use MercadoPago\Client\Payment\PaymentClient;
-use MercadoPago\Exceptions\MPApiException;
 
 class PagoController extends Controller
 {
@@ -20,17 +19,13 @@ class PagoController extends Controller
         $id     = data_get($request->input('data'), 'id') ?? $request->input('id');
         $action = $request->input('action');
 
-        Log::info('[MP Webhook] recebi', ['type' => $type, 'action' => $action, 'id' => $id, 'raw' => $request->all()]);
-
         if (($type === 'payment' || str_contains((string)$action, 'payment')) && $id) {
             try {
-                $client   = new PaymentClient();
-                $payment  = $client->get((int) $id);
+                $payment = (new PaymentClient())->get((int) $id);
+                $orderId = (int) data_get($payment, 'external_reference');
+                $status  = strtolower((string) data_get($payment, 'status'));
 
-                $orderId  = (int) data_get($payment, 'external_reference');
-                $statusMP = data_get($payment, 'status');
-
-                if ($orderId && ($order = Order::find($orderId))) {
+                if ($orderId && ($order = Order::with(['items.product.user','user'])->find($orderId))) {
                     $map = [
                         'approved'   => 'Concluido',
                         'pending'    => 'Pendente',
@@ -39,26 +34,17 @@ class PagoController extends Controller
                         'refunded'   => 'Cancelado',
                         'in_process' => 'Pendente',
                     ];
-                    $novoStatus = $map[$statusMP] ?? $order->status;
+                    $novo = $map[$status] ?? $order->status;
 
-                    if ($order->status !== $novoStatus) {
-                        $order->status = $novoStatus;
-                        $order->save();
-                        Log::info('[MP Webhook] Pedido atualizado', ['order_id' => $order->id, 'status' => $novoStatus]);
+                    if ($order->status !== $novo) {
+                        $order->update(['status' => $novo]);
+                        if ($novo === 'Concluido') {
+                            $this->enviarEmailsPagamentoAprovado($order);
+                        }
                     }
-                } else {
-                    Log::warning('[MP Webhook] Pedido não encontrado', [
-                        'external_reference' => $orderId, 'mp_status' => $statusMP
-                    ]);
                 }
-            } catch (MPApiException $e) {
-                $resp = $e->getApiResponse();
-                Log::error('[MP Webhook] MPApiException', [
-                    'status' => $resp?->getStatusCode(),
-                    'content'=> $resp?->getContent()
-                ]);
             } catch (\Throwable $e) {
-                Log::error('[MP Webhook] Erro geral', ['err' => $e->getMessage()]);
+                Log::warning('[MP Webhook] Falhou', ['err' => $e->getMessage()]);
             }
         }
 
@@ -67,78 +53,91 @@ class PagoController extends Controller
 
     public function success(Request $request, Order $order)
     {
-        $mpStatus = null;
+        $statusParam = strtolower((string) $request->query('status', ''));
+        $colStatus   = strtolower((string) $request->query('collection_status', ''));
+        $isApproved  = in_array($statusParam, ['approved','aproved'], true)
+                    || in_array($colStatus,   ['approved','aproved'], true);
 
         if ($request->filled('payment_id')) {
             try {
                 MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
-                $client  = new PaymentClient();
-                $payment = $client->get((int) $request->query('payment_id'));
-                $mpStatus = $payment->status ?? null;
-
-                if ($mpStatus === 'approved' && $order->status !== 'Concluido') {
-                    $order->status = 'Concluido';
-                    $order->save();
-                    Log::info('[MP Return] Pedido marcado como Concluido', ['order_id' => $order->id]);
-
-                    $order->loadMissing(['items.product.user', 'user']);
-
-                    try {
-                        if ($order->user?->email) {
-                            Mail::raw(
-                                "Seu pedido #{$order->id} foi aprovado. Total: R$ ".number_format($order->total_price,2,',','.'),
-                                function ($m) use ($order) {
-                                    $m->to($order->user->email)->subject("Pedido #{$order->id} aprovado");
-                                }
-                            );
-                        }
-
-                        $sellerEmails = $order->items
-                            ->map(fn ($it) => $it->product?->user?->email)
-                            ->filter()->unique()->values();
-
-                        foreach ($sellerEmails as $email) {
-                            Mail::raw(
-                                "Você vendeu! Pedido #{$order->id} foi aprovado.",
-                                function ($m) use ($email, $order) {
-                                    $m->to($email)->subject("Nova venda aprovada — Pedido #{$order->id}");
-                                }
-                            );
-                        }
-
-                        Log::info('[Email] Enviado confirmação de pagamento', [
-                            'order_id' => $order->id,
-                            'buyer'    => $order->user?->email,
-                            'sellers'  => $sellerEmails ?? [],
-                        ]);
-                    } catch (\Throwable $e) {
-                        Log::error('[Email] Falha ao enviar e-mails de pagamento', [
-                            'order_id' => $order->id,
-                            'err' => $e->getMessage(),
-                        ]);
-                    }
-                }
-            } catch (MPApiException $e) {
-                $r = $e->getApiResponse();
-                Log::warning('[MP Return] MPApiException', [
-                    'status' => $r?->getStatusCode(),
-                    'content'=> $r?->getContent()
-                ]);
+                $payment   = (new PaymentClient())->get((int) $request->query('payment_id'));
+                $mpStatus  = strtolower((string) ($payment->status ?? ''));
+                $isApproved = $isApproved || ($mpStatus === 'approved');
             } catch (\Throwable $e) {
-                Log::warning('[MP Return] Falha ao consultar pagamento', ['err' => $e->getMessage()]);
+                Log::warning('[MP Return] Falha consulta', ['err' => $e->getMessage()]);
             }
         }
 
-        return view('orders.success', compact('order', 'mpStatus'));
+        if ($isApproved && $order->status !== 'Concluido') {
+            try {
+                $order->update(['status' => 'Concluido']);
+                $order->loadMissing(['items.product.user','user']);
+                $this->enviarEmailsPagamentoAprovado($order);
+            } catch (\Throwable $e) {
+                Log::warning('[MP Return] Falhou concluir/enviar', ['err' => $e->getMessage()]);
+            }
+        }
+
+        return view('orders.success', compact('order'));
     }
 
-    public function failure(Order $order)
+    private function enviarEmailsPagamentoAprovado(Order $order): void
     {
-        return view('orders.failure', compact('order'));
+        $order->loadMissing(['items.product.user','user']);
+
+        try {
+            $buyer = $order->user;
+            if ($buyer?->email) {
+                $orderDetails = [
+                    'user_name' => $buyer->name,
+                    'total'     => $this->totalPedido($order),
+                    'items'     => $order->items->map(fn($i) => [
+                        'name'           => $i->product->name,
+                        'price'          => (float)$i->price,
+                        'quantity'       => (float)$i->quantity,
+                        'seller_address' => $i->product->user->address ?? 'Endereço não informado',
+                    ])->toArray(),
+                ];
+
+                Mail::send('cart.buyer_email', ['orderDetails' => $orderDetails], function ($m) use ($buyer, $order) {
+                    $m->to($buyer->email)->subject("Pedido #{$order->id} aprovado");
+                });
+            }
+        } catch (\Throwable $e) {
+            Log::warning('[Email] Comprador falhou', ['order_id' => $order->id, 'err' => $e->getMessage()]);
+        }
+
+        try {
+            $bySeller = $order->items->groupBy(fn($i) => $i->product->user_id);
+
+            foreach ($bySeller as $sellerItems) {
+                $seller = $sellerItems->first()->product->user;
+                if (!$seller?->email) continue;
+
+                $sellerDetails = [
+                    'seller_name' => $seller->name,
+                    'buyer_name'  => $order->user?->name,
+                    'total'       => $sellerItems->sum(fn($i) => (float)$i->price * (float)$i->quantity),
+                    'items'       => $sellerItems->map(fn($i) => [
+                        'name'     => $i->product->name,
+                        'quantity' => (float)$i->quantity,
+                    ])->toArray(),
+                ];
+
+                Mail::send('cart.seller_email', ['sellerDetails' => $sellerDetails], function ($m) use ($seller, $order) {
+                    $m->to($seller->email)->subject("Novo pedido aprovado — #{$order->id}");
+                });
+            }
+        } catch (\Throwable $e) {
+            Log::warning('[Email] Vendedor falhou', ['order_id' => $order->id, 'err' => $e->getMessage()]);
+        }
     }
 
-    public function pending(Order $order)
+    private function totalPedido(Order $order): float
     {
-        return view('orders.pending', compact('order'));
+        if (!is_null($order->total_price)) return (float) $order->total_price;
+        $items = $order->relationLoaded('items') ? $order->items : $order->items()->get();
+        return (float) $items->sum(fn($i) => (float)$i->price * (float)$i->quantity);
     }
 }
