@@ -30,17 +30,28 @@ class OrderController extends Controller
 
         return back()->with('success', 'Status atualizado.');
     }
-
     public function mySales()
     {
-        $vendas = Order::whereHas('items.product', fn ($q) =>
-                $q->where('user_id', Auth::id())
-            )
-            ->with(['items.product.user', 'user']) // cliente do pedido
+        $vendas = Order::whereHas('items.product', function ($q) {
+                $q->where('user_id', Auth::id());
+            })
+            ->with(['items.product.user', 'user']) // comprador
+            ->latest()
+            ->paginate(20);
+
+        return view('account.mySales', compact('vendas'));
+    }
+
+    public function mySalesAnalysis()
+    {
+        $vendas = Order::whereHas('items.product', function ($q) {
+                $q->where('user_id', Auth::id());
+            })
+            ->with(['items.product.user', 'user'])
             ->latest()
             ->get();
 
-        return view('account.mySales', compact('vendas'));
+        return view('account.mySalesAnalysis', compact('vendas'));
     }
 
     public function confirmRetirada(Request $request)

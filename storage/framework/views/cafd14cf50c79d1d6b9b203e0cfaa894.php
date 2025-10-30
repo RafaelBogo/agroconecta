@@ -40,6 +40,12 @@
       <h5>Suporte</h5>
       <p>Fale com a nossa equipe de ajuda.</p>
     </a>
+
+    <a href="<?php echo e(route('seller.mySalesAnalysis')); ?>" class="option-card" aria-label="Suporte">
+      <span class="option-icon"><i class="bi bi-headset"></i></span>
+      <h5>Análise de Vendas</h5>
+      <p>Visualize gráficos das suas vendas</p>
+    </a>
   </div>
 
   <a href="<?php echo e(route('dashboard')); ?>" class="btn-voltar">
@@ -51,4 +57,5 @@
 <?php $__env->startPush('styles'); ?>
   <link rel="stylesheet" href="<?php echo e(asset('css/minhaConta.css')); ?>">
 <?php $__env->stopPush(); ?>
+
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\AgroConecta\resources\views/minhaConta.blade.php ENDPATH**/ ?>

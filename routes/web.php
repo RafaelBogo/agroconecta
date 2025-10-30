@@ -132,9 +132,20 @@ Route::post('/email/verify', [AuthController::class, 'verifyCode'])->name('verif
 // Rotas de Vendas (Vendedor)
 // ===============================
 Route::middleware('auth')->group(function () {
-    Route::get('/minha-conta/minhas-vendas', [OrderController::class, 'mySales'])->name('seller.mySales');
-    Route::post('/minha-conta/minhas-vendas/confirmar-retirada', [OrderController::class, 'confirmRetirada'])->name('seller.confirmRetirada');
+    // NOVA tela – Minhas Vendas (lista operacional, com reembolso/cancelar)
+    Route::get('/minha-conta/minhas-vendas', [OrderController::class, 'mySales'])
+        ->name('seller.mySales');
+
+    // NOVA tela – Análise de Vendas (a antiga)
+    Route::get('/minha-conta/analise-vendas', [OrderController::class, 'mySalesAnalysis'])
+        ->name('seller.mySalesAnalysis');
+
+    Route::post(
+        '/minha-conta/minhas-vendas/confirmar-retirada',
+        [OrderController::class, 'confirmRetirada']
+    )->name('seller.confirmRetirada');
 });
+
 
 // ===============================
 // Rotas de Suporte
@@ -168,3 +179,9 @@ Route::post('/webhooks/mercadopago', [PagoController::class, 'webhook'])->name('
 Route::get('/pedido/{order}/sucesso',  [PagoController::class, 'success'])->name('orders.success');
 Route::get('/pedido/{order}/falha',    [PagoController::class, 'failure'])->name('orders.failure');
 Route::get('/pedido/{order}/pendente', [PagoController::class, 'pending'])->name('orders.pending');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/pedido/{order}/refund', [PagoController::class, 'refund'])->name('orders.refund');
+    Route::post('/pedido/{order}/cancel', [PagoController::class, 'cancel'])->name('orders.cancel');
+});
+

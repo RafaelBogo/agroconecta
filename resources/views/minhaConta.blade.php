@@ -42,6 +42,12 @@
       <h5>Suporte</h5>
       <p>Fale com a nossa equipe de ajuda.</p>
     </a>
+
+    <a href="{{ route('seller.mySalesAnalysis') }}" class="option-card" aria-label="Suporte">
+      <span class="option-icon"><i class="bi bi-headset"></i></span>
+      <h5>Análise de Vendas</h5>
+      <p>Visualize gráficos das suas vendas</p>
+    </a>
   </div>
 
   <a href="{{ route('dashboard') }}" class="btn-voltar">

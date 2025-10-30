@@ -2,166 +2,92 @@
 <?php $__env->startSection('boxed', true); ?>
 
 <?php $__env->startSection('content'); ?>
-  <h1 class="text-center mb-4">Minhas Vendas</h1>
+    <h1 class="mb-4">Minhas Vendas</h1>
 
-  <?php
-      $base = $vendas;
-      $porDia = $base
+    <?php if(session('success')): ?>
+        <div class="alert alert-success"><?php echo e(session('success')); ?></div>
+    <?php endif; ?>
+    <?php if($errors->any()): ?>
+        <div class="alert alert-danger"><?php echo e($errors->first()); ?></div>
+    <?php endif; ?>
 
-        ->groupBy(fn($v) => optional($v->created_at)->toDateString())
-        ->sortKeys()
-        ->map(function($items, $ymd){
-            $vendasDia  = (float) $items->sum('total_price');
-            $pedidosDia = (int)   $items->count();
-            return [
-                'label'=> \Carbon\Carbon::parse($ymd)->format('d/m'),
-                'vendas'=> $vendasDia,
-                'pedidos'=> $pedidosDia,
-                'aov'=> $pedidosDia ? $vendasDia / $pedidosDia : 0,
-            ];
-        });
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Comprador</th>
+                    <th>Itens</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>MP Status</th>
+                    <th style="width:280px;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $__empty_1 = true; $__currentLoopData = $vendas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                    <?php
+                        $total = $order->total_price ?? $order->items->sum(fn($i) => $i->price * $i->quantity);
+                        $meusItens = $order->items->filter(fn($i) => $i->product && $i->product->user_id === auth()->id());
+                    ?>
+                    <tr>
+                        <td><?php echo e($order->id); ?></td>
+                        <td>
+                            <?php echo e($order->user?->name ?? '—'); ?>
 
-      $labelsDias= $porDia->pluck('label')->values();
-      $serieVendas = $porDia->pluck('vendas')->values();
-      $seriePedidos = $porDia->pluck('pedidos')->values();
-      $serieAov = $porDia->pluck('aov')->values();
+                            <br>
+                            <small><?php echo e($order->user?->email); ?></small>
+                        </td>
+                        <td>
+                            <?php $__currentLoopData = $meusItens; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div>
+                                    <?php echo e($item->quantity); ?>x <?php echo e($item->product?->name); ?>
 
-      // Top 5 produtos por unidades
-      $topProdutosQty = $base->groupBy('product_id')->map(function($items){
-              $p = $items->first();
-              return [
-                  'nome'     => optional($p->product)->name ?? 'Produto',
-                  'unidades' => (int) $items->sum('quantity'),
-              ];
-          })
-          ->sortByDesc('unidades')
-          ->take(5);
+                                    <small class="text-muted">R$ <?php echo e(number_format($item->price, 2, ',', '.')); ?></small>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </td>
+                        <td>R$ <?php echo e(number_format($total, 2, ',', '.')); ?></td>
+                        <td><?php echo e($order->status); ?></td>
+                        <td><?php echo e($order->mp_status ?? '—'); ?></td>
+                        <td>
+                            <?php if($order->status === 'Concluido' && $order->mp_payment_id): ?>
+                                
+                                <form method="POST" action="<?php echo e(route('orders.refund', $order)); ?>" class="d-inline">
+                                    <?php echo csrf_field(); ?>
+                                    <button class="btn btn-sm btn-warning mb-1"
+                                        onclick="return confirm('Confirmar reembolso total deste pedido?')">
+                                        Reembolsar total
+                                    </button>
+                                </form>
 
-      $labelsProdutosQty = $topProdutosQty->pluck('nome')->values();
-      $serieUnidadesProdutos = $topProdutosQty->pluck('unidades')->values();
-
-      // Distribuição por status
-      $porStatus = $vendas->groupBy('status')->map->count()->sortDesc();
-      $labelsStatus = $porStatus->keys()->values();
-      $serieStatus = $porStatus->values();
-
-      // Pedidos por hora
-      $porHoraRaw = $base->groupBy(fn($v) => optional($v->created_at)->format('H'))->map->count();
-      $labelsHoras = collect(range(0,23))->map(fn($h) => str_pad($h,2,'0',STR_PAD_LEFT).'h');
-      $seriePedidosHora = collect(range(0,23))->map(function($h) use ($porHoraRaw){
-          $key = str_pad($h,2,'0',STR_PAD_LEFT);
-          return (int) ($porHoraRaw[$key] ?? 0);
-      });
-
-      // Cards
-      $totalVendas = (float) $base->sum('total_price');
-      $totalPedidos = (int)   $base->count();
-      $ticketMedio = $totalPedidos ? $totalVendas / $totalPedidos : 0;
-      $pagos = (int)   $vendas->where('status','Pago')->count();
-      $pctPagos = $vendas->count() ? ($pagos / $vendas->count()) * 100 : 0;
-
-      $fmtBRL = fn($v) => 'R$ ' . number_format((float)$v, 2, ',', '.');
-  ?>
-
-  
-  <div class="row g-3 mb-4">
-    <div class="col-md-3"><div class="card shadow-sm"><div class="card-body">
-      <div class="text-muted small">Vendas (período mostrado)</div>
-      <div class="h4 mb-0"><?php echo e($fmtBRL($totalVendas)); ?></div>
-    </div></div></div>
-
-    <div class="col-md-3"><div class="card shadow-sm"><div class="card-body">
-      <div class="text-muted small">Pedidos</div>
-      <div class="h4 mb-0"><?php echo e($totalPedidos); ?></div>
-    </div></div></div>
-
-    <div class="col-md-3"><div class="card shadow-sm"><div class="card-body">
-      <div class="text-muted small">Ticket médio</div>
-      <div class="h4 mb-0"><?php echo e($fmtBRL($ticketMedio)); ?></div>
-    </div></div></div>
-
-    <div class="col-md-3"><div class="card shadow-sm"><div class="card-body">
-      <div class="text-muted small">% Pedidos pagos</div>
-      <div class="h4 mb-0"><?php echo e(number_format($pctPagos, 1, ',', '.')); ?>%</div>
-    </div></div></div>
-  </div>
-
-  
-  <div class="row g-4 mb-4">
-    <div class="col-lg-8">
-      <div class="card shadow-sm">
-        <div class="card-header fw-semibold">Vendas (R$) × Pedidos por dia</div>
-        <div class="card-body"><canvas id="chartVendasPedidos" style="height:320px"></canvas></div>
-      </div>
+                                
+                                <form method="POST" action="<?php echo e(route('orders.refund', $order)); ?>" class="d-inline-flex align-items-center gap-1 mb-1">
+                                    <?php echo csrf_field(); ?>
+                                    <input name="amount" type="number" step="0.01" min="0.01"
+                                           class="form-control form-control-sm" style="width: 90px"
+                                           placeholder="Valor">
+                                    <button class="btn btn-sm btn-outline-warning"
+                                            onclick="return confirm('Confirmar reembolso parcial?')">
+                                        Parcial
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <small class="text-muted">Sem ações</small>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                    <tr>
+                        <td colspan="7">Nenhuma venda encontrada.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
-    <div class="col-lg-4">
-      <div class="card shadow-sm">
-        <div class="card-header fw-semibold">Status dos pedidos</div>
-        <div class="card-body"><canvas id="chartStatus" style="height:320px"></canvas></div>
-      </div>
-    </div>
-  </div>
 
-  
-  <div class="row g-4 mb-4">
-    <div class="col-lg-6">
-      <div class="card shadow-sm">
-        <div class="card-header fw-semibold">Ticket médio por dia</div>
-        <div class="card-body"><canvas id="chartAovDia" style="height:300px"></canvas></div>
-      </div>
-    </div>
-    <div class="col-lg-6">
-      <div class="card shadow-sm">
-        <div class="card-header fw-semibold">Distribuição de pedidos por horário</div>
-        <div class="card-body"><canvas id="chartPedidosHora" style="height:300px"></canvas></div>
-      </div>
-    </div>
-  </div>
+    <?php echo e($vendas->links()); ?>
 
-  
-  <div class="row g-4 mb-4">
-    <div class="col-lg-12">
-      <div class="card shadow-sm">
-        <div class="card-header fw-semibold">Top 5 produtos por unidades vendidas</div>
-        <div class="card-body"><canvas id="chartTopProdutosQty" style="height:320px"></canvas></div>
-      </div>
-    </div>
-  </div>
-
-  <?php if($vendas->isEmpty()): ?>
-    <p class="text-center">Você ainda não possui vendas cadastradas.</p>
-  <?php endif; ?>
-
-  <a href="<?php echo e(route('minha.conta')); ?>" class="btn btn-dark mt-3">
-    <i class="bi bi-arrow-left"></i> Voltar
-  </a>
 <?php $__env->stopSection(); ?>
-
-<?php $__env->startPush('scripts'); ?>
-  
-  <script id="sales-data" type="application/json">
-    {
-      "labelsDias": <?php echo json_encode($labelsDias, 15, 512) ?>,
-      "serieVendas": <?php echo json_encode($serieVendas, 15, 512) ?>,
-      "seriePedidos": <?php echo json_encode($seriePedidos, 15, 512) ?>,
-      "serieAov": <?php echo json_encode($serieAov, 15, 512) ?>,
-
-      "labelsProdutosQty": <?php echo json_encode($labelsProdutosQty, 15, 512) ?>,
-      "serieUnidadesProdutos": <?php echo json_encode($serieUnidadesProdutos, 15, 512) ?>,
-
-      "labelsStatus": <?php echo json_encode($labelsStatus, 15, 512) ?>,
-      "serieStatus": <?php echo json_encode($serieStatus, 15, 512) ?>,
-
-      "labelsHoras": <?php echo json_encode($labelsHoras, 15, 512) ?>,
-      "seriePedidosHora": <?php echo json_encode($seriePedidosHora, 15, 512) ?>
-    }
-  </script>
-
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
-
-  <script src="<?php echo e(asset('js/account.mySales.js')); ?>" defer></script>
-<?php $__env->stopPush(); ?>
-
 
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\AgroConecta\resources\views/account/mySales.blade.php ENDPATH**/ ?>
