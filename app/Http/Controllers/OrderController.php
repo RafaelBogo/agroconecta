@@ -15,27 +15,31 @@ class OrderController extends Controller
             ->latest()
             ->get();
 
-        return view('account.orders', compact('orders'));
+        // view certa
+        return view('account.myOrders', compact('orders'));
     }
 
     public function update(Request $request, Order $order)
     {
+        // só o dono pode mudar
         abort_unless($order->user_id === Auth::id(), 403);
 
+        // agora aceita Retirado também
         $data = $request->validate([
-            'status' => 'required|in:Pendente,Concluido,Cancelado',
+            'status' => 'required|in:Pendente,Concluido,Cancelado,Retirado',
         ]);
 
         $order->update(['status' => $data['status']]);
 
         return back()->with('success', 'Status atualizado.');
     }
+
     public function mySales()
     {
-        $vendas = Order::whereHas('items.product', function ($q) {
-                $q->where('user_id', Auth::id());
-            })
-            ->with(['items.product.user', 'user']) // comprador
+        $vendas = Order::whereHas('items.product', fn ($q) =>
+                $q->where('user_id', Auth::id())
+            )
+            ->with(['items.product.user', 'user'])
             ->latest()
             ->paginate(20);
 
@@ -44,9 +48,9 @@ class OrderController extends Controller
 
     public function mySalesAnalysis()
     {
-        $vendas = Order::whereHas('items.product', function ($q) {
-                $q->where('user_id', Auth::id());
-            })
+        $vendas = Order::whereHas('items.product', fn ($q) =>
+                $q->where('user_id', Auth::id())
+            )
             ->with(['items.product.user', 'user'])
             ->latest()
             ->get();
@@ -68,7 +72,8 @@ class OrderController extends Controller
                 ->withErrors(['error' => 'Venda não encontrada ou não autorizada.']);
         }
 
-        $venda->update(['status' => 'Concluido']);
+        // vendedor confirma retirada
+        $venda->update(['status' => 'Retirado']);
 
         return redirect()
             ->route('seller.mySales')
