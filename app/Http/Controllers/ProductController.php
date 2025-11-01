@@ -19,55 +19,60 @@ class ProductController extends Controller
         return view('sell.cadastroProduto');
     }
 
-    public function storeCadastroProduto(Request $request)
-    {
-        try {
-            // Validação dos campos
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'price' => 'required|numeric',
-                'validity' => 'required|date',
-                'unit' => 'required|string|max:255',
-                'contact' => 'required|string|max:255',
-                'description' => 'required|string|max:250',
-                'address' => 'required|string|max:255',
-                'city' => 'required|string|max:255',
-                'photo' => 'required|image|max:2048',
-                'stock' => 'required|integer|min:0',
-            ]);
+public function storeCadastroProduto(Request $request)
+{
+    try {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'validity' => 'required|date',
+            'unit' => 'required|string|max:255',
+            'contact' => 'required|string|max:255',
+            'description' => 'required|string|max:250',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'photo' => 'required|image|max:2048',
+            'stock'=> 'required|integer|min:0',
+        ]);
 
-            // Upload da foto
-            $path = $request->file('photo')->store('products', 'public');
-
-            // Salvar o produto no banco
-            Product::create([
-                'name' => $validatedData['name'],
-                'price' => $validatedData['price'],
-                'validity' => $validatedData['validity'],
-                'unit' => $validatedData['unit'],
-                'contact' => $validatedData['contact'],
-                'description' => $validatedData['description'],
-                'address' => $validatedData['address'],
-                'city' => $validatedData['city'],
-                'photo' => $path,
-                'user_id' => Auth::id(),
-                'stock' => $validatedData['stock'],
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('product_created', true)
-                ->with('success_message', 'Produto cadastrado com sucesso!');
-
-        } catch (\Exception $e) {
-            Log::error('Erro ao cadastrar produto:', [
-                'error' => $e->getMessage(),
-                'data' => $request->all(),
-            ]);
-            return redirect()->back()->withErrors(['error' => 'Erro ao salvar o produto. Por favor, tente novamente.']);
+        $destino = public_path('storage/products');
+        if (!is_dir($destino)) {
+            mkdir($destino, 0755, true);
         }
-    }
 
+        $file     = $request->file('photo');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move($destino, $filename);
+
+        $path = 'products/' . $filename;
+
+        Product::create([
+            'name'=> $validatedData['name'],
+            'price' => $validatedData['price'],
+            'validity' => $validatedData['validity'],
+            'unit' => $validatedData['unit'],
+            'contact' => $validatedData['contact'],
+            'description' => $validatedData['description'],
+            'address' => $validatedData['address'],
+            'city' => $validatedData['city'],
+            'photo' => $path,
+            'user_id' => Auth::id(),
+            'stock' => $validatedData['stock'],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('product_created', true)
+            ->with('success_message', 'Produto cadastrado com sucesso!');
+
+    } catch (\Exception $e) {
+        Log::error('Erro ao cadastrar produto:', [
+            'error' => $e->getMessage(),
+            'data' => $request->all(),
+        ]);
+        return redirect()->back()->withErrors(['error' => 'Erro ao salvar o produto. Por favor, tente novamente.']);
+    }
+}
 
     public function showProducts(Request $request)
     {
@@ -110,7 +115,7 @@ class ProductController extends Controller
    public function showProductDetails($id)
 {
     $product = Product::with([
-        'user:id,name',          
+        'user:id,name',
     ])->findOrFail($id);
 
     return view('products.details', compact('product'));
@@ -168,7 +173,6 @@ class ProductController extends Controller
 
         return redirect()->back()->with('success', 'Produto atualizado com sucesso!');
     }
-//classe para produto ativo ou nao
     public function toggleActive($id)
     {
         $product = Product::where('id', $id)

@@ -76,21 +76,14 @@
     @else
       <div class="row g-3">
         @foreach($products as $product)
-          @php
-            $img = $product->photo
-              ? asset('storage/'.$product->photo)
-              : asset('img/sem-foto.png'); // coloca uma imagem padrão na pasta public/img
-          @endphp
           <div class="col-12 col-sm-6 col-lg-4">
             <a href="{{ route('products.details', $product->id) }}" class="text-decoration-none text-reset">
               <div class="card product-card h-100">
                 <div class="ratio ratio-16x9">
                   <img
-                    src="{{ $img }}"
+                    src="{{ asset('storage/' . $product->photo) }}"
                     class="product-image rounded-top"
                     alt="{{ $product->name }}"
-                    loading="lazy"
-                    onerror="this.src='{{ asset('img/sem-foto.png') }}'"
                   >
                 </div>
                 <div class="card-body">
@@ -115,6 +108,7 @@
   </div>
 @endsection
 
+
 @push('scripts')
   <script src="{{ asset('js/products.showProducts.js') }}" defer></script>
 @endpush
@@ -122,3 +116,4 @@
 @push('styles')
   <link rel="stylesheet" href="{{ asset('css/products.showProducts.css') }}">
 @endpush
+
