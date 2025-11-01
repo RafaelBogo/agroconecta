@@ -4,7 +4,6 @@
 @section('boxed', true)
 
 @section('content')
-  {{-- Cabeçalho + busca --}}
   <div class="search-card shadow-sm">
     <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-2 mb-3">
       <div>
@@ -26,18 +25,14 @@
             class="form-control"
             placeholder="Ex.: tomate, mel, queijo…"
             value="{{ request('product') }}"
-            aria-label="Buscar por produto"
           >
-          <button type="button" id="clearProduct" class="btn btn-outline-secondary d-none">
-            <i class="bi bi-x-lg"></i>
-          </button>
         </div>
       </div>
 
       <div class="col-12 col-md-3">
         <div class="input-group">
           <span class="input-group-text bg-white"><i class="bi bi-geo-alt"></i></span>
-          <select name="city" class="form-select" aria-label="Filtrar por cidade">
+          <select name="city" class="form-select">
             <option value="">Todas as cidades</option>
             @foreach($cities as $city)
               <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
@@ -57,14 +52,11 @@
 
     @if(request()->filled('product') || request()->filled('city'))
       <div class="mt-2">
-        <a href="{{ route('products.search') }}" class="btn btn-link p-0 text-decoration-none">
-          Limpar filtros
-        </a>
+        <a href="{{ route('products.search') }}" class="btn btn-link p-0 text-decoration-none">Limpar filtros</a>
       </div>
     @endif
   </div>
 
-  {{-- Lista de produtos --}}
   <div class="products-card shadow-sm mt-3">
     @if($products->isEmpty())
       <div class="text-center py-5">
@@ -76,14 +68,22 @@
     @else
       <div class="row g-3">
         @foreach($products as $product)
+          @php
+              $foto = $product->photo;
+              $imgUrl = $foto
+                  ? route('media', ['path' => ltrim($foto, '/')])
+                  : 'https://via.placeholder.com/800x450?text=Sem+imagem';
+          @endphp
+
           <div class="col-12 col-sm-6 col-lg-4">
             <a href="{{ route('products.details', $product->id) }}" class="text-decoration-none text-reset">
               <div class="card product-card h-100">
                 <div class="ratio ratio-16x9">
                   <img
-                    src="{{ asset('storage/' . $product->photo) }}"
+                    src="{{ $imgUrl }}"
                     class="product-image rounded-top"
                     alt="{{ $product->name }}"
+                    onerror="this.onerror=null;this.src='https://via.placeholder.com/800x450?text=Sem+imagem';"
                   >
                 </div>
                 <div class="card-body">
@@ -98,22 +98,6 @@
           </div>
         @endforeach
       </div>
-
-      @if(method_exists($products, 'links'))
-        <div class="d-flex justify-content-center mt-3">
-          {{ $products->links() }}
-        </div>
-      @endif
     @endif
   </div>
 @endsection
-
-
-@push('scripts')
-  <script src="{{ asset('js/products.showProducts.js') }}" defer></script>
-@endpush
-
-@push('styles')
-  <link rel="stylesheet" href="{{ asset('css/products.showProducts.css') }}">
-@endpush
-

@@ -75,21 +75,14 @@
     <?php else: ?>
       <div class="row g-3">
         <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-          <?php
-            $img = $product->photo
-              ? asset('storage/'.$product->photo)
-              : asset('img/sem-foto.png'); // coloca uma imagem padrão na pasta public/img
-          ?>
           <div class="col-12 col-sm-6 col-lg-4">
             <a href="<?php echo e(route('products.details', $product->id)); ?>" class="text-decoration-none text-reset">
               <div class="card product-card h-100">
                 <div class="ratio ratio-16x9">
                   <img
-                    src="<?php echo e($img); ?>"
+                    src="<?php echo e(asset('storage/' . $product->photo)); ?>"
                     class="product-image rounded-top"
                     alt="<?php echo e($product->name); ?>"
-                    loading="lazy"
-                    onerror="this.src='<?php echo e(asset('img/sem-foto.png')); ?>'"
                   >
                 </div>
                 <div class="card-body">
@@ -116,6 +109,7 @@
   </div>
 <?php $__env->stopSection(); ?>
 
+
 <?php $__env->startPush('scripts'); ?>
   <script src="<?php echo e(asset('js/products.showProducts.js')); ?>" defer></script>
 <?php $__env->stopPush(); ?>
@@ -123,5 +117,6 @@
 <?php $__env->startPush('styles'); ?>
   <link rel="stylesheet" href="<?php echo e(asset('css/products.showProducts.css')); ?>">
 <?php $__env->stopPush(); ?>
+
 
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\AgroConecta\resources\views/products/showProducts.blade.php ENDPATH**/ ?>

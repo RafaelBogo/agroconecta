@@ -185,3 +185,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/pedido/{order}/cancel', [PagoController::class, 'cancel'])->name('orders.cancel');
 });
 
+//Para corrigir o erro das imagens na hospedagem
+Route::get('/media/{path}', function ($path) {
+    $full = storage_path('app/public/' . $path);
+
+    if (!is_file($full)) {
+        return response()->file(
+            public_path('img/placeholder.png')
+        );
+    }
+    return response()->file($full);
+})->where('path', '.*')->name('media');
