@@ -4,16 +4,27 @@
 @section('boxed', true)
 
 @php
+  use Illuminate\Support\Str;
+
   $decimais = in_array(strtolower($product->unit), ['kg','g','l','ml']);
   $isOwner  = auth()->check() && auth()->id() === $product->user_id;
+
+  $foto = $product->photo;
+  if (!Str::startsWith($foto, ['http://', 'https://'])) {
+      $foto = route('media', ['path' => ltrim($product->photo, '/')]);
+  }
 @endphp
 
 @section('content')
 <div class="product-wrap">
-  {{-- Coluna Esquerda: Imagem e avaliação --}}
+  {{-- Coluna Esquerda Imagem e avaliaação --}}
   <div>
     <div class="product-image mb-4">
-      <img src="{{ asset('storage/' . $product->photo) }}" alt="Foto do produto {{ $product->name }}">
+      <img
+        src="{{ $foto }}"
+        alt="Foto do produto {{ $product->name }}"
+        onerror="this.src='https://via.placeholder.com/800x450?text=Sem+imagem';"
+      >
     </div>
 
     {{-- Avaliações --}}
@@ -41,7 +52,7 @@
     </div>
   </div>
 
-  {{-- Coluna Direita: Detalhes e ações --}}
+  {{-- Coluna Direita detalhes e ações --}}
   <div>
     <h1 class="product-title">{{ $product->name }}</h1>
     <div class="product-price mb-3">R$ {{ number_format($product->price, 2, ',', '.') }}</div>
@@ -58,9 +69,23 @@
       </div>
     @else
       {{-- Ações --}}
-      <form id="add-to-cart-form" class="mb-3" data-cart-add-url="{{ route('cart.add') }}" data-login-url="{{ route('login') }}" data-product-id="{{ $product->id }}">
+      <form id="add-to-cart-form"
+            class="mb-3"
+            data-cart-add-url="{{ route('cart.add') }}"
+            data-login-url="{{ route('login') }}"
+            data-product-id="{{ $product->id }}">
         <label for="quantity" class="form-label">Quantidade</label>
-        <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="{{ $decimais ? '0.01' : '1' }}" step="{{ $decimais ? '0.01' : '1' }}" inputmode="decimal" required>
+        <input
+          type="number"
+          id="quantity"
+          name="quantity"
+          class="form-control"
+          value="1"
+          min="{{ $decimais ? '0.01' : '1' }}"
+          step="{{ $decimais ? '0.01' : '1' }}"
+          inputmode="decimal"
+          required
+        >
 
         <div class="action-row mt-3">
           <button type="submit" class="btn btn-success">
