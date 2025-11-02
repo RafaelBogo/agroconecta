@@ -2,7 +2,7 @@
 
 @section('title', 'Meus Dados')
 @section('boxed', true)
-@section('back', route('myAccount'))
+@section('back', content: route('myAccount'))
 
 @section('content')
 
