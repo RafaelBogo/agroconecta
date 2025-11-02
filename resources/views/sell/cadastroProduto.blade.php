@@ -2,7 +2,7 @@
 
 @section('title', 'Cadastro de Produto')
 @section('boxed', true)
-@section('back', content: route('account.myProducts'))
+@section('back', content: route('dashboard'))
 
 @section('content')
 @php

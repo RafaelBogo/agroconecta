@@ -2,6 +2,7 @@
 
 @section('title', 'Meu Carrinho')
 @section('boxed', true)
+@section('back', route('dashboard'))
 
 @section('content')
 <h1 class="cart-title">Meu Carrinho</h1>
@@ -9,72 +10,94 @@
 @php $total = 0; @endphp
 
 <div class="cart-content">
-    <div class="cart-table">
+  <div class="cart-table">
     @if (empty($cartItems))
-        <p class="empty-cart">O carrinho está vazio.</p>
+      <p class="empty-cart">O carrinho está vazio.</p>
     @else
-        <table class="table">
+      <table class="table">
         <thead>
-            <tr>
+          <tr>
             <th>Produto</th>
             <th>Preço</th>
             <th>Quantidade</th>
             <th>Subtotal</th>
             <th>Ações</th>
-            </tr>
+          </tr>
         </thead>
         <tbody>
-            @foreach ($cartItems as $item)
-                @php
-                  $subtotal = $item['price'] * $item['quantity'];
-                  $total += $subtotal;
-                @endphp
-                <tr data-item-id="{{ $item['id'] }}">
-                  <td>
-                    <img src="{{ asset('storage/' . $item['photo']) }}" alt="{{ $item['name'] }}"
-                        style="width: 50px; height: 50px; border-radius: 5px;">
-                    {{ $item['name'] }}
-                  </td>
-                  <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
-                  <td class="quantity-controls">
-                    <div class="input-group" style="max-width: 140px;">
-                      <button class="btn btn-outline-secondary btn-sm btn-decrease" type="button">-</button>
-                     <input type="number" step="0.01" min="0.01"
-                        class="form-control text-center quantity-input no-spin"readonly value="{{ number_format($item['quantity'], 2, '.', '') }}">
-                      <button class="btn btn-outline-secondary btn-sm btn-increase" type="button">+</button>
-                    </div>
-                  </td>
-                  <td class="subtotal">R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
-                  <td>
-                    <button type="button" class="btn btn-danger btn-sm delete-button"
-                            data-item-id="{{ $item['id'] }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                      Remover
-                    </button>
-                  </td>
-                </tr>
+          @foreach ($cartItems as $item)
+            @php
+              $subtotal = $item['price'] * $item['quantity'];
+              $total += $subtotal;
+
+              $rawPhoto = $item['photo'] ?? '';
+              $isUrl = is_string($rawPhoto) && (str_starts_with($rawPhoto, 'http://') || str_starts_with($rawPhoto, 'https://'));
+              $foto = $isUrl
+                          ? $rawPhoto
+                          : route('media', ['path' => ltrim((string) $rawPhoto, '/')]);
+            @endphp
+            <tr data-item-id="{{ $item['id'] }}">
+              <td class="d-flex align-items-center gap-2">
+                <img
+                  src="{{ $foto }}"
+                  alt="{{ $item['name'] }}"
+                  style="width:50px;height:50px;object-fit:cover;border-radius:5px;"
+                  onerror="this.src='https://via.placeholder.com/80x80?text=+';"
+                >
+                <span>{{ $item['name'] }}</span>
+              </td>
+              <td>R$ {{ number_format($item['price'], 2, ',', '.') }}</td>
+              <td class="quantity-controls">
+                <div class="input-group" style="max-width: 140px;">
+                  <button class="btn btn-outline-secondary btn-sm btn-decrease" type="button">-</button>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    class="form-control text-center quantity-input no-spin"
+                    readonly
+                    value="{{ number_format($item['quantity'], 2, '.', '') }}"
+                  >
+                  <button class="btn btn-outline-secondary btn-sm btn-increase" type="button">+</button>
+                </div>
+              </td>
+              <td class="subtotal">R$ {{ number_format($subtotal, 2, ',', '.') }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm delete-button"
+                  data-item-id="{{ $item['id'] }}"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteModal"
+                >
+                  Remover
+                </button>
+              </td>
+            </tr>
           @endforeach
         </tbody>
-        </table>
+      </table>
     @endif
-    </div>
+  </div>
 
-    <div class="cart-summary">
-        <h4>Resumo</h4>
-        <p>Valor dos produtos: <span id="total-value">R$ {{ number_format($total, 2, ',', '.') }}</span></p>
-        <p>Entrega: <span>Retirada com o produtor</span></p>
-        <p>Desconto: <span id="discount-value">R$ 0,00</span></p>
-        <hr>
-        <p><strong>Total: <span id="grand-total">R$ {{ number_format($total, 2, ',', '.') }}</span></strong></p>
-        <button class="btn btn-success btn-finalize" id="finalizarPedido">
-            <span id="finalizarText">Finalizar Pedido</span>
-            <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
-        </button>
-        <a class="btn btn-dark btn-finalize mt-2" href="{{ route('products.show') }}">Continuar Comprando</a>
-    </div>
+  <div class="cart-summary">
+    <h4>Resumo</h4>
+    <p>Valor dos produtos: <span id="total-value">R$ {{ number_format($total, 2, ',', '.') }}</span></p>
+    <p>Entrega: <span>Retirada com o produtor</span></p>
+    <p>Desconto: <span id="discount-value">R$ 0,00</span></p>
+    <hr>
+    <p><strong>Total: <span id="grand-total">R$ {{ number_format($total, 2, ',', '.') }}</span></strong></p>
+    <button class="btn btn-success btn-finalize" id="finalizarPedido">
+      <span id="finalizarText">Finalizar Pedido</span>
+      <span id="finalizarSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+    </button>
+    <a class="btn btn-dark btn-finalize mt-2" href="{{ route('products.show') }}">Continuar Comprando</a>
+  </div>
 </div>
 @endsection
 
 @push('modals')
+  {{-- modal remover --}}
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -91,7 +114,7 @@
     </div>
   </div>
 
-  {{-- Modal finalizar pedido --}}
+  {{-- modal finalizar --}}
   <div class="modal fade" id="finalizarModal" tabindex="-1" aria-labelledby="finalizarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -112,9 +135,7 @@
   <link rel="stylesheet" href="{{ asset('css/cart.view.css') }}">
 @endpush
 
-
 @push('scripts')
-  {{-- Config gerada no Blade para o JS público --}}
   <script id="cart-config" type="application/json">
     {
       "deleteUrl": "{{ route('cart.delete') }}",
@@ -123,8 +144,5 @@
       "mpPublicKey": "{{ config('services.mercadopago.public_key') }}"
     }
   </script>
-
-  {{-- Seu JS público --}}
   <script src="{{ asset('js/cart.view.js') }}" defer></script>
 @endpush
-

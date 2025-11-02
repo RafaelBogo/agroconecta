@@ -1,6 +1,6 @@
 <?php $__env->startSection('title', 'Cadastro de Produto'); ?>
 <?php $__env->startSection('boxed', true); ?>
-<?php $__env->startSection('back', content: route('account.myProducts')); ?>
+<?php $__env->startSection('back', content: route('dashboard')); ?>
 
 <?php $__env->startSection('content'); ?>
 <?php
