@@ -1,14 +1,48 @@
 <?php $__env->startSection('title', 'Criar conta'); ?>
 <?php $__env->startSection('boxed', false); ?>
+<?php $__env->startSection('noFooter', true); ?> 
 
 <?php $__env->startSection('content'); ?>
 <?php
+  // cidades do Oeste catarinense (as que tu já tinha + Bom Jesus do Oeste) em ordem alfabética
   $cities = [
-    'Chapecó','Xanxerê','Xaxim','Pinhalzinho','Palmitos','Maravilha','Modelo','Saudades','Águas de Chapecó',
-    'Nova Erechim','Nova Itaberaba','Coronel Freitas','Quilombo','Abelardo Luz','Coronel Martins','Galvão',
-    'São Lourenço do Oeste','Campo Erê','Saltinho','São Domingos','Ipuaçu','Entre Rios','Jupiá',
-    'Itapiranga','Iporã do Oeste','Mondaí','Riqueza','Descanso','Tunápolis','Belmonte','Paraíso',
-    'São Miguel do Oeste','Guaraciaba','Anchieta','Dionísio Cerqueira','Barra Bonita'
+    'Abelardo Luz',
+    'Águas de Chapecó',
+    'Anchieta',
+    'Barra Bonita',
+    'Belmonte',
+    'Bom Jesus do Oeste',
+    'Campo Erê',
+    'Chapecó',
+    'Coronel Freitas',
+    'Coronel Martins',
+    'Descanso',
+    'Dionísio Cerqueira',
+    'Entre Rios',
+    'Galvão',
+    'Guaraciaba',
+    'Ipuaçu',
+    'Iporã do Oeste',
+    'Itapiranga',
+    'Jupiá',
+    'Maravilha',
+    'Modelo',
+    'Mondaí',
+    'Nova Erechim',
+    'Nova Itaberaba',
+    'Palmitos',
+    'Paraíso',
+    'Pinhalzinho',
+    'Quilombo',
+    'Riqueza',
+    'Saltinho',
+    'São Domingos',
+    'São Lourenço do Oeste',
+    'São Miguel do Oeste',
+    'Saudades',
+    'Tunápolis',
+    'Xanxerê',
+    'Xaxim',
   ];
 ?>
 

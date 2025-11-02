@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +11,18 @@
 
     <style>
         body {
-            background-image: url('{{ asset("images/background3.jpg") }}');
-            background-size: cover;
-            background-position: center;
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
             margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+            background-image: url('{{ asset("images/background3.jpg") }}');
+            background-size: cover;
+            background-position: center;
             padding-top: 70px;
         }
 
@@ -26,7 +31,6 @@
             top: 0;
             width: 100%;
             z-index: 1030;
-
             background-color: rgba(120, 123, 123, 0.9);
             box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
             opacity: .95;
@@ -90,7 +94,6 @@
             overflow-y: auto;
         }
 
-        /* scrollbars */
         .content-box::-webkit-scrollbar {
             width: 35px;
         }
@@ -109,7 +112,6 @@
             background-color: rgba(100, 100, 100, .9);
         }
 
-        /* Botão voltar */
         .btn-voltar {
             background: #fff;
             color: #111827;
@@ -141,7 +143,6 @@
             font-size: 1rem;
         }
 
-        /* Footer */
         .site-footer {
             background: rgba(33, 37, 41, .92);
             color: #f8f9fa;
@@ -200,7 +201,6 @@
     </style>
     @stack('styles')
 </head>
-
 <body class="d-flex flex-column min-vh-100">
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
@@ -208,7 +208,7 @@
             <a class="navbar-brand fw-semibold" href="{{ route('dashboard') }}">AgroConecta</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar" aria-expanded="false" aria-label="Alternar navegação">
+                    aria-controls="mainNavbar" aria-expanded="false" aria-label="Alternar navegação">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -221,15 +221,13 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('cart.view') }}">Carrinho</a></li>
                 </ul>
 
-
                 <ul class="navbar-nav ms-lg-auto">
-                    <li class="nav-item"><a class="nav-link px-lg-3" href="{{ route('myAccount') }}">Minha Conta</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link px-lg-3" href="{{ route('myAccount') }}">Minha Conta</a></li>
                     <li class="nav-item">
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
                             <a href="#" class="nav-link"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Sair
                             </a>
                         </form>
@@ -239,7 +237,7 @@
         </div>
     </nav>
 
-    <main class="flex-fill">
+    <main>
         <div class="container">
             @hasSection('boxed')
                 <div class="content-box">
@@ -253,27 +251,26 @@
                 </div>
             @else
                 @hasSection('back')
-                    <a href="@yield('back', url()->previous())" class="btn-voltar mb-3">
+                    <a href="@yield('back', url()->previous())" class="btn-voltar mb-3 mt-4 d-inline-flex">
                         <i class="bi bi-arrow-left"></i> Voltar
                     </a>
                 @endif
 
                 @yield('content')
             @endif
-
         </div>
     </main>
 
     @stack('modals')
 
+    @unless (View::hasSection('noFooter'))
     <footer class="site-footer mt-auto pt-5 pb-4" role="contentinfo">
         <div class="container">
             <div class="row g-4">
                 {{-- Coluna 1 --}}
                 <div class="col-12 col-lg-5">
                     <div class="site-footer__brand">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo AgroConecta" class="site-footer__logo"
-                            loading="lazy">
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo AgroConecta" class="site-footer__logo" loading="lazy">
                         <div>
                             <strong>AgroConecta</strong><br>
                             <small class="site-footer__muted">Conectando agricultores locais e consumidores.</small>
@@ -281,8 +278,7 @@
                     </div>
 
                     <p class="mt-3 mb-2 site-footer__muted">
-                        Nossa missão é aproximar quem produz com quem consome, fortalecendo a economia local e a
-                        agricultura sustentável.
+                        Nossa missão é aproximar quem produz com quem consome, fortalecendo a economia local e a agricultura sustentável.
                     </p>
 
                     <div class="d-flex align-items-center gap-2 social" aria-label="Redes sociais">
@@ -336,6 +332,7 @@
             @stack('footer')
         </div>
     </footer>
+    @endunless
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -348,5 +345,4 @@
 
     @stack('scripts')
 </body>
-
 </html>
