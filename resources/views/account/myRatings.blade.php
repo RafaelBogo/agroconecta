@@ -2,7 +2,7 @@
 
 @section('title', 'Minhas Avaliações')
 @section('boxed', true)
-@section('back', route('minha.conta'))
+@section('back', route('myAccount'))
 
 @section('content')
 <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
