@@ -10,7 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        /* body flex pra empurrar o footer pra baixo */
         body {
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
@@ -19,13 +18,12 @@
             flex-direction: column;
         }
 
-        /* fundo fica no main, não no footer */
         main {
             flex: 1 0 auto;
             background-image: url('<?php echo e(asset("images/background3.jpg")); ?>');
             background-size: cover;
             background-position: center;
-            padding-top: 70px; /* por causa da navbar fixa */
+            padding-top: 70px;
         }
 
         .navbar {
@@ -92,11 +90,10 @@
             max-width: 1200px;
             width: 100%;
             margin: 50px auto;
-            max-height: 80vh;   /* mantém o scroll interno */
+            max-height: 80vh;
             overflow-y: auto;
         }
 
-        /* scrollbars */
         .content-box::-webkit-scrollbar {
             width: 35px;
         }
@@ -115,7 +112,6 @@
             background-color: rgba(100, 100, 100, .9);
         }
 
-        /* Botão voltar */
         .btn-voltar {
             background: #fff;
             color: #111827;
@@ -147,7 +143,6 @@
             font-size: 1rem;
         }
 
-        /* Footer (só aparece se a view não esconder) */
         .site-footer {
             background: rgba(33, 37, 41, .92);
             color: #f8f9fa;

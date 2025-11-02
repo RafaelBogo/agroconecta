@@ -1,20 +1,18 @@
-{{-- resources/views/auth/register.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Criar conta')
 @section('boxed', false)
-@section('noFooter', true) {{-- não mostra o footer nessa tela --}}
+@section('noFooter', true)
 
 @section('content')
 @php
-  // cidades do Oeste catarinense (as que tu já tinha + Bom Jesus do Oeste) em ordem alfabética
   $cities = [
     'Abelardo Luz',
     'Águas de Chapecó',
     'Anchieta',
     'Barra Bonita',
     'Belmonte',
-    'Bom Jesus do Oeste',
+    'Bom Jesus',
     'Campo Erê',
     'Chapecó',
     'Coronel Freitas',
