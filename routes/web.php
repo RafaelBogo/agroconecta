@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
 // ===============================
 // Rotas de Minha Conta
 // ===============================
-Route::get('/minha-conta', [DashboardController::class, 'minhaConta'])->name('minha.conta');
+Route::get('/minha-conta', [DashboardController::class, 'myAccount'])->name('myAccount');
 
 // ===============================
 // Rotas de Carrinho

@@ -45,9 +45,8 @@
 
   </div>
 
-  <a href="{{ route('dashboard') }}" class="btn-voltar">
-    <i class="bi bi-arrow-left"></i> Voltar
-  </a>
+  @section('back', route('dashboard'))
+
 </div>
 @endsection
 
