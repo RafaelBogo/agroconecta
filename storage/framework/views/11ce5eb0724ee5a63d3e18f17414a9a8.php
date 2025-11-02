@@ -1,9 +1,17 @@
 <?php $__env->startSection('title', $product->name); ?>
 <?php $__env->startSection('boxed', true); ?>
+<?php $__env->startSection('back', route('products.show')); ?>
 
 <?php
+  use Illuminate\Support\Str;
+
   $decimais = in_array(strtolower($product->unit), ['kg','g','l','ml']);
   $isOwner  = auth()->check() && auth()->id() === $product->user_id;
+
+  $foto = $product->photo;
+  if (!Str::startsWith($foto, ['http://', 'https://'])) {
+      $foto = route('media', ['path' => ltrim($product->photo, '/')]);
+  }
 ?>
 
 <?php $__env->startSection('content'); ?>
@@ -11,7 +19,11 @@
   
   <div>
     <div class="product-image mb-4">
-      <img src="<?php echo e(asset('storage/' . $product->photo)); ?>" alt="Foto do produto <?php echo e($product->name); ?>">
+      <img
+        src="<?php echo e($foto); ?>"
+        alt="Foto do produto <?php echo e($product->name); ?>"
+        onerror="this.src='https://via.placeholder.com/800x450?text=Sem+imagem';"
+      >
     </div>
 
     
@@ -56,9 +68,23 @@
       </div>
     <?php else: ?>
       
-      <form id="add-to-cart-form" class="mb-3" data-cart-add-url="<?php echo e(route('cart.add')); ?>" data-login-url="<?php echo e(route('login')); ?>" data-product-id="<?php echo e($product->id); ?>">
+      <form id="add-to-cart-form"
+            class="mb-3"
+            data-cart-add-url="<?php echo e(route('cart.add')); ?>"
+            data-login-url="<?php echo e(route('login')); ?>"
+            data-product-id="<?php echo e($product->id); ?>">
         <label for="quantity" class="form-label">Quantidade</label>
-        <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="<?php echo e($decimais ? '0.01' : '1'); ?>" step="<?php echo e($decimais ? '0.01' : '1'); ?>" inputmode="decimal" required>
+        <input
+          type="number"
+          id="quantity"
+          name="quantity"
+          class="form-control"
+          value="1"
+          min="<?php echo e($decimais ? '0.01' : '1'); ?>"
+          step="<?php echo e($decimais ? '0.01' : '1'); ?>"
+          inputmode="decimal"
+          required
+        >
 
         <div class="action-row mt-3">
           <button type="submit" class="btn btn-success">

@@ -2,6 +2,7 @@
 
 @section('title', $product->name)
 @section('boxed', true)
+@section('back', route('products.show'))
 
 @php
   use Illuminate\Support\Str;
