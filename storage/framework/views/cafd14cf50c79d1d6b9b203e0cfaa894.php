@@ -29,10 +29,10 @@
       <p>Veja e faça avaliações de compras.</p>
     </a>
 
-    <a href="<?php echo e(route('seller.mySales')); ?>" class="option-card" aria-label="Minhas Vendas">
+    <a href="<?php echo e(route('seller.mySalesAnalysis')); ?>" class="option-card" aria-label="Suporte">
       <span class="option-icon"><i class="bi bi-bag"></i></span>
-      <h5>Minhas Vendas</h5>
-      <p>Acompanhe vendas e retiradas.</p>
+      <h5>Análise de Vendas</h5>
+      <p>Visualize gráficos das suas vendas</p>
     </a>
 
     <a href="<?php echo e(route('support')); ?>" class="option-card" aria-label="Suporte">
@@ -41,11 +41,6 @@
       <p>Fale com a nossa equipe de ajuda.</p>
     </a>
 
-    <a href="<?php echo e(route('seller.mySalesAnalysis')); ?>" class="option-card" aria-label="Suporte">
-      <span class="option-icon"><i class="bi bi-headset"></i></span>
-      <h5>Análise de Vendas</h5>
-      <p>Visualize gráficos das suas vendas</p>
-    </a>
   </div>
 
   <a href="<?php echo e(route('dashboard')); ?>" class="btn-voltar">
