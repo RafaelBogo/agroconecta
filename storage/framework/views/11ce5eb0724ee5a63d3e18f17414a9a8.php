@@ -86,7 +86,7 @@
           required
         >
 
-        <div class="action-row mt-3">
+        <div class="action-row mt-3 d-flex flex-wrap gap-2">
           <button type="submit" class="btn btn-success">
             <i class="bi bi-cart-plus me-1"></i> Adicionar ao Carrinho
           </button>
@@ -95,9 +95,11 @@
             <i class="bi bi-bag me-1"></i> Continuar comprando
           </a>
 
-          <a href="<?php echo e(route('chat.with', $product->user_id)); ?>" class="btn btn-outline-success">
-            <i class="bi bi-chat-dots me-1"></i> Conversar com o vendedor
-          </a>
+          <?php if(!empty($product->user_id)): ?>
+            <a href="<?php echo e(route('chat.with', $product->user_id)); ?>" class="btn btn-outline-success">
+              <i class="bi bi-chat-dots me-1"></i> Conversar com o vendedor
+            </a>
+          <?php endif; ?>
         </div>
       </form>
     <?php endif; ?>

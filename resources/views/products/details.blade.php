@@ -18,7 +18,7 @@
 
 @section('content')
 <div class="product-wrap">
-  {{-- Coluna Esquerda Imagem e avaliaação --}}
+  {{-- Coluna Esquerda Imagem e avaliação --}}
   <div>
     <div class="product-image mb-4">
       <img
@@ -88,7 +88,7 @@
           required
         >
 
-        <div class="action-row mt-3">
+        <div class="action-row mt-3 d-flex flex-wrap gap-2">
           <button type="submit" class="btn btn-success">
             <i class="bi bi-cart-plus me-1"></i> Adicionar ao Carrinho
           </button>
@@ -97,9 +97,11 @@
             <i class="bi bi-bag me-1"></i> Continuar comprando
           </a>
 
-          <a href="{{ route('chat.with', $product->user_id) }}" class="btn btn-outline-success">
-            <i class="bi bi-chat-dots me-1"></i> Conversar com o vendedor
-          </a>
+          @if(!empty($product->user_id))
+            <a href="{{ route('chat.with', $product->user_id) }}" class="btn btn-outline-success">
+              <i class="bi bi-chat-dots me-1"></i> Conversar com o vendedor
+            </a>
+          @endif
         </div>
       </form>
     @endif
