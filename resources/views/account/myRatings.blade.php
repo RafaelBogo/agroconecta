@@ -18,6 +18,9 @@
             $raw = (string) ($product->photo ?? '');
             $isUrl = $raw !== '' && (strpos($raw, 'http://') === 0 || strpos($raw, 'https://') === 0);
             $foto = $isUrl ? $raw : route('media', ['path' => ltrim($raw, '/')]);
+
+            $jaAvaliou = in_array($product->id, $reviews);
+            $podeAvaliar = !$jaAvaliou && $product->status === 'Retirado';
         @endphp
 
         <div class="rating-card mb-3">
@@ -41,7 +44,8 @@
                 </div>
 
                 <div class="col-12 col-md-4 text-md-end">
-                    @if(in_array($product->id, $reviews))
+                    {{-- Já avaliou --}}
+                    @if($jaAvaliou)
                         <span class="badge text-bg-success px-3 py-2">
                             <i class="bi bi-check2-circle me-1"></i> Você já avaliou
                         </span>
@@ -49,11 +53,26 @@
                 </div>
             </div>
 
-            @unless(in_array($product->id, $reviews))
-                @if(in_array($product->id, $eligibleIds ?? [], true))
-                    <form action="{{ route('products.reviews.store', $product->id) }}" method="POST" class="mt-3 rating-form"
-                        id="form-{{ $product->id }}">
+            {{-- Área da avaliação --}}
+            @unless($jaAvaliou)
+                @if($podeAvaliar)
+                    <form action="{{ route('products.reviews.store', $product->id) }}" method="POST"
+                          class="mt-3 rating-form" id="form-{{ $product->id }}">
                         @csrf
+
+                        <div class="rating-stars mb-2">
+                            @for($i = 5; $i >= 1; $i--)
+                                <input type="radio" name="rating" id="star-{{ $product->id }}-{{ $i }}" value="{{ $i }}" required>
+                                <label for="star-{{ $product->id }}-{{ $i }}">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+                            @endfor
+                        </div>
+
+                        <div id="chosen-{{ $product->id }}" class="text-muted small mb-2">Nenhuma nota selecionada</div>
+
+                        <textarea name="comment" class="form-control mb-2" rows="2" placeholder="Comentário (opcional)"></textarea>
+                        <button type="submit" class="btn btn-success btn-sm">Enviar avaliação</button>
                     </form>
                 @else
                     <div class="mt-3">
@@ -63,7 +82,6 @@
                     </div>
                 @endif
             @endunless
-
         </div>
     @empty
         <div class="text-center py-4">
