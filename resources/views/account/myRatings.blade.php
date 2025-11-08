@@ -15,12 +15,13 @@
 
     @forelse($products as $product)
         @php
-            $raw = (string) ($product->photo ?? '');
+            $raw  = (string) ($product->photo ?? '');
             $isUrl = $raw !== '' && (strpos($raw, 'http://') === 0 || strpos($raw, 'https://') === 0);
             $foto = $isUrl ? $raw : route('media', ['path' => ltrim($raw, '/')]);
 
-            $jaAvaliou = in_array($product->id, $reviews);
-            $podeAvaliar = !$jaAvaliou && $product->status === 'Retirado';
+            $eligibleNorm = array_map('intval', $eligibleIds ?? []);
+            $jaAvaliou    = in_array((int)$product->id, array_map('intval', $reviews ?? []));
+            $podeAvaliar  = in_array((int)$product->id, $eligibleNorm);
         @endphp
 
         <div class="rating-card mb-3">
@@ -29,7 +30,7 @@
                     <div class="d-flex align-items-start gap-3">
                         @if($raw)
                             <img src="{{ $foto }}" alt="{{ $product->name }}" class="thumb"
-                                onerror="this.onerror=null;this.src='https://via.placeholder.com/120x120?text=Sem+imagem';">
+                                 onerror="this.onerror=null;this.src='https://via.placeholder.com/120x120?text=Sem+imagem';">
                         @else
                             <div class="thumb thumb-placeholder d-flex align-items-center justify-content-center">
                                 <i class="bi bi-image"></i>
@@ -44,7 +45,6 @@
                 </div>
 
                 <div class="col-12 col-md-4 text-md-end">
-                    {{-- Já avaliou --}}
                     @if($jaAvaliou)
                         <span class="badge text-bg-success px-3 py-2">
                             <i class="bi bi-check2-circle me-1"></i> Você já avaliou
@@ -53,7 +53,6 @@
                 </div>
             </div>
 
-            {{-- Área da avaliação --}}
             @unless($jaAvaliou)
                 @if($podeAvaliar)
                     <form action="{{ route('products.reviews.store', $product->id) }}" method="POST"

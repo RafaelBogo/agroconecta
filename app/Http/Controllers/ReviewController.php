@@ -10,14 +10,10 @@ use App\Models\Review;
 
 class ReviewController extends Controller
 {
-    /**
-     * Lista os produtos que o usuário comprou e pode (ou não) avaliar.
-     */
     public function index()
     {
         $userId = Auth::id();
 
-        // Produtos comprados por este usuário (tabela orders contém product_id e status)
         $products = Product::whereIn('products.id', function ($q) use ($userId) {
                 $q->select('orders.product_id')
                   ->from('orders')
@@ -27,12 +23,10 @@ class ReviewController extends Controller
             ->orderBy('name')
             ->get();
 
-        // Produtos que o usuário já avaliou
         $reviews = Review::where('user_id', $userId)
             ->pluck('product_id')
             ->all();
 
-        // Produtos elegíveis para avaliação (pedido marcado como Retirado)
         $eligibleIds = $this->eligibleProductIds($userId);
 
         return view('account.myRatings', [
@@ -42,9 +36,6 @@ class ReviewController extends Controller
         ]);
     }
 
-    /**
-     * Salva a avaliação de um produto.
-     */
     public function store(Request $request, $productId)
     {
         $data = $request->validate([
@@ -55,11 +46,9 @@ class ReviewController extends Controller
         $userId    = Auth::id();
         $productId = (int) $productId;
 
-        // Só permite avaliar se houver pedido "Retirado" para este produto
         $eligibleIds = $this->eligibleProductIds($userId);
         abort_unless(in_array($productId, $eligibleIds, true), 403, 'A avaliação só é liberada após marcar o produto como retirado.');
 
-        // Evita avaliação duplicada
         $already = Review::where('user_id', $userId)
             ->where('product_id', $productId)
             ->exists();
@@ -75,9 +64,7 @@ class ReviewController extends Controller
         return back()->with('success', 'Avaliação enviada com sucesso!');
     }
 
-    /**
-     * Retorna os IDs de produtos elegíveis para avaliação (pedidos "Retirado").
-     */
+
     private function eligibleProductIds(int $userId): array
     {
         return DB::table('orders')
