@@ -114,7 +114,7 @@
                     <div class="mb-3 flex-grow-1">
                         <label for="address" class="form-label">Endereço</label>
                         <textarea id="address" name="address" class="form-control" rows="6"
-                            placeholder="Cidade, comunidade/bairro, rua, ponto de referência, cor da casa..."
+                            placeholder="Comunidade/bairro, rua, ponto de referência, cor da casa..."
                             required>{{ old('address', $user->address) }}</textarea>
                     </div>
 
