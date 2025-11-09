@@ -13,19 +13,18 @@ class ChatController extends Controller
     {
         $myId = Auth::id();
 
-        $otherIds = Message::selectRaw('CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END as other_id', [$myId])
+        $userIds = Message::selectRaw('CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END AS contact_id', [$myId])
             ->where(fn($q) => $q->where('sender_id', $myId)->orWhere('receiver_id', $myId))
-            ->groupBy('other_id')
-            ->pluck('other_id');
+            ->distinct()
+            ->pluck('contact_id');
 
-        $users = User::whereIn('id', $otherIds)->orderBy('name')->get();
+        $users = User::whereIn('id', $userIds)->orderBy('name')->get();
 
         return view('chat.inbox', compact('users'));
     }
 
     public function showChat($userId)
     {
-
         $user = User::findOrFail($userId);
 
         $messages = Message::where(function ($q) use ($userId) {
@@ -43,7 +42,7 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
         $data = $request->validate([
-            'receiver_id' => 'required|exists:users,id',
+            'receiver_id' => 'required|exists:users,id|different:' . Auth::id(),
             'message'     => 'required|string|min:1|max:2000',
         ]);
 
@@ -53,7 +52,7 @@ class ChatController extends Controller
             'message'     => trim($data['message']),
         ]);
 
-        return back();
+        return back()->with('success', 'Mensagem enviada.');
     }
 
     public function endConversation($userId)
@@ -66,6 +65,6 @@ class ChatController extends Controller
             })
             ->delete();
 
-        return redirect()->route('messages')->with('success', 'Conversa encerrada com sucesso.');
+        return redirect()->route('chat.inbox')->with('success', 'Conversa encerrada com sucesso.');
     }
 }
