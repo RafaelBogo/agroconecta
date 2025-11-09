@@ -18,40 +18,40 @@ class PagoController extends Controller
     {
         MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
 
-        $type = $request->input('type') ?: $request->input('topic') ?: $request->header('X-Topic');
-        $id = data_get($request->input('data'), 'id') ?? $request->input('id');
+        $type   = $request->input('type') ?: $request->input('topic') ?: $request->header('X-Topic');
+        $id     = data_get($request->input('data'), 'id') ?? $request->input('id');
         $action = $request->input('action');
 
-        if (($type === 'payment' || str_contains((string) $action, 'payment')) && $id) {
+        if (($type === 'payment' || str_contains((string)$action, 'payment')) && $id) {
             try {
-                $payment = (new PaymentClient())->get((int) $id);
+                $payment = (new PaymentClient())->get((int)$id);
                 $orderId = (int) data_get($payment, 'external_reference');
-                $status = strtolower((string) data_get($payment, 'status'));
-                $payIdStr = (string) data_get($payment, 'id');
+                $status  = strtolower((string) data_get($payment, 'status'));
+                $payId   = (string) data_get($payment, 'id');
 
                 if ($orderId && ($order = Order::with(['items.product.user', 'user'])->find($orderId))) {
-                    $map = [
-                        'approved' => 'Concluido',
-                        'pending' => 'Pendente',
-                        'rejected' => 'Cancelado',
-                        'cancelled' => 'Cancelado',
-                        'refunded' => 'Estornado',
-                        'in_process' => 'Pendente',
-                        'authorized' => 'Pendente',
-                    ];
-                    $novo = $map[$status] ?? $order->status;
+                    $novo = match ($status) {
+                        'approved'  => 'Concluido',
+                        'refunded'  => 'Estornado',
+                        'pending', 'in_process', 'authorized', 'rejected', 'cancelled' => 'Pendente',
+                        default     => 'Pendente',
+                    };
 
-                    $order->mp_payment_id = $payIdStr ?: $order->mp_payment_id;
-                    $order->mp_status = $status ?: $order->mp_status;
+                    if ($payId) {
+                        $order->mp_payment_id = $payId;
+                    }
+                    if ($status) {
+                        $order->mp_status = $status;
+                    }
 
                     if ($order->status !== $novo) {
                         $order->status = $novo;
                         $order->save();
 
                         Log::info('[MP Webhook] Pedido atualizado', [
-                            'order_id' => $order->id,
-                            'status' => $novo,
-                            'mp_status' => $status,
+                            'order_id'   => $order->id,
+                            'status'     => $novo,
+                            'mp_status'  => $status,
                             'payment_id' => $order->mp_payment_id,
                         ]);
 
@@ -66,7 +66,7 @@ class PagoController extends Controller
                 } else {
                     Log::warning('[MP Webhook] Pedido não encontrado', [
                         'external_reference' => $orderId,
-                        'mp_status' => $status
+                        'mp_status'          => $status,
                     ]);
                 }
             } catch (\Throwable $e) {
@@ -79,27 +79,25 @@ class PagoController extends Controller
 
     public function success(Request $request, Order $order)
     {
-        $mpStatus = null;
+        $mpStatus   = null;
 
         $statusParam = strtolower((string) $request->query('status', ''));
-        $colStatus = strtolower((string) $request->query('collection_status', ''));
-        $isApproved = in_array($statusParam, ['approved', 'aproved'], true)
-            || in_array($colStatus, ['approved', 'aproved'], true);
+        $colStatus   = strtolower((string) $request->query('collection_status', ''));
+        $isApproved  = in_array($statusParam, ['approved', 'aproved'], true)
+                    || in_array($colStatus,   ['approved', 'aproved'], true);
 
         if ($request->filled('payment_id')) {
             try {
                 MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
-                $payment = (new PaymentClient())->get((int) $request->query('payment_id'));
+                $payment  = (new PaymentClient())->get((int) $request->query('payment_id'));
                 $mpStatus = strtolower((string) ($payment->status ?? ''));
-                $mpPayId = (string) ($payment->id ?? null);
-                $isApproved = $isApproved || ($mpStatus === 'approved');
+                $mpPayId  = (string) ($payment->id ?? null);
 
-                if ($mpPayId)
-                    $order->mp_payment_id = $mpPayId;
-                if ($mpStatus)
-                    $order->mp_status = $mpStatus;
-                if ($mpPayId || $mpStatus)
-                    $order->save();
+                if ($mpPayId)  $order->mp_payment_id = $mpPayId;
+                if ($mpStatus) $order->mp_status     = $mpStatus;
+                if ($mpPayId || $mpStatus) $order->save();
+
+                $isApproved = $isApproved || ($mpStatus === 'approved');
             } catch (\Throwable $e) {
                 Log::warning('[MP Return] Falha consulta', ['err' => $e->getMessage()]);
             }
@@ -119,6 +117,28 @@ class PagoController extends Controller
 
         return view('orders.success', compact('order', 'mpStatus'));
     }
+
+    public function cancel(Request $request, Order $order)
+    {
+        abort(404);
+    }
+
+    public function failure(Order $order)
+    {
+        if ($order->status !== 'Concluido' && $order->status !== 'Pendente') {
+            try { $order->update(['status' => 'Pendente']); } catch (\Throwable $e) {}
+        }
+        return view('orders.failure', compact('order'));
+    }
+
+    public function pending(Request $request, Order $order)
+    {
+        if ($order->status !== 'Concluido') {
+            try { $order->update(['status' => 'Pendente']); } catch (\Throwable $e) {}
+        }
+        return view('orders.pending', compact('order'));
+    }
+
     public function refund(Request $request, Order $order)
     {
         $souVendedor = $order->items()
@@ -141,14 +161,11 @@ class PagoController extends Controller
             $paymentClient = new PaymentClient();
 
             if ($amount <= 0) {
-                // total
                 $payment    = $paymentClient->get((int) $order->mp_payment_id);
                 $amountFull = (float) ($payment->transaction_amount ?? 0);
-
                 if ($amountFull <= 0) {
                     return back()->withErrors('Não foi possível determinar o valor do pagamento no Mercado Pago.');
                 }
-
                 $refundClient->refund((int) $order->mp_payment_id, $amountFull);
                 Log::info('[Refund] Total OK', ['order_id' => $order->id, 'amount' => $amountFull]);
             } else {
@@ -171,78 +188,22 @@ class PagoController extends Controller
         }
     }
 
-    public function cancel(Request $request, Order $order)
-    {
-        if (!$order->items()->whereHas('product', fn($q) => $q->where('user_id', Auth::id()))->exists()) {
-            abort(403);
-        }
-
-        if (!in_array($order->mp_status, ['pending', 'in_process', 'authorized'], true)) {
-            return back()->withErrors(['error' => 'Só é possível cancelar pagamentos não aprovados.']);
-        }
-        if (!$order->mp_payment_id) {
-            return back()->withErrors(['error' => 'payment_id ausente neste pedido.']);
-        }
-
-        try {
-            MercadoPagoConfig::setAccessToken(config('services.mercadopago.token'));
-            (new PaymentClient())->cancel((int) $order->mp_payment_id);
-
-            $order->status = 'Cancelado';
-            $order->mp_status = 'cancelled';
-            $order->save();
-
-            Log::info('[Cancel] OK', ['order_id' => $order->id, 'payment_id' => $order->mp_payment_id]);
-
-            return back()->with('success', 'Pagamento cancelado com sucesso.');
-        } catch (\Throwable $e) {
-            Log::error('[Cancel] Falhou', [
-                'order_id' => $order->id,
-                'payment_id' => $order->mp_payment_id,
-                'err' => $e->getMessage(),
-            ]);
-            return back()->withErrors(['error' => 'Falha ao cancelar: ' . $e->getMessage()]);
-        }
-    }
-
-    public function failure(Order $order)
-    {
-        if ($order->status !== 'Concluido') {
-            try {
-                $order->update(['status' => 'Cancelado']);
-            } catch (\Throwable $e) {
-            }
-        }
-        return view('orders.failure', compact('order'));
-    }
-
-    public function pending(Request $request, Order $order)
-    {
-        if ($order->status !== 'Concluido') {
-            try {
-                $order->update(['status' => 'Pendente']);
-            } catch (\Throwable $e) {
-            }
-        }
-        return view('orders.pending', compact('order'));
-    }
-
     private function enviarEmailsPagamentoAprovado(Order $order): void
     {
         $order->loadMissing(['items.product.user', 'user']);
 
         $fromAddress = config('mail.from.address') ?: ('no-reply@' . parse_url(config('app.url') ?: request()->getSchemeAndHttpHost(), PHP_URL_HOST));
-        $fromName = config('mail.from.name') ?: 'AgroConecta';
+        $fromName    = config('mail.from.name') ?: 'AgroConecta';
 
         $buyer = $order->user;
         if ($buyer?->email) {
             $orderDetails = [
                 'user_name' => $buyer->name,
-                'total' => $this->totalPedido($order),
-                'items' => $order->items->map(fn($i) => [
-                    'name' => $i->product->name,
-                    'price' => (float) $i->price,
-                    'quantity' => (float) $i->quantity,
+                'total'     => $this->totalPedido($order),
+                'items'     => $order->items->map(fn($i) => [
+                    'name'           => $i->product->name,
+                    'price'          => (float)$i->price,
+                    'quantity'       => (float)$i->quantity,
                     'seller_address' => $i->product->user->address ?? 'Endereço não informado',
                 ])->toArray(),
             ];
@@ -250,15 +211,15 @@ class PagoController extends Controller
             $html = view('cart.buyer_email', ['orderDetails' => $orderDetails])->render();
             Log::info('[Email->Buyer] Render OK', [
                 'order_id' => $order->id,
-                'to' => $buyer->email,
+                'to'       => $buyer->email,
                 'html_len' => strlen($html),
             ]);
 
             try {
                 Mail::html($html, function ($m) use ($buyer, $order, $fromAddress, $fromName) {
                     $m->from($fromAddress, $fromName)
-                        ->to($buyer->email)
-                        ->subject("Pedido #{$order->id} aprovado");
+                      ->to($buyer->email)
+                      ->subject("Pedido #{$order->id} aprovado");
                 });
                 Log::info('[Email->Buyer] Enviado', ['order_id' => $order->id, 'to' => $buyer->email]);
             } catch (\Throwable $e) {
@@ -271,40 +232,40 @@ class PagoController extends Controller
         $bySeller = $order->items->groupBy(fn($i) => $i->product->user_id);
         foreach ($bySeller as $sellerItems) {
             $seller = $sellerItems->first()->product->user;
-            $to = $seller?->email;
+            $to     = $seller?->email;
 
             if (!$to) {
                 Log::warning('[Email->Seller] Vendedor sem e-mail', [
-                    'order_id' => $order->id,
+                    'order_id'  => $order->id,
                     'seller_id' => $seller?->id,
-                    'sellerName' => $seller?->name,
+                    'sellerName'=> $seller?->name,
                 ]);
                 continue;
             }
 
             $sellerDetails = [
                 'seller_name' => $seller->name,
-                'buyer_name' => $order->user?->name,
-                'total' => $sellerItems->sum(fn($i) => (float) $i->price * (float) $i->quantity),
-                'items' => $sellerItems->map(fn($i) => [
-                    'name' => $i->product->name,
-                    'quantity' => (float) $i->quantity,
+                'buyer_name'  => $order->user?->name,
+                'total'       => $sellerItems->sum(fn($i) => (float)$i->price * (float)$i->quantity),
+                'items'       => $sellerItems->map(fn($i) => [
+                    'name'     => $i->product->name,
+                    'quantity' => (float)$i->quantity,
                 ])->toArray(),
             ];
 
             $html = view('cart.seller_email', ['sellerDetails' => $sellerDetails])->render();
             Log::info('[Email->Seller] Render OK', [
                 'order_id' => $order->id,
-                'to' => $to,
+                'to'       => $to,
                 'html_len' => strlen($html),
-                'items' => count($sellerDetails['items']),
+                'items'    => count($sellerDetails['items']),
             ]);
 
             try {
                 Mail::html($html, function ($m) use ($to, $order, $fromAddress, $fromName) {
                     $m->from($fromAddress, $fromName)
-                        ->to($to)
-                        ->subject("Novo pedido aprovado — #{$order->id}");
+                      ->to($to)
+                      ->subject("Novo pedido aprovado — #{$order->id}");
                 });
                 Log::info('[Email->Seller] Enviado', ['order_id' => $order->id, 'to' => $to]);
             } catch (\Throwable $e) {
@@ -319,14 +280,14 @@ class PagoController extends Controller
             $deleted = DB::table('cart_items')->where('user_id', $order->user_id)->delete();
             Log::info('[Cart] Carrinho limpo após aprovação', [
                 'order_id' => $order->id,
-                'user_id' => $order->user_id,
-                'deleted' => $deleted
+                'user_id'  => $order->user_id,
+                'deleted'  => $deleted
             ]);
         } catch (\Throwable $e) {
             Log::warning('[Cart] Falha ao limpar carrinho', [
                 'order_id' => $order->id,
-                'user_id' => $order->user_id,
-                'err' => $e->getMessage()
+                'user_id'  => $order->user_id,
+                'err'      => $e->getMessage()
             ]);
         }
     }
@@ -337,6 +298,6 @@ class PagoController extends Controller
             return (float) $order->total_price;
         }
         $items = $order->relationLoaded('items') ? $order->items : $order->items()->get();
-        return (float) $items->sum(fn($i) => (float) $i->price * (float) $i->quantity);
+        return (float) $items->sum(fn($i) => (float)$i->price * (float)$i->quantity);
     }
 }

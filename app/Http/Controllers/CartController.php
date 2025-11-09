@@ -180,8 +180,6 @@ class CartController extends Controller
         });
 
         $successUrl = route('orders.success', ['order' => $order->id]);
-        $failureUrl = route('orders.failure', ['order' => $order->id]);
-        $pendingUrl = route('orders.pending',  ['order' => $order->id]);
 
         $token = config('services.mercadopago.token') ?? env('MP_ACCESS_TOKEN');
         MercadoPagoConfig::setAccessToken($token);
@@ -189,11 +187,21 @@ class CartController extends Controller
         $payload = [
             'items'=> $items,
             'external_reference' => (string) $order->id,
-            'payer'=> ['name' => Auth::user()->name ?? 'Cliente', 'email' => Auth::user()->email ?? 'comprador+teste@example.com'],
-            'back_urls' => ['success' => $successUrl, 'failure' => $failureUrl, 'pending' => $pendingUrl],
+            'payer'=> [
+                'name'  => Auth::user()->name  ?? 'Cliente',
+                'email' => Auth::user()->email ?? 'comprador+teste@example.com'
+            ],
+            'back_urls' => [
+                'success' => $successUrl
+            ],
         ];
-        if (Str::startsWith($successUrl, 'https://')) $payload['auto_return'] = 'approved';
-        if (Str::startsWith(url('/'), 'https://'))   $payload['notification_url'] = route('mp.webhook');
+
+        if (Str::startsWith($successUrl, 'https://')) {
+            $payload['auto_return'] = 'approved';
+        }
+        if (Str::startsWith(url('/'), 'https://')) {
+            $payload['notification_url'] = route('mp.webhook');
+        }
 
         try {
             $pref = (new PreferenceClient())->create($payload);
