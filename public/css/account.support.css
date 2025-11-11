@@ -1,2 +1,5 @@
-
-  .email-text { font-size: 1.1rem; color: #333; word-break: break-word; }
+.email-text {
+    font-size: 1.1rem;
+    color: #333;
+    word-break: break-word;
+}

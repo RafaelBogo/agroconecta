@@ -1,45 +1,51 @@
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
 
-    h2 {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #333;
-        text-align: center;
-        margin-bottom: 30px;
-    }
+.form-group {
+    margin-bottom: 20px;
+}
 
-    .form-group {
-        margin-bottom: 20px;
-    }
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 15px;
+    font-size: 16px;
+    width: 100%;
+}
 
-    .form-control {
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        padding: 15px;
-        font-size: 16px;
-        width: 100%;
-    }
+.form-control:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
 
-    .form-control:focus {
-        border-color: #4CAF50;
-        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-    }
+.btn-container {
+    display: flex;
+    justify-content: space-between;
+}
 
-    .btn-container {
-        display: flex;
-        justify-content: space-between;
-    }
+.btn-success {
+    padding: 10px 30px;
+}
 
-    .btn-success {
-        padding: 10px 30px;
-    }
+.btn-secondary {
+    padding: 10px 30px;
+    background-color: black;
+    border: none;
+}
 
-    .btn-secondary {
-        padding: 10px 30px;
-        background-color: black;
-        border: none;
-    }
+.modal {
+    z-index: 2000 !important;
+}
 
-    /* sobe o modal pra cima de qualquer overlay da página*/
-    .modal { z-index: 2000 !important; }
-    .modal-backdrop { z-index: 1990 !important; }
-    .modal-backdrop.show { pointer-events: none; }
+.modal-backdrop {
+    z-index: 1990 !important;
+}
+
+.modal-backdrop.show {
+    pointer-events: none;
+}

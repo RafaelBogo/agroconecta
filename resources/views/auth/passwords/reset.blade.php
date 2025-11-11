@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/auth.passwords.reset.css') }}">
 
 </head>
+
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card p-4" style="width: 100%; max-width: 400px;">
@@ -17,20 +19,23 @@
                 @csrf
                 <input type="hidden" name="token" value="{{ $token }}">
 
-                <!-- Nova Senha -->
+                {{-- Nova Senha --}}
                 <div class="mb-3 password-container">
                     <label for="password" class="form-label">Nova Senha</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Digite sua nova senha" required>
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Digite sua nova senha" required>
                     <button type="button" class="toggle-password" onclick="togglePassword('password', 'password-icon')">
                         <i id="password-icon" class="bi bi-eye"></i>
                     </button>
                 </div>
 
-                <!-- Confirmação de Senha -->
+                {{-- Confirmação de Senha --}}
                 <div class="mb-3 password-container">
                     <label for="password_confirmation" class="form-label">Confirme a Nova Senha</label>
-                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirme sua nova senha" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation', 'password-icon-confirm')">
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+                        placeholder="Confirme sua nova senha" required>
+                    <button type="button" class="toggle-password"
+                        onclick="togglePassword('password_confirmation', 'password-icon-confirm')">
                         <i id="password-icon-confirm" class="bi bi-eye"></i>
                     </button>
                 </div>
@@ -44,4 +49,5 @@
     <script src="{{ asset('js/auth.password.reset.js') }}" defer></script>
 
 </body>
+
 </html>

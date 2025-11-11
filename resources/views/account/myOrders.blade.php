@@ -31,7 +31,6 @@
         $total = $items->sum(fn($i) => (float) $i->price * (int) $i->quantity);
         $modalId = 'orderModal-' . $order->id;
 
-        // pode mostrar botão "Pedido retirado" quando ainda não está retirado
         $podeMarcarRetirado = in_array($order->status, ['Pendente', 'Concluido'], true);
     @endphp
 
@@ -157,48 +156,4 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/account.orders.css') }}">
-    <style>
-        .status-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            padding: .25rem .6rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            line-height: 1;
-            border: 1px solid currentColor;
-        }
-
-        .status-pendente {
-            color: #946200;
-            background: #fff7e6;
-            border-color: #f5c06a;
-        }
-
-        .status-concluido {
-            color: #0a6b2d;
-            background: #e9f9ef;
-            border-color: #7fd19a;
-        }
-
-        .status-cancelado {
-            color: #842029;
-            background: #f8d7da;
-            border-color: #f1aeb5;
-        }
-
-        .status-retirado {
-            color: #0b5ed7;
-            background: #e7f1ff;
-            border-color: #9ec5fe;
-        }
-
-        .modal {
-            z-index: 2000 !important;
-        }
-
-        .modal-backdrop {
-            z-index: 1990 !important;
-        }
-    </style>
 @endpush

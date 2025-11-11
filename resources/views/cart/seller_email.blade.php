@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Novo Pedido Recebido</title>
 </head>
+
 <body>
     <h1>Olá, {{ $sellerDetails['seller_name'] }}</h1>
     <p>Você recebeu um novo pedido!</p>
@@ -19,4 +21,5 @@
     <p><strong>Total do Pedido:</strong> R$ {{ number_format($sellerDetails['total'], 2, ',', '.') }}</p>
     <p>Obrigado por utilizar o AgroConecta!</p>
 </body>
+
 </html>

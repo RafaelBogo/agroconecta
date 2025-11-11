@@ -1,4 +1,3 @@
-{{-- resources/views/account/mySalesAnalysis.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Análise de Vendas')
@@ -17,7 +16,7 @@
 @php
     $base = $vendas;
 
-    // totais
+    // Totais
     $totalVendas = (float) $base->sum('total_price');
     $totalPedidos = (int) $base->count();
     $ticketMedio = $totalPedidos ? $totalVendas / $totalPedidos : 0;
@@ -37,7 +36,7 @@
     $labelsDias = $porDia->pluck('label')->values();
     $serieVendas = $porDia->pluck('vendas')->values();
 
-    // ====== STATUS (incluindo Retirado) ======
+    // Status
     $porStatus = $base
         ->groupBy(function ($v) {
             $s = $v->status ?? '';
@@ -61,7 +60,7 @@
     $labelsStatus = $porStatus->keys()->values();
     $serieStatus = $porStatus->values();
 
-    // pedidos por hora (bem simples)
+    // Pedidos por hora
     $porHoraRaw = $base->groupBy(fn($v) => optional($v->created_at)->format('H'))->map->count();
     $labelsHoras = collect(range(0, 23))->map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT));
     $serieHora = collect(range(0, 23))->map(function ($h) use ($porHoraRaw) {
@@ -226,7 +225,7 @@
             const labelsHoras = @json($labelsHoras);
             const serieHora = @json($serieHora);
 
-            // vendas por dia
+            //Vendas por dia
             if (labelsDias.length && document.getElementById('chartVendasDia')) {
                 new Chart(document.getElementById('chartVendasDia'), {
                     type: 'line',
@@ -253,7 +252,7 @@
                 });
             }
 
-            // status (agora inclui Retirado)
+            //Status
             if (labelsStatus.length && document.getElementById('chartStatus')) {
                 new Chart(document.getElementById('chartStatus'), {
                     type: 'doughnut',
@@ -272,7 +271,7 @@
                 });
             }
 
-            // por hora
+            //Por hora
             if (document.getElementById('chartHora')) {
                 new Chart(document.getElementById('chartHora'), {
                     type: 'bar',

@@ -1,1 +1,21 @@
-    .content-box { max-width: 900px; }
+    .content-box {
+        max-width: 900px;
+    }
+
+    .content-box {
+        padding: 60px !important;
+        margin-top: 40px !important;
+        margin-bottom: 60px !important;
+    }
+
+    .card {
+        border-radius: 16px;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    .card-body {
+        min-height: 540px;
+    }

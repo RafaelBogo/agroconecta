@@ -228,20 +228,7 @@
 <?php $__env->startPush('scripts'); ?>
     <script src="<?php echo e(asset('js/account.editProduct.js')); ?>" defer></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const unit = document.getElementById('unit');
-            const custom = document.getElementById('unit_custom');
-            if (!unit || !custom) return;
-
-            unit.addEventListener('change', function () {
-                if (this.value === 'custom') {
-                    custom.classList.remove('d-none');
-                    custom.focus();
-                } else {
-                    custom.classList.add('d-none');
-                }
-            });
-        });
+        
     </script>
 <?php $__env->stopPush(); ?>
 

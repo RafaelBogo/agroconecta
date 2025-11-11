@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -201,6 +202,7 @@
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
@@ -208,7 +210,7 @@
             <a class="navbar-brand fw-semibold" href="<?php echo e(route('dashboard')); ?>">AgroConecta</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                    aria-controls="mainNavbar" aria-expanded="false" aria-label="Alternar navegação">
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Alternar navegação">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -222,12 +224,13 @@
                 </ul>
 
                 <ul class="navbar-nav ms-lg-auto">
-                    <li class="nav-item"><a class="nav-link px-lg-3" href="<?php echo e(route('myAccount')); ?>">Minha Conta</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3" href="<?php echo e(route('myAccount')); ?>">Minha Conta</a>
+                    </li>
                     <li class="nav-item">
                         <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" class="d-inline">
                             <?php echo csrf_field(); ?>
                             <a href="#" class="nav-link"
-                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Sair
                             </a>
                         </form>
@@ -264,74 +267,76 @@
     <?php echo $__env->yieldPushContent('modals'); ?>
 
     <?php if (! (View::hasSection('noFooter'))): ?>
-    <footer class="site-footer mt-auto pt-5 pb-4" role="contentinfo">
-        <div class="container">
-            <div class="row g-4">
-                
-                <div class="col-12 col-lg-5">
-                    <div class="site-footer__brand">
-                        <img src="<?php echo e(asset('images/logo.png')); ?>" alt="Logo AgroConecta" class="site-footer__logo" loading="lazy">
-                        <div>
-                            <strong>AgroConecta</strong><br>
-                            <small class="site-footer__muted">Conectando agricultores locais e consumidores.</small>
+        <footer class="site-footer mt-auto pt-5 pb-4" role="contentinfo">
+            <div class="container">
+                <div class="row g-4">
+                    
+                    <div class="col-12 col-lg-5">
+                        <div class="site-footer__brand">
+                            <img src="<?php echo e(asset('images/logo.png')); ?>" alt="Logo AgroConecta" class="site-footer__logo"
+                                loading="lazy">
+                            <div>
+                                <strong>AgroConecta</strong><br>
+                                <small class="site-footer__muted">Conectando agricultores locais e consumidores.</small>
+                            </div>
+                        </div>
+
+                        <p class="mt-3 mb-2 site-footer__muted">
+                            Nossa missão é aproximar quem produz com quem consome, fortalecendo a economia local e a
+                            agricultura sustentável.
+                        </p>
+
+                        <div class="d-flex align-items-center gap-2 social" aria-label="Redes sociais">
+                            <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                            <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="https://wa.me/5599999999999" target="_blank" rel="noopener" aria-label="WhatsApp">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+                            <a href="mailto:suporte.agroconecta@gmail.com" aria-label="E-mail">
+                                <i class="bi bi-envelope"></i>
+                            </a>
                         </div>
                     </div>
 
-                    <p class="mt-3 mb-2 site-footer__muted">
-                        Nossa missão é aproximar quem produz com quem consome, fortalecendo a economia local e a agricultura sustentável.
-                    </p>
+                    
+                    <div class="col-6 col-lg-3">
+                        <h6 class="text-uppercase mb-3">Navegar</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><a href="<?php echo e(route('dashboard')); ?>">Início</a></li>
+                            <li><a href="<?php echo e(route('products.show')); ?>">Produtos</a></li>
+                            <li><a href="<?php echo e(route('sell.cadastroProduto')); ?>">Vender</a></li>
+                            <li><a href="<?php echo e(route('chat.inbox')); ?>">Mensagens</a></li>
+                            <li><a href="<?php echo e(route('cart.view')); ?>">Carrinho</a></li>
+                            <li><a href="<?php echo e(route('myAccount')); ?>">Minha Conta</a></li>
+                        </ul>
+                    </div>
 
-                    <div class="d-flex align-items-center gap-2 social" aria-label="Redes sociais">
-                        <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://wa.me/5599999999999" target="_blank" rel="noopener" aria-label="WhatsApp">
-                            <i class="bi bi-whatsapp"></i>
-                        </a>
-                        <a href="mailto:suporte.agroconecta@gmail.com" aria-label="E-mail">
-                            <i class="bi bi-envelope"></i>
-                        </a>
+                    
+                    <div class="col-6 col-lg-3">
+                        <h6 class="text-uppercase mb-3">Navegar</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><a href="<?php echo e(route('orders.index')); ?>">Meus Pedidos</a></li>
+                            <li><a href="<?php echo e(route('user.data')); ?>">Meus Dados</a></li>
+                            <li><a href="<?php echo e(route('account.myProducts')); ?>">Meus Produtos</a></li>
+                            <li><a href="<?php echo e(route('account.myRatings')); ?>">Avaliações</a></li>
+                            <li><a href="<?php echo e(route('seller.mySales')); ?>">Minhas Vendas</a></li>
+                            <li><a href="<?php echo e(route('support')); ?>">Suporte</a></li>
+                        </ul>
                     </div>
                 </div>
 
-                
-                <div class="col-6 col-lg-3">
-                    <h6 class="text-uppercase mb-3">Navegar</h6>
-                    <ul class="list-unstyled mb-0">
-                        <li><a href="<?php echo e(route('dashboard')); ?>">Início</a></li>
-                        <li><a href="<?php echo e(route('products.show')); ?>">Produtos</a></li>
-                        <li><a href="<?php echo e(route('sell.cadastroProduto')); ?>">Vender</a></li>
-                        <li><a href="<?php echo e(route('chat.inbox')); ?>">Mensagens</a></li>
-                        <li><a href="<?php echo e(route('cart.view')); ?>">Carrinho</a></li>
-                        <li><a href="<?php echo e(route('myAccount')); ?>">Minha Conta</a></li>
-                    </ul>
+                <div class="site-footer__divider"></div>
+                <div class="mt-3 small text-center text-md-start">
+                    © <?php echo e(date('Y')); ?> AgroConecta. Todos os direitos reservados.
                 </div>
 
-                
-                <div class="col-6 col-lg-3">
-                    <h6 class="text-uppercase mb-3">Navegar</h6>
-                    <ul class="list-unstyled mb-0">
-                        <li><a href="<?php echo e(route('orders.index')); ?>">Meus Pedidos</a></li>
-                        <li><a href="<?php echo e(route('user.data')); ?>">Meus Dados</a></li>
-                        <li><a href="<?php echo e(route('account.myProducts')); ?>">Meus Produtos</a></li>
-                        <li><a href="<?php echo e(route('account.myRatings')); ?>">Avaliações</a></li>
-                        <li><a href="<?php echo e(route('seller.mySales')); ?>">Minhas Vendas</a></li>
-                        <li><a href="<?php echo e(route('support')); ?>">Suporte</a></li>
-                    </ul>
-                </div>
+                <?php echo $__env->yieldPushContent('footer'); ?>
             </div>
-
-            <div class="site-footer__divider"></div>
-            <div class="mt-3 small text-center text-md-start">
-                © <?php echo e(date('Y')); ?> AgroConecta. Todos os direitos reservados.
-            </div>
-
-            <?php echo $__env->yieldPushContent('footer'); ?>
-        </div>
-    </footer>
+        </footer>
     <?php endif; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -345,5 +350,6 @@
 
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
+
 </html>
 <?php /**PATH C:\xampp\htdocs\AgroConecta\resources\views/layouts/app.blade.php ENDPATH**/ ?>

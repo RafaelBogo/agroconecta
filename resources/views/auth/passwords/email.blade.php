@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/auth.passwords.email.css') }}">
 
 </head>
+
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card p-4" style="width: 100%; max-width: 400px;">
@@ -19,11 +21,13 @@
                 @csrf
                 <div class="mb-3">
                     <label for="email" class="form-label">E-mail</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu e-mail" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu e-mail"
+                        required>
                 </div>
                 <button type="submit" class="btn btn-success w-100">Enviar Link</button>
             </form>
         </div>
     </div>
 </body>
+
 </html>

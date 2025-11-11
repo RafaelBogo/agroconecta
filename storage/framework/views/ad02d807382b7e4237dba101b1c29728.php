@@ -213,29 +213,11 @@ unset($__errorArgs, $__bag); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('styles'); ?>
-<style>
-    .content-box {
-        padding: 60px !important; /* mais espaçamento interno */
-        margin-top: 40px !important;
-        margin-bottom: 60px !important;
-    }
-
-    .card {
-        border-radius: 16px;
-    }
-
-    .form-label {
-        font-weight: 500;
-    }
-
-    .card-body {
-        min-height: 540px;
-    }
-</style>
+    <link rel="stylesheet" href="<?php echo e(asset('css/dashboard.css')); ?>">
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startPush('scripts'); ?>
-<script src="<?php echo e(asset('js/sell.cadastroProduto.js')); ?>" defer></script>
+    <script src="<?php echo e(asset('js/sell.cadastroProduto.js')); ?>" defer></script>
 <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\AgroConecta\resources\views/sell/cadastroProduto.blade.php ENDPATH**/ ?>

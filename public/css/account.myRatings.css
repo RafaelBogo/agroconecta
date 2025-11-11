@@ -1,46 +1,74 @@
-
-.rating-card{
-    background:#fff;
-    border:1px solid rgba(0,0,0,.06);
-    border-radius:18px;
-    padding:16px 18px;
-    box-shadow:0 6px 16px rgba(17,24,39,.06);
+.rating-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .06);
+    border-radius: 18px;
+    padding: 16px 18px;
+    box-shadow: 0 6px 16px rgba(17, 24, 39, .06);
 }
 
-.product-name{ font-size:1.05rem; color:#111827; }
-.product-desc{ color:#6b7280; }
-
-.thumb{
-    width:72px; height:72px; object-fit:cover; border-radius:12px;
-    box-shadow:0 4px 10px rgba(0,0,0,.08);
-}
-.thumb-placeholder{
-    width:72px; height:72px; border-radius:12px; background:#f3f4f6; color:#9ca3af; font-size:1.3rem;
+.product-name {
+    font-size: 1.05rem;
+    color: #111827;
 }
 
-.rating-stars{
+.product-desc {
+    color: #6b7280;
+}
+
+.thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+}
+
+.thumb-placeholder {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    background: #f3f4f6;
+    color: #9ca3af;
+    font-size: 1.3rem;
+}
+
+.rating-stars {
     direction: rtl;
-    display:inline-flex; gap:6px; user-select:none;
-}
-.rating-stars input{
-    display:none;
-}
-.rating-stars label{
-    font-size:1.6rem; cursor:pointer; transition: transform .12s ease;
-    color:#d1d5db;
-}
-.rating-stars label:hover{ transform: translateY(-2px) scale(1.05); }
-.rating-stars label i{ pointer-events:none; }
-
-.rating-stars input:checked ~ label i,
-.rating-stars label:hover ~ label i{
-    color:#f59e0b;
-}
-.rating-stars input:checked + label i{
-    color:#f59e0b;
+    display: inline-flex;
+    gap: 6px;
+    user-select: none;
 }
 
-.rating-stars label:focus-visible{
-    outline:2px solid rgba(25,135,84,.45); outline-offset:2px; border-radius:8px;
+.rating-stars input {
+    display: none;
 }
 
+.rating-stars label {
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: transform .12s ease;
+    color: #d1d5db;
+}
+
+.rating-stars label:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
+.rating-stars label i {
+    pointer-events: none;
+}
+
+.rating-stars input:checked~label i,
+.rating-stars label:hover~label i {
+    color: #f59e0b;
+}
+
+.rating-stars input:checked+label i {
+    color: #f59e0b;
+}
+
+.rating-stars label:focus-visible {
+    outline: 2px solid rgba(25, 135, 84, .45);
+    outline-offset: 2px;
+    border-radius: 8px;
+}

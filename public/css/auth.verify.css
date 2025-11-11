@@ -1,40 +1,39 @@
-/* Tela de verificação de e-mail */
-body{
-  background-image: url('../images/background4.png');
-  background-size: cover;
-  background-position: center;
-  font-family: 'Arial', sans-serif;
-  min-height: 100vh;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+body {
+    background-image: url('../images/background4.png');
+    background-size: cover;
+    background-position: center;
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.verification-box{
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,.3);
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
+.verification-box {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .3);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
 }
 
-.verification-box h4{
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #333;
+.verification-box h4 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
 }
 
-/* use sua cor de marca aqui */
-.btn-primary{
-  background-color: #2e7d32;  
-  border-color: #2e7d32;
-  color: #fff !important;
+.btn-primary {
+    background-color: #2e7d32;
+    border-color: #2e7d32;
+    color: #fff !important;
 }
-.btn-primary:hover{
-  background-color: #256a2b;
-  border-color: #256a2b;
+
+.btn-primary:hover {
+    background-color: #256a2b;
+    border-color: #256a2b;
 }

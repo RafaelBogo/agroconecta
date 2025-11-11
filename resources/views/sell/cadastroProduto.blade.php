@@ -200,27 +200,9 @@
 @endsection
 
 @push('styles')
-<style>
-    .content-box {
-        padding: 60px !important; /* mais espaçamento interno */
-        margin-top: 40px !important;
-        margin-bottom: 60px !important;
-    }
-
-    .card {
-        border-radius: 16px;
-    }
-
-    .form-label {
-        font-weight: 500;
-    }
-
-    .card-body {
-        min-height: 540px;
-    }
-</style>
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 @endpush
 
 @push('scripts')
-<script src="{{ asset('js/sell.cadastroProduto.js') }}" defer></script>
+    <script src="{{ asset('js/sell.cadastroProduto.js') }}" defer></script>
 @endpush

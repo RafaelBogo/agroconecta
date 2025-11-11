@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -201,6 +202,7 @@
     </style>
     @stack('styles')
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
@@ -208,7 +210,7 @@
             <a class="navbar-brand fw-semibold" href="{{ route('dashboard') }}">AgroConecta</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                    aria-controls="mainNavbar" aria-expanded="false" aria-label="Alternar navegação">
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Alternar navegação">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -222,12 +224,13 @@
                 </ul>
 
                 <ul class="navbar-nav ms-lg-auto">
-                    <li class="nav-item"><a class="nav-link px-lg-3" href="{{ route('myAccount') }}">Minha Conta</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3" href="{{ route('myAccount') }}">Minha Conta</a>
+                    </li>
                     <li class="nav-item">
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
                             <a href="#" class="nav-link"
-                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Sair
                             </a>
                         </form>
@@ -264,74 +267,76 @@
     @stack('modals')
 
     @unless (View::hasSection('noFooter'))
-    <footer class="site-footer mt-auto pt-5 pb-4" role="contentinfo">
-        <div class="container">
-            <div class="row g-4">
-                {{-- Coluna 1 --}}
-                <div class="col-12 col-lg-5">
-                    <div class="site-footer__brand">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo AgroConecta" class="site-footer__logo" loading="lazy">
-                        <div>
-                            <strong>AgroConecta</strong><br>
-                            <small class="site-footer__muted">Conectando agricultores locais e consumidores.</small>
+        <footer class="site-footer mt-auto pt-5 pb-4" role="contentinfo">
+            <div class="container">
+                <div class="row g-4">
+                    {{-- Coluna 1 --}}
+                    <div class="col-12 col-lg-5">
+                        <div class="site-footer__brand">
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo AgroConecta" class="site-footer__logo"
+                                loading="lazy">
+                            <div>
+                                <strong>AgroConecta</strong><br>
+                                <small class="site-footer__muted">Conectando agricultores locais e consumidores.</small>
+                            </div>
+                        </div>
+
+                        <p class="mt-3 mb-2 site-footer__muted">
+                            Nossa missão é aproximar quem produz com quem consome, fortalecendo a economia local e a
+                            agricultura sustentável.
+                        </p>
+
+                        <div class="d-flex align-items-center gap-2 social" aria-label="Redes sociais">
+                            <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                            <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="https://wa.me/5599999999999" target="_blank" rel="noopener" aria-label="WhatsApp">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+                            <a href="mailto:suporte.agroconecta@gmail.com" aria-label="E-mail">
+                                <i class="bi bi-envelope"></i>
+                            </a>
                         </div>
                     </div>
 
-                    <p class="mt-3 mb-2 site-footer__muted">
-                        Nossa missão é aproximar quem produz com quem consome, fortalecendo a economia local e a agricultura sustentável.
-                    </p>
+                    {{-- Coluna 2 --}}
+                    <div class="col-6 col-lg-3">
+                        <h6 class="text-uppercase mb-3">Navegar</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><a href="{{ route('dashboard') }}">Início</a></li>
+                            <li><a href="{{ route('products.show') }}">Produtos</a></li>
+                            <li><a href="{{ route('sell.cadastroProduto') }}">Vender</a></li>
+                            <li><a href="{{ route('chat.inbox') }}">Mensagens</a></li>
+                            <li><a href="{{ route('cart.view') }}">Carrinho</a></li>
+                            <li><a href="{{ route('myAccount') }}">Minha Conta</a></li>
+                        </ul>
+                    </div>
 
-                    <div class="d-flex align-items-center gap-2 social" aria-label="Redes sociais">
-                        <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <a href="https://wa.me/5599999999999" target="_blank" rel="noopener" aria-label="WhatsApp">
-                            <i class="bi bi-whatsapp"></i>
-                        </a>
-                        <a href="mailto:suporte.agroconecta@gmail.com" aria-label="E-mail">
-                            <i class="bi bi-envelope"></i>
-                        </a>
+                    {{-- Coluna 3 --}}
+                    <div class="col-6 col-lg-3">
+                        <h6 class="text-uppercase mb-3">Navegar</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><a href="{{ route('orders.index') }}">Meus Pedidos</a></li>
+                            <li><a href="{{ route('user.data') }}">Meus Dados</a></li>
+                            <li><a href="{{ route('account.myProducts') }}">Meus Produtos</a></li>
+                            <li><a href="{{ route('account.myRatings') }}">Avaliações</a></li>
+                            <li><a href="{{ route('seller.mySales') }}">Minhas Vendas</a></li>
+                            <li><a href="{{ route('support') }}">Suporte</a></li>
+                        </ul>
                     </div>
                 </div>
 
-                {{-- Coluna 2 --}}
-                <div class="col-6 col-lg-3">
-                    <h6 class="text-uppercase mb-3">Navegar</h6>
-                    <ul class="list-unstyled mb-0">
-                        <li><a href="{{ route('dashboard') }}">Início</a></li>
-                        <li><a href="{{ route('products.show') }}">Produtos</a></li>
-                        <li><a href="{{ route('sell.cadastroProduto') }}">Vender</a></li>
-                        <li><a href="{{ route('chat.inbox') }}">Mensagens</a></li>
-                        <li><a href="{{ route('cart.view') }}">Carrinho</a></li>
-                        <li><a href="{{ route('myAccount') }}">Minha Conta</a></li>
-                    </ul>
+                <div class="site-footer__divider"></div>
+                <div class="mt-3 small text-center text-md-start">
+                    © {{ date('Y') }} AgroConecta. Todos os direitos reservados.
                 </div>
 
-                {{-- Coluna 3 --}}
-                <div class="col-6 col-lg-3">
-                    <h6 class="text-uppercase mb-3">Navegar</h6>
-                    <ul class="list-unstyled mb-0">
-                        <li><a href="{{ route('orders.index') }}">Meus Pedidos</a></li>
-                        <li><a href="{{ route('user.data') }}">Meus Dados</a></li>
-                        <li><a href="{{ route('account.myProducts') }}">Meus Produtos</a></li>
-                        <li><a href="{{ route('account.myRatings') }}">Avaliações</a></li>
-                        <li><a href="{{ route('seller.mySales') }}">Minhas Vendas</a></li>
-                        <li><a href="{{ route('support') }}">Suporte</a></li>
-                    </ul>
-                </div>
+                @stack('footer')
             </div>
-
-            <div class="site-footer__divider"></div>
-            <div class="mt-3 small text-center text-md-start">
-                © {{ date('Y') }} AgroConecta. Todos os direitos reservados.
-            </div>
-
-            @stack('footer')
-        </div>
-    </footer>
+        </footer>
     @endunless
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -345,4 +350,5 @@
 
     @stack('scripts')
 </body>
+
 </html>

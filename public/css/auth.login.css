@@ -1,11 +1,11 @@
-    body{
-    background: url('../images/background4.png') center / cover no-repeat fixed;
-     font-family: 'Arial', sans-serif;
-    min-height: 100vh;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    body {
+        background: url('../images/background4.png') center / cover no-repeat fixed;
+        font-family: 'Arial', sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .login-container {

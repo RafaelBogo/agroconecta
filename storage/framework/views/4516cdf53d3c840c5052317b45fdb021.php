@@ -225,7 +225,7 @@
             const labelsHoras = <?php echo json_encode($labelsHoras, 15, 512) ?>;
             const serieHora = <?php echo json_encode($serieHora, 15, 512) ?>;
 
-            // vendas por dia
+            { { --Vendas por dia-- } }
             if (labelsDias.length && document.getElementById('chartVendasDia')) {
                 new Chart(document.getElementById('chartVendasDia'), {
                     type: 'line',
@@ -252,7 +252,7 @@
                 });
             }
 
-            // status (agora inclui Retirado)
+            { { --Status --} }
             if (labelsStatus.length && document.getElementById('chartStatus')) {
                 new Chart(document.getElementById('chartStatus'), {
                     type: 'doughnut',
@@ -271,7 +271,7 @@
                 });
             }
 
-            // por hora
+            { { --Por hora-- } }
             if (document.getElementById('chartHora')) {
                 new Chart(document.getElementById('chartHora'), {
                     type: 'bar',
