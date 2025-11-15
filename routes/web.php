@@ -132,11 +132,9 @@ Route::post('/email/verify', [AuthController::class, 'verifyCode'])->name('verif
 // Rotas de Vendas (Vendedor)
 // ===============================
 Route::middleware('auth')->group(function () {
-    // NOVA tela – Minhas Vendas (lista operacional, com reembolso/cancelar)
     Route::get('/minha-conta/minhas-vendas', [OrderController::class, 'mySales'])
         ->name('seller.mySales');
 
-    // NOVA tela – Análise de Vendas (a antiga)
     Route::get('/minha-conta/analise-vendas', [OrderController::class, 'mySalesAnalysis'])
         ->name('seller.mySalesAnalysis');
 
@@ -161,7 +159,7 @@ Route::get('/account/myRatings', [ReviewController::class, 'index'])->name('acco
 Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('products.reviews.store')->middleware('auth');
 
 // ===============================
-// Rotas de Chat (consolidado)
+// Rotas de Chat
 // ===============================
 Route::middleware('auth')->group(function () {
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.inbox');

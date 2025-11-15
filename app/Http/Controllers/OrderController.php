@@ -15,16 +15,13 @@ class OrderController extends Controller
             ->latest()
             ->get();
 
-        // view certa
         return view('account.myOrders', compact('orders'));
     }
 
     public function update(Request $request, Order $order)
     {
-        // só o dono pode mudar
         abort_unless($order->user_id === Auth::id(), 403);
 
-        // agora aceita Retirado também
         $data = $request->validate([
             'status' => 'required|in:Pendente,Concluido,Cancelado,Retirado',
         ]);
@@ -33,19 +30,7 @@ class OrderController extends Controller
 
         return back()->with('success', 'Status atualizado.');
     }
-
-    public function mySales()
-    {
-        $vendas = Order::whereHas('items.product', fn ($q) =>
-                $q->where('user_id', Auth::id())
-            )
-            ->with(['items.product.user', 'user'])
-            ->latest()
-            ->paginate(20);
-
-        return view('account.mySales', compact('vendas'));
-    }
-
+    
     public function mySalesAnalysis()
     {
         $vendas = Order::whereHas('items.product', fn ($q) =>
@@ -72,7 +57,6 @@ class OrderController extends Controller
                 ->withErrors(['error' => 'Venda não encontrada ou não autorizada.']);
         }
 
-        // vendedor confirma retirada
         $venda->update(['status' => 'Retirado']);
 
         return redirect()
