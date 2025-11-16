@@ -22,7 +22,7 @@
         <div>
             <div class="product-image mb-4">
                 <img src="{{ $foto }}" alt="Foto do produto {{ $product->name }}"
-                    onerror="this.src='https://placehold.co/800x450?text=Sem+a';">
+                    onerror="this.src='https://placehold.co/800x450?text=Sem+imagem';">
             </div>
 
             {{-- Avaliações --}}
