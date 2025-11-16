@@ -67,7 +67,7 @@
                         $foto = $product->photo;
                         $imgUrl = $foto
                             ? route('media', ['path' => ltrim($foto, '/')])
-                            : 'https://via.placeholder.com/800x450?text=Sem+imagem';
+                            : 'https://placehold.co/800x450?text=Sem+imagem';
                       ?>
 
                     <div class="col-12 col-sm-6 col-lg-4">
@@ -75,7 +75,7 @@
                             <div class="card product-card h-100">
                                 <div class="ratio ratio-16x9">
                                     <img src="<?php echo e($imgUrl); ?>" class="product-image rounded-top" alt="<?php echo e($product->name); ?>"
-                                        onerror="this.onerror=null;this.src='https://via.placeholder.com/800x450?text=Sem+imagem';">
+                                        onerror="this.onerror=null;this.src='https://placehold.co/800x450?text=Sem+imagem';">
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title mb-1 text-truncate"><?php echo e($product->name); ?></h5>
