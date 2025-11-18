@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\Order;
 
 class ReviewController extends Controller
 {
@@ -14,17 +14,26 @@ class ReviewController extends Controller
     {
         $userId = Auth::id();
 
-        $products = Product::whereIn('products.id', function ($q) use ($userId) {
-                $q->select('orders.product_id')
-                  ->from('orders')
-                  ->where('orders.user_id', $userId);
-            })
-            ->with('user')
-            ->orderBy('name')
-            ->get();
+        $productIds = Order::where('user_id', $userId)
+            ->with('items')
+            ->get()
+            ->flatMap(fn ($order) => $order->items->pluck('product_id'))
+            ->unique()
+            ->values()
+            ->all();
+
+        if (empty($productIds)) {
+            $products = collect();
+        } else {
+            $products = Product::whereIn('id', $productIds)
+                ->with('user')
+                ->orderBy('name')
+                ->get();
+        }
 
         $reviews = Review::where('user_id', $userId)
             ->pluck('product_id')
+            ->map(fn ($id) => (int) $id)
             ->all();
 
         $eligibleIds = $this->eligibleProductIds($userId);
@@ -47,11 +56,16 @@ class ReviewController extends Controller
         $productId = (int) $productId;
 
         $eligibleIds = $this->eligibleProductIds($userId);
-        abort_unless(in_array($productId, $eligibleIds, true), 403, 'A avaliação só é liberada após marcar o produto como retirado.');
+        abort_unless(
+            in_array($productId, $eligibleIds, true),
+            403,
+            'A avaliação só é liberada após marcar o pedido como retirado.'
+        );
 
         $already = Review::where('user_id', $userId)
             ->where('product_id', $productId)
             ->exists();
+
         abort_if($already, 422, 'Você já avaliou este produto.');
 
         Review::create([
@@ -64,15 +78,16 @@ class ReviewController extends Controller
         return back()->with('success', 'Avaliação enviada com sucesso!');
     }
 
-
     private function eligibleProductIds(int $userId): array
     {
-        return DB::table('orders')
-            ->where('user_id', $userId)
+        return Order::where('user_id', $userId)
             ->where('status', 'Retirado')
-            ->pluck('product_id')
+            ->with('items')
+            ->get()
+            ->flatMap(fn ($order) => $order->items->pluck('product_id'))
             ->unique()
             ->values()
+            ->map(fn ($id) => (int) $id)
             ->all();
     }
 }
