@@ -9,7 +9,7 @@ Este repositório contém o código-fonte do sistema de marketplace desenvolvido
 > * Todas as contas, CPFs e cartões descritos aqui são dados de teste fornecidos pelo Mercado Pago.
 > * Nenhuma transação realizada neste sistema gera cobrança real.
 > * O sistema foi desenvolvido para rodar em hospedagem (servidor com URL pública).
->   Em execução local (localhost) a API de pagamentos não funciona corretamente.
+>   Em execução local (`localhost`) a API de pagamentos não funciona corretamente.
 
 ---
 
@@ -171,3 +171,105 @@ Quando o sistema redirecionar para o Mercado Pago:
 * Contas, CPFs e cartões são fictícios e fornecidos pelo sandbox do Mercado Pago.
 * O arquivo `.env` não é distribuído neste repositório e deve ser configurado manualmente em cada servidor.
 * O uso em produção real exige novas credenciais de Mercado Pago, ambiente separado e revisão de segurança completa.
+
+---
+
+## 9. Execução local (opcional)
+
+O sistema foi desenvolvido para uso em hospedagem com URL pública.
+A execução local não é recomendada para o fluxo de pagamentos, pois a API do Mercado Pago depende de notificações e chamadas externas que exigem um endereço acessível pela internet.
+
+Se ainda assim for necessário executar o sistema localmente para fins de desenvolvimento da aplicação em si (sem garantia de funcionamento completo da API de pagamentos), são necessários os pontos a seguir.
+
+### 9.1. Dependências locais
+
+* PHP compatível com a versão requerida pelo Laravel utilizado no projeto.
+* Composer instalado.
+* XAMPP instalado e configurado (Apache e MySQL ativos) ou ambiente equivalente.
+* Servidor de banco de dados MySQL ou compatível.
+* Pasta `vendor` presente no projeto. Se não existir, executar:
+
+```bash
+composer install
+```
+
+### 9.2. Exemplo de configuração de `.env` para ambiente local
+
+O arquivo `.env` deve ser ajustado conforme as necessidades do projeto e do ambiente local.
+Abaixo segue um exemplo de configuração básica:
+
+```env
+APP_NAME=Agroconecta
+APP_ENV=local
+APP_KEY=base64:sua_chave_gerada_pelo_artisan
+APP_DEBUG=true
+APP_TIMEZONE=America/Sao_Paulo
+APP_URL=http://localhost
+
+APP_LOCALE=pt_BR
+APP_FALLBACK_LOCALE=pt_BR
+APP_FAKER_LOCALE=pt_BR
+
+APP_MAINTENANCE_DRIVER=file
+PHP_CLI_SERVER_WORKERS=4
+BCRYPT_ROUNDS=12
+
+LOG_CHANNEL=errorlog
+LOG_LEVEL=debug
+LOG_DEPRECATIONS_CHANNEL=null
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=agroconecta_local
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
+
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+CACHE_DRIVER=file
+CACHE_STORE=file
+CACHE_PREFIX=
+
+FILESYSTEM_DISK=public
+QUEUE_CONNECTION=sync
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+MEMCACHED_HOST=127.0.0.1
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=seu_email@gmail.com
+MAIL_PASSWORD="sua_senha_ou_app_password"
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=noreply.agroconecta@gmail.com
+MAIL_FROM_NAME="AgroConecta"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+VITE_APP_NAME="${APP_NAME}"
+
+MP_PUBLIC_KEY=SEU_MP_PUBLIC_KEY_DE_TESTE
+MP_ACCESS_TOKEN=SEU_MP_ACCESS_TOKEN_DE_TESTE
+
+# Exemplo alternativo comentado de chaves do Mercado Pago:
+# MERCADOPAGO_PUBLIC_KEY=SEU_OUTRO_PUBLIC_KEY
+# MERCADOPAGO_ACCESS_TOKEN=SEU_OUTRO_ACCESS_TOKEN
+```
+
+Mesmo com a configuração local do `.env` e o XAMPP corretamente configurado, a API de pagamentos pode não funcionar corretamente em `localhost` devido à necessidade de URLs públicas para callbacks e webhooks.
+Para testar o fluxo de pagamento completo, manter a recomendação de uso em ambiente de hospedagem com domínio público.
+
+A estrutura do banco de dados utilizada pelo sistema estará disponível no arquivo `database.sql` neste repositório, para referência e implantação em diferentes ambientes.
