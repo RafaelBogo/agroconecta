@@ -146,9 +146,11 @@ php artisan db:seed
 Quando o sistema redirecionar para o Mercado Pago:
 
 1. Informar as credenciais da conta Buyer Test:
-
+   * User ID: `2928363894`
    * Usuário: `TESTUSER3994048825872853384`
    * Senha: `Ql8mRUfAyd`
+
+    Caso peça uma verificação de 6 digitos, são os últimos 6 digitos do UserId.
 
 2. Prosseguir para pagamento com cartão.
 
